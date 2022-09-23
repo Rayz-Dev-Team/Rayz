@@ -252,9 +252,10 @@ class Economy(commands.Cog):
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
+		item_list = fileIO("economy/items.json", "load")
 		say_list = []
 		for key, i in prices["items"].items():
-			say_list.append("{} - {:,}".format(i["display_name"], i["price"]))
+			say_list.append("{} - {:,}".format(item_list["items"][i]["display_name"], i["price"]))
 		em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
 		await ctx.send(embed=em)
 
@@ -271,6 +272,7 @@ class Economy(commands.Cog):
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
+		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.send(embed=em)
@@ -336,6 +338,7 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
+		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.send(embed=em)
@@ -662,7 +665,6 @@ class Economy(commands.Cog):
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.send(embed=em)
-
 
 	@commands.command()
 	async def rob(self, ctx, *, member: guilded.Member=None):
