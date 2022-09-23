@@ -971,9 +971,7 @@ class Economy(commands.Cog):
 					amount = random.randint(item_drops["rare"][drop]["min_amount"], item_drops["rare"][drop]["max_amount"])
 					if not drop in info["inventory"]["items"]:
 						info["inventory"]["items"][drop] = {
-							"amount": amount,
-							"description": "{}".format(item_drops["rare"][drop]["description"]),
-							"display_name": "{}".format(item_list["items"][drop]["display_name"])
+							"amount": amount
 						}
 						new_amount = amount
 						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
@@ -989,16 +987,14 @@ class Economy(commands.Cog):
 					amount = random.randint(item_drops["epic"][drop]["min_amount"], item_drops["epic"][drop]["max_amount"])
 					if not drop in info["inventory"]["items"]:
 						info["inventory"]["items"][drop] = {
-							"amount": amount,
-							"description": "{}".format(item_drops["epic"][drop]["description"]),
-							"display_name": "{}".format(item_drops["epic"][drop]["display_name"])
+							"amount": amount
 						}
 						new_amount = amount
-						drops_lines_list.append("[Epic] +{} {}".format(amount, item_drops["epic"][drop]["display_name"]))
+						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 					else:
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Epic] +{} {}".format(amount, item_drops["epic"][drop]["display_name"]))
+						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 				if legendary_chance == 1:
 					drop_list = []
 					for i in item_drops["legendary"]:
@@ -1007,16 +1003,14 @@ class Economy(commands.Cog):
 					amount = random.randint(item_drops["legendary"][drop]["min_amount"], item_drops["legendary"][drop]["max_amount"])
 					if not drop in info["inventory"]["items"]:
 						info["inventory"]["items"][drop] = {
-							"amount": amount,
-							"description": "{}".format(item_drops["legendary"][drop]["description"]),
-							"display_name": "{}".format(item_drops["legendary"][drop]["display_name"])
+							"amount": amount
 						}
 						new_amount = amount
-						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_drops["legendary"][drop]["display_name"]))
+						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 					else:
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_drops["legendary"][drop]["display_name"]))
+						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 				if unreal_chance == 1:
 					drop_list = []
 					for i in item_drops["unreal"]:
@@ -1025,16 +1019,14 @@ class Economy(commands.Cog):
 					amount = random.randint(item_drops["unreal"][drop]["min_amount"], item_drops["unreal"][drop]["max_amount"])
 					if not drop in info["inventory"]["items"]:
 						info["inventory"]["items"][drop] = {
-							"amount": amount,
-							"description": "{}".format(item_drops["unreal"][drop]["description"]),
-							"display_name": "{}".format(item_drops["unreal"][drop]["display_name"])
+							"amount": amount
 						}
 						new_amount = amount
-						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_drops["unreal"][drop]["display_name"]))
+						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 					else:
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_drops["unreal"][drop]["display_name"]))
+						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 				if not drops_lines_list == []:
 					message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
 
