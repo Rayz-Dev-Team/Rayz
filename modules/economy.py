@@ -868,6 +868,7 @@ class Economy(commands.Cog):
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
+		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.send(embed=em)
@@ -952,16 +953,14 @@ class Economy(commands.Cog):
 					amount = random.randint(item_drops["common"][drop]["min_amount"], item_drops["common"][drop]["max_amount"])
 					if not drop in info["inventory"]["items"]:
 						info["inventory"]["items"][drop] = {
-							"amount": amount,
-							"description": "{}".format(item_drops["common"][drop]["description"]),
-							"display_name": "{}".format(item_drops["common"][drop]["display_name"])
+							"amount": amount
 						}
 						new_amount = amount
-						drops_lines_list.append("[Common] +{} {}".format(amount, item_drops["common"][drop]["display_name"]))
+						drops_lines_list.append("[Common] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 					else:
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Common] +{} {}".format(amount, item_drops["common"][drop]["display_name"]))
+						drops_lines_list.append("[Common] +{} {}".format(amount,item_list["items"][drop]["display_name"]))
 				if rare_chance <= 15:
 					drop_list = []
 					for i in item_drops["rare"]:
@@ -972,14 +971,14 @@ class Economy(commands.Cog):
 						info["inventory"]["items"][drop] = {
 							"amount": amount,
 							"description": "{}".format(item_drops["rare"][drop]["description"]),
-							"display_name": "{}".format(item_drops["rare"][drop]["display_name"])
+							"display_name": "{}".format(item_list["items"][drop]["display_name"])
 						}
 						new_amount = amount
-						drops_lines_list.append("[Rare] +{} {}".format(amount, item_drops["rare"][drop]["display_name"]))
+						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 					else:
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Rare] +{} {}".format(amount, item_drops["rare"][drop]["display_name"]))
+						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
 				if epic_chance == 1:
 					drop_list = []
 					for i in item_drops["epic"]:
