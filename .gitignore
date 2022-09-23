@@ -21,3 +21,5 @@ guilded.log
 
 # Core modules (Not supported by the guilded api)
 modules/core/*
+modules/inspire.py
+modules/demo.py
