@@ -30,6 +30,7 @@ bot = commands.Bot(bot_id="acd5fc8c-4272-48d0-b78b-da1fecb1bab5", command_prefix
 async def on_ready():
     print("[ Online and connected to Guilded. ]")
     print('------')
+    print('beep')
 
 @bot.event
 async def on_command_error(ctx, error):
