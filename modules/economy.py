@@ -1152,12 +1152,12 @@ class Economy(commands.Cog):
 			default_print_list = []
 			for key, i in info["inventory"]["seasonal_items"]["halloween"].items():
 				if i["amount"] > 0:
-					halloween_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], item_list["items"][key]["description"]))
+					halloween_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
 			if halloween_print_list == []:
 				halloween_print_list.append("None")
 			for key, i in info["inventory"]["items"].items():
 				if i["amount"] > 0:
-					default_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], item_list["items"][key]["description"]))
+					default_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
 			if num == None:
