@@ -1,0 +1,9 @@
+{
+    "Developer" : [],
+    "Prefix" : "?",
+    "Token" : "yes",
+    "database_name" : "Rayz",
+    "database_password" : "Your password",
+    "database_port" : "5433",
+    "database_username" : "postgres"
+}
