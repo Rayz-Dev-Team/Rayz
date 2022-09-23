@@ -1113,3 +1113,4 @@ modules/__pycache__/duels.cpython-310.pyc
 modules/__pycache__/dev.cpython-37.pyc
 modules/__pycache__/demo.cpython-38.pyc
 modules/__pycache__/demo.cpython-310.pyc
+*.pyc
