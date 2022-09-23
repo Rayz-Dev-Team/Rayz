@@ -1,9 +1,6 @@
 # Directory consisting mostly of jsons regarding guilds that Rayz is in
 guilds
 
-# Directory consisting mostly of jsons regarding users in servers that use Rayz
-users
-
 # Compiled python bytecode helps to speed up launch of scripts on local hardware
 __pycache__
 */__pycache__
