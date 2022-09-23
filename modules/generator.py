@@ -111,7 +111,7 @@ class Generator(commands.Cog):
 		author = event.message.author
 		guild = event.server
 		message = event.message
-		if author.bot:
+		if event.message.created_by_bot:
 			return
 		await _check_values(author)
 		await _check_values_guild(guild)
@@ -180,6 +180,8 @@ class Generator(commands.Cog):
 		author = event.before.author
 		before = event.before
 		after = event.after
+		if before.created_by_bot:
+			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			async def getServer():
@@ -207,6 +209,8 @@ class Generator(commands.Cog):
 		author = event.message.author
 		channel = event.channel
 		message = event.message
+		if message.created_by_bot:
+			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			async def getServer():
