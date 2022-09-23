@@ -60,7 +60,7 @@
             "description" : "Secure your bank.",
             "rarity" : "Epic"
         },
-        "pick_locker" : {
+        "lock_picker" : {
             "display_name" : "Lockpick",
             "description" : "Unlock things!",
             "rarity" : "Epic"
@@ -89,8 +89,8 @@
         "golden chest" : "golden_chest",
         "trick or treat bag" : "trick_or_treat_bag",
         "bank lock" : "bank_lock",
-        "pick locker" : "pick_locker",
-        "lockpick" : "pick_locker",
+        "pick locker" : "lock_picker",
+        "lockpick" : "lock_picker",
         "2022 halloween event chest" : "2022_halloween_event_chest",
         "dark chest" : "dark_chest",
         "hacking tablet" : "hacking_tablet"

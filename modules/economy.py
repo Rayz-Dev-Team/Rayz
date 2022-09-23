@@ -1122,6 +1122,7 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
+		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.send(embed=em)
@@ -1151,12 +1152,12 @@ class Economy(commands.Cog):
 			default_print_list = []
 			for key, i in info["inventory"]["seasonal_items"]["halloween"].items():
 				if i["amount"] > 0:
-					halloween_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], i["description"]))
+					halloween_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], item_list["items"][key]["description"]))
 			if halloween_print_list == []:
 				halloween_print_list.append("None")
 			for key, i in info["inventory"]["items"].items():
 				if i["amount"] > 0:
-					default_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], i["description"]))
+					default_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(i["display_name"], i["amount"], item_list["items"][key]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
 			if num == None:
