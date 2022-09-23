@@ -1,0 +1,20 @@
+{
+    "items" : {
+        "candycorn" : {
+            "price" : 30,
+            "display_name" : "Candycorn"
+        },
+        "jolly_ranchers" : {
+            "price" : 45,
+            "display_name" : "Jolly ranchers"
+        },
+        "nerds" : {
+            "price" : 1500,
+            "display_name" : "Nerds"
+        },
+        "dots" : {
+            "price" : 90000,
+            "display_name" : "Dots"
+        }
+    }
+}

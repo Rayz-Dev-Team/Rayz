@@ -1,0 +1,84 @@
+{
+    "common" : {
+        "string" : {
+            "min_amount" : 1,
+            "max_amount" : 10,
+            "display_name" : "String",
+            "description" : "Just string."
+        },
+        "broken_cpu" : {
+            "min_amount" : 1,
+            "max_amount" : 2,
+            "display_name" : "Broken CPU",
+            "description" : "010121"
+        },
+        "dirty_socks" : {
+            "min_amount" : 1,
+            "max_amount" : 2,
+            "display_name" : "Dirty socks",
+            "description" : "Dang, these things smell."
+        },
+        "dead_batteries" : {
+            "min_amount" : 1,
+            "max_amount" : 5,
+            "display_name" : "Dead batteries",
+            "description" : "No charge left."
+        }
+    },
+    "rare" : {
+        "shovel" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Shovel",
+            "description" : "Dig things up?"
+        },
+        "golden_chest" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Golden chest",
+            "description" : "A locked chest. Who knows what's inside."
+        },
+        "trick_or_treat_bag" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Trick or treat bag",
+            "description" : "Do you dare to open it?"
+        }
+    },
+    "epic" : {
+        "bank_lock" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Bank lock",
+            "description" : "Secure your bank"
+        },
+        "lock_picker" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Lock picker",
+            "description" : "Unlock things?"
+        }
+    },
+    "legendary" : {
+        "2022_halloween_event_chest" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "2022 Halloween box",
+            "description" : "[LEGENDARY] 2022 Halloween event series chest. Contains higher drop rates, and a higher amount of items."
+        },
+        "dark_chest" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Dark chest",
+            "description" : "[LEGENDARY] A locked chest. Who knows what's inside."
+        }
+    },
+    "unreal" : {
+        "hacking_tablet" : {
+            "min_amount" : 1,
+            "max_amount" : 1,
+            "display_name" : "Hacking tablet",
+            "description" : "[UNREAL] I would watch others do this before you attempt."
+        }
+    }
+}
