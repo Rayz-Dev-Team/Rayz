@@ -23,7 +23,8 @@ import psycopg2
 from psycopg2 import Error
 from core.database import *
 from psycopg2.extras import Json
-from psycopg2.extras import RealDictCursor
+from tools.db_funcs import getUser
+from tools.functions import paginate
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -628,7 +629,10 @@ class Economy(commands.Cog):
 	async def leaderboard(self, ctx, page: typing.Optional[int] = 1):
 		# We need to know where to offset our query by if the number is greater than 1
 		# We need it to be greater because we need to start at 0 otherwise
-		offset = page * 10 if page > 1 else 0
+		offset = (page - 1) * 10 if page > 1 else 0
+
+		if page < 1:
+			page = 1
 
 		author = ctx.author
 		guild = ctx.guild
@@ -654,33 +658,23 @@ class Economy(commands.Cog):
 				return [result,total]
 
 			[LB,total] = await getUserLB()
+			[description, numOfPages] = paginate(LB,total[0],page)
 			
-			# Now that we have the total, we calculate how many pages we have
-			numOfPages = math.ceil(total[0] / 10)
-			
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
+			if page > numOfPages:
+				em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
+				await ctx.send(embed=em)
+				connection.close()
+				return
 
-			user = await getUser()
+			# We're now importing this function
+			user = await getUser(author.id)
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
 				em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 				await ctx.send(embed=em)
 				connection.close()
 				return
-
-			# Create an empty string to fill in with our users
-			description = ""
-			# Now we fill that description up
-			for num, member in enumerate(LB):
-				placement = num + 1
-				if(page > 1):
-					placement =  placement + ((page - 1) * 10)
-				description += f"`{placement}.` {member[0]}: {member[1]:,}\n"
+			
 			em = guilded.Embed(title="Global leaderboard:".format(author.name), description=description, color=0x363942)
 			# Add our footer with the page we're on out of the total
 			em.set_footer(text=f"Page {page}/{numOfPages}")
