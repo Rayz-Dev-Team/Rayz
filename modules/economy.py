@@ -24,6 +24,7 @@ from psycopg2 import Error
 from core.database import *
 from psycopg2.extras import Json
 from tools.db_funcs import getUser
+from tools.db_funcs import getServer
 from tools.functions import paginate
 from tools.functions import roll_chance
 
@@ -125,13 +126,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			if user[10] == None:
 				await ctx.send("Is None")
 			else:
@@ -153,13 +148,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			cursor = connection.cursor()
 			total_amount = user[3] + amount
 			cursor.execute(f"UPDATE users SET bank = {total_amount} WHERE ID = '{member.id}'")
@@ -209,13 +198,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[4] == "False":
 				cursor = connection.cursor()
 				add_value = 0.25
@@ -295,13 +278,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			info = user[10]
 			accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
 			cursor = connection.cursor()
@@ -365,13 +342,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			async def getMember():
 				with connection:
 					cursor = connection.cursor()
@@ -446,13 +417,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			async def getMember():
 				with connection:
 					cursor = connection.cursor()
@@ -460,13 +425,7 @@ class Economy(commands.Cog):
 					content = cursor.fetchone()
 				return content
 			member1 = await getMember()
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			prefix = server[3]
 			if amount > user[6]:
 				em = guilded.Embed(title="Uh oh!", description="`You don't have {:,} in your pocket.".format(amount), color=0x363942)
@@ -511,13 +470,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			if amount.lower() == "all":
 				if user[3] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
@@ -581,13 +534,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			if amount.lower() == "all":
 				if user[6] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your pocket balance is 0.".format(author.id), color=0x363942)
@@ -697,13 +644,7 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			LB = fileIO("config/economy_settings.json", "load")
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
@@ -722,13 +663,7 @@ class Economy(commands.Cog):
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 				await ctx.send(embed=em)
 				return
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			async def getMember():
 				with connection:
 					cursor = connection.cursor()
@@ -806,20 +741,8 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			user = await getUser(author.id)
+			server = await getServer(guild.id)
 			if user == None:
 				await _check_values(author)
 			gen_amount = random.randint(5000, 12000)
@@ -896,20 +819,8 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			user = await getUser(author.id)
+			server = await getServer(guild.id)
 			prefix = server[3]
 			if amount == None:
 				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x25 bonus.\nJACKPOT `-` x450 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
@@ -1047,20 +958,8 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			user = await getUser(author.id)
+			server = await getServer(guild.id)
 			if user == None:
 				await _check_values(author)
 			curr_time = time.time()
@@ -1256,13 +1155,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
+			user = await getUser(author.id)
 			if user == None:
 				await _check_values(author)
 			bank_code = user[4]
@@ -1292,20 +1185,8 @@ class Economy(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-					content = cursor.fetchone()
-				return content
-			user = await getUser()
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			user = await getUser(author.id)
+			server = await getServer(guild.id)
 			prefix = server[3]
 			if user == None:
 				await _check_values(author)
@@ -1345,21 +1226,9 @@ class Economy(commands.Cog):
 		if author.bot:
 			return
 		await _check_values_guild(guild)
-		try:
-			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
-			em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server[4], server[5]), color=0x363942)
-			await ctx.send(embed=em)
-			connection.close()
-		except psycopg2.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+		server = await getServer(guild.id)
+		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server[4], server[5]), color=0x363942)
+		await ctx.send(embed=em)
 
 def setup(bot):
 	bot.add_cog(Economy(bot))

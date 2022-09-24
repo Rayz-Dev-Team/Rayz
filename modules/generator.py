@@ -14,6 +14,8 @@ import psycopg2
 from psycopg2 import Error
 from core.database import *
 from psycopg2.extras import Json
+from tools.db_funcs import getUser
+from tools.db_funcs import getServer
 
 class Generator(commands.Cog):
 	def __init__(self,bot):
@@ -30,13 +32,7 @@ class Generator(commands.Cog):
 		await _check_values_guild(guild)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[15] == None:
 				return
 			if banned == True:
@@ -64,13 +60,7 @@ class Generator(commands.Cog):
 		await _check_values_guild(guild)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[13] == None:
 				pass
 			else:
@@ -120,13 +110,7 @@ class Generator(commands.Cog):
 		info = fileIO("config/banned_words.json", "load")
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getUser():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getUser()
+			server = await getServer(guild.id)
 			prefix = server[3]
 			if server[1] == None:
 				append_it = ["111111111111111111111111111111111111111111111111111111111111111111111111111111111"]
@@ -184,13 +168,7 @@ class Generator(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[2] is not None:
 				try:
 					channel = await guild.fetch_channel(server[2])
@@ -213,13 +191,7 @@ class Generator(commands.Cog):
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[2] is not None:
 				try:
 					channel = await guild.fetch_channel(server[2])
@@ -236,13 +208,7 @@ class Generator(commands.Cog):
 async def _check_inventory(author):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		async def getUser():
-			with connection:
-				cursor = connection.cursor()
-				cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-				content = cursor.fetchone()
-			return content
-		user = await getUser()
+		user = await getUser(author.id)
 		if user[10] == None:
 			new_account = {
 				"inventory": {
@@ -288,13 +254,7 @@ async def _check_inventory(author):
 async def _check_inventory_member(member):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		async def getUser():
-			with connection:
-				cursor = connection.cursor()
-				cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-				content = cursor.fetchone()
-			return content
-		user = await getUser()
+		user = await getUser(member.id)
 		if user[10] == None:
 			new_account = {
 				"inventory": {
@@ -319,13 +279,7 @@ async def _check_inventory_member(member):
 async def _check_values_member(member):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		async def getUser():
-			with connection:
-				cursor = connection.cursor()
-				cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-				content = cursor.fetchone()
-			return content
-		user = await getUser()
+		user = await getUser(member.id)
 		if user == None:
 			cursor = connection.cursor()
 			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0)")
@@ -394,13 +348,7 @@ async def _check_values(author):
 async def _check_values_guild(guild):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		async def getGuild():
-			with connection:
-				cursor = connection.cursor()
-				cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-				content = cursor.fetchone()
-			return content
-		server = await getGuild()
+		server = await getServer(guild.id)
 		if server == None:
 			cursor = connection.cursor()
 			cursor.execute(f"INSERT INTO servers(id, logs_channel_id, server_prefix, partner_status, economy_multiplier, moderation_module, fun_module, economy_module) VALUES('{guild.id}', 'None', '?', 'False', 1, 'Enabled', 'Enabled', 'Enabled')")
