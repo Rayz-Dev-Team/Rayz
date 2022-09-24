@@ -897,7 +897,7 @@ class Economy(commands.Cog):
 				await ctx.send(embed=em)
 				return
 			if amount < 100 or amount > 15000:
-				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `2,500-15,000`", color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `100-15,000`", color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount > user[6]:
