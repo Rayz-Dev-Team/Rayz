@@ -915,7 +915,7 @@ class Economy(commands.Cog):
 				row_1_item_list = ['💚', '💜', '🖤']
 				row_1_chance_win = random.randint(1, 100)
 				row_1_chance_jackpot = random.randint(1, 100)
-				if row_1_chance_win <= 30:
+				if row_1_chance_win <= 50:
 					row_1_item_list.append('💰')
 				if row_1_chance_jackpot == 1:
 					row_1_item_list.append('💎')
@@ -925,7 +925,7 @@ class Economy(commands.Cog):
 				row_2_item_list = ['💚', '💜', '🖤']
 				row_2_chance_win = random.randint(1, 100)
 				row_2_chance_jackpot = random.randint(1, 100)
-				if row_2_chance_win <= 30:
+				if row_2_chance_win <= 50:
 					row_2_item_list.append('💰')
 				if row_2_chance_jackpot == 1:
 					row_2_item_list.append('💎')
@@ -935,36 +935,36 @@ class Economy(commands.Cog):
 				row_3_item_list = ['💚', '💜', '🖤']
 				row_3_chance_win = random.randint(1, 100)
 				row_3_chance_jackpot = random.randint(1, 100)
-				if row_3_chance_win <= 30:
+				if row_3_chance_win <= 50:
 					row_3_item_list.append('💰')
 				if row_3_chance_jackpot == 1:
 					row_3_item_list.append('💎')
 				row_3_a = random.choice(row_3_item_list)
 				row_3.append(row_3_a)
 			if row_1.count('💰') == 3:
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_1.count('💎') ==3:
 				multiplier_amount += 650
 			if row_2.count('💰') == 3:
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_2.count('💎') ==3:
 				multiplier_amount += 650
 			if row_3.count('💰') == 3:
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_3.count('💎') ==3:
 				multiplier_amount += 650
 				win_bool = True
 			if row_1[0] == '💰' and row_2[0] == '💰' and row_3[0] == '💰':
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_1[1] == '💰' and row_2[1] == '💰' and row_3[1] == '💰':
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_1[2] == '💰' and row_2[2] == '💰' and row_3[2] == '💰':
-				multiplier_amount += 25
+				multiplier_amount += 15
 				win_bool = True
 			if row_1[0] == '💎' and row_2[0] == '💎' and row_3[0] == '💎':
 				multiplier_amount += 650
