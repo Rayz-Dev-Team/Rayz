@@ -19,4 +19,4 @@ modules/inspire.py
 modules/demo.py
 
 # Ignoring extra packages installed in venv
-env/Lib/site-packages
+env
