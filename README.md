@@ -42,6 +42,10 @@ Please read this document to understand how to contrbute to this project!
         - CD into the same dir and run `activate.bat` if using CMD
       - On MacOS/Linux
         - Execute `./env/Scripts/activate`
+  - Install project dependencies to the venv:
+    - On Windows: `pip install -r requirements.txt`
+    - On MacOS/Linux: `pip3 install -r requirements.txt`
+  - Configure via config.json taking inspiration from example
   - Use `./run.bat` or `python base.py` to get started if on windows.
   - Use `python3 base.py` to get started if on mac/linux.
 
