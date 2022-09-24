@@ -28,8 +28,7 @@
         },
         "trick_or_treat_bag" : {
             "min_amount" : 1,
-            "max_amount" : 1,
-            "display_name" : "Trick or treat bag"
+            "max_amount" : 1
         }
     },
     "epic" : {
