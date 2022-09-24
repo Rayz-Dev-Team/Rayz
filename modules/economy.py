@@ -908,7 +908,7 @@ class Economy(commands.Cog):
 			final = []
 			display_output = []
 			for i in range(3):
-				item_list = ['💛', '💚', '💜', '🖤']
+				item_list = ['💚', '💜', '🖤']
 				chance_win = random.randint(1, 100)
 				chance_jackpot = random.randint(1, 100)
 				if chance_win <= 85:
