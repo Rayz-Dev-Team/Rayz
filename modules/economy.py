@@ -857,6 +857,98 @@ class Economy(commands.Cog):
 			await ctx.send(embed=em)
 
 	@commands.command()
+	async def slots(self, ctx, *, amount: int=None):
+		author = ctx.author
+		guild = ctx.guild
+		support_guild = await self.bot.fetch_server("Mldgz04R")
+		members_support_guild = await support_guild.fetch_members()
+		if author.bot:
+			return
+		await _check_values(author)
+		await _check_values_guild(guild)
+		await check_leaderboard(author)
+		LB = fileIO("config/economy_settings.json", "load")
+		LB_bans = fileIO("economy/bans.json", "load")
+		item_drops = fileIO("economy/drops.json", "load")
+		item_list = fileIO("economy/items.json", "load")
+		if author.id in LB_bans["bans"]:
+			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			await ctx.send(embed=em)
+			return
+		try:
+			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+			async def getUser():
+				with connection:
+					cursor = connection.cursor()
+					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
+					content = cursor.fetchone()
+				return content
+			user = await getUser()
+			async def getServer():
+				with connection:
+					cursor = connection.cursor()
+					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
+					content = cursor.fetchone()
+				return content
+			server = await getServer()
+			prefix = server[3]
+			if amount == None:
+				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x30 bonus.\nJACKPOT `-` x140 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
+				await ctx.send(embed=em)
+				return
+			if amount < 2500 or amount > 15000:
+				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `2,500-15,000`", color=0x363942)
+				await ctx.send(embed=em)
+				return
+			if amount > user[6]:
+				em = guilded.Embed(title="Uh oh!", description="You don't have {:,} in your pocket.".format(amount), color=0x363942)
+				await ctx.send(embed=em)
+				return
+			cursor = connection.cursor()
+			final = []
+			display_output = []
+			for i in range(3):
+				item_list = ['🧡', '💛', '💚', '💙', '💜', '🖤']
+				chance_win = random.randint(1, 100)
+				chance_jackpot = random.randint(1, 1000)
+				if chance_win <= 15:
+					item_list.append('💰')
+				if chance_jackpot == 1:
+					item_list.append('💎')
+				a = random.choice(item_list)
+				final.append(a)
+			if final.count('💰') == 3:
+				display_output.append(f"**Slots:**:\n{final[0]}{final[1]}{final[2]}")
+				em = guilded.Embed(title="WIN!", description="{}\n\nYour bet of x has been multiplied by x".format(" \n".join(display_output)), color=0x363942)
+				await ctx.send(embed=em)
+				win_amount = amount * 30
+				pocket_amount = user[6] + win_amount
+				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
+				connection.commit()
+				connection.close()
+			elif final.count('💎') ==3:
+				display_output.append(f"**Slots:**:\n{final[0]}{final[1]}{final[2]}")
+				em = guilded.Embed(title="JACKPOT!", description="{}\n\nYour bet of x has been multiplied by x".format(" \n".join(display_output)), color=0x363942)
+				await ctx.send(embed=em)
+				win_amount = amount * 140
+				pocket_amount = user[6] + win_amount
+				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
+				connection.commit()
+				connection.close()
+			else:
+				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
+				em = guilded.Embed(title="Lose", description="{}\n\n<@{}> lost a bet of {}".format(" \n".join(display_output), author.id, amount), color=0x363942)
+				await ctx.send(embed=em)
+				pocket_amount = user[6] - amount
+				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
+				connection.commit()
+				connection.close()
+		except psycopg2.DatabaseError as e:
+			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+			await ctx.send(embed=em)
+
+ 
+	@commands.command()
 	async def work(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
