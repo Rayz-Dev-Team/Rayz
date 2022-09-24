@@ -911,7 +911,7 @@ class Economy(commands.Cog):
 				item_list = ['🧡', '💛', '💚', '💙', '💜', '🖤']
 				chance_win = random.randint(1, 100)
 				chance_jackpot = random.randint(1, 1000)
-				if chance_win <= 30:
+				if chance_win <= 75:
 					item_list.append('💰')
 				if chance_jackpot == 1:
 					item_list.append('💎')
