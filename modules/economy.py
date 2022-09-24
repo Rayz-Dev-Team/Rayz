@@ -107,7 +107,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		roles_list = await author.fetch_role_ids()
 		boost_or_not = False
-		if 30058569 in roles_list:
+		if 30056569 in roles_list:
 			boost_or_not = True
 		if boost_or_not:
 			await ctx.send("Has role")
@@ -809,13 +809,13 @@ class Economy(commands.Cog):
 			if author in members_support_guild:
 				author_support_guild = await support_guild.fetch_member(author.id)
 				roles_list = await author_support_guild.fetch_role_ids()
-				if 30058586 in roles_list:
+				if 30056586 in roles_list:
 					edit_message = ":Gold_tier: Elite supporter boosted you by `x3`"
 					multiplier_amount += 3
-				elif 30058578 in roles_list:
+				elif 30056578 in roles_list:
 					edit_message = ":Silver_tier: Epic supporter boosted you by `x2`"
 					multiplier_amount += 2
-				elif 30058569 in roles_list:
+				elif 30056569 in roles_list:
 					edit_message = ":Copper_tier: Supporter boosted you by `x1.5`"
 					multiplier_amount += 1.5
 				else:
@@ -829,7 +829,7 @@ class Economy(commands.Cog):
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
-					if 30058586 in roles_list or 30058578 in roles_list or 30058569 in roles_list:
+					if 30056586 in roles_list or 30056578 in roles_list or 30056569 in roles_list:
 						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, LB["currency_name"], edit_message), color=0x363942)
 					else:
 						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, LB["currency_name"]), color=0x363942)
@@ -915,7 +915,7 @@ class Economy(commands.Cog):
 				row_1_item_list = ['💚', '💜', '🖤']
 				row_1_chance_win = random.randint(1, 100)
 				row_1_chance_jackpot = random.randint(1, 100)
-				if row_1_chance_win <= 85:
+				if row_1_chance_win <= 65:
 					row_1_item_list.append('💰')
 				if row_1_chance_jackpot == 1:
 					row_1_item_list.append('💎')
@@ -925,7 +925,7 @@ class Economy(commands.Cog):
 				row_2_item_list = ['💚', '💜', '🖤']
 				row_2_chance_win = random.randint(1, 100)
 				row_2_chance_jackpot = random.randint(1, 100)
-				if row_2_chance_win <= 85:
+				if row_2_chance_win <= 65:
 					row_2_item_list.append('💰')
 				if row_2_chance_jackpot == 1:
 					row_2_item_list.append('💎')
@@ -935,7 +935,7 @@ class Economy(commands.Cog):
 				row_3_item_list = ['💚', '💜', '🖤']
 				row_3_chance_win = random.randint(1, 100)
 				row_3_chance_jackpot = random.randint(1, 100)
-				if row_3_chance_win <= 85:
+				if row_3_chance_win <= 65:
 					row_3_item_list.append('💰')
 				if row_3_chance_jackpot == 1:
 					row_3_item_list.append('💎')
@@ -1047,11 +1047,11 @@ class Economy(commands.Cog):
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
-					if 30058586 in roles_list:
+					if 30056586 in roles_list:
 						booster_amount += 3
-					elif 30058578 in roles_list:
+					elif 30056578 in roles_list:
 						booster_amount += 2
-					elif 30058569 in roles_list:
+					elif 30056569 in roles_list:
 						booster_amount += 1.5
 				multiplier_amount = float(server[5]) + booster_amount
 				gen_amount = random.randint(15, 150) * int(multiplier_amount)
@@ -1174,13 +1174,13 @@ class Economy(commands.Cog):
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
-					if 30058586 in roles_list:
+					if 30056586 in roles_list:
 						edit_message = ":Gold_tier: Elite supporter boosted you by `x3`"
 						message_list.append(edit_message)
-					elif 30058578 in roles_list:
+					elif 30056578 in roles_list:
 						edit_message = ":Silver_tier: Epic supporter boosted you by `x2`"
 						message_list.append(edit_message)
-					elif 30058569 in roles_list:
+					elif 30056569 in roles_list:
 						edit_message = ":Copper_tier: Supporter boosted you by `x1.5`"
 						message_list.append(edit_message)
 				if server[4] == "True":
