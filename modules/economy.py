@@ -918,19 +918,19 @@ class Economy(commands.Cog):
 				a = random.choice(item_list)
 				final.append(a)
 			if final.count('💰') == 3:
-				display_output.append(f"**Slots:**:\n{final[0]}{final[1]}{final[2]}")
-				em = guilded.Embed(title="WIN!", description="{}\n\nYour bet of x has been multiplied by x".format(" \n".join(display_output)), color=0x363942)
+				win_amount = amount * 80
+				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
+				em = guilded.Embed(title="WIN!", description="{}\n\n<@{}> WON {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 				await ctx.send(embed=em)
-				win_amount = amount * 30
 				pocket_amount = user[6] + win_amount
 				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
 			elif final.count('💎') ==3:
-				display_output.append(f"**Slots:**:\n{final[0]}{final[1]}{final[2]}")
-				em = guilded.Embed(title="JACKPOT!", description="{}\n\nYour bet of x has been multiplied by x".format(" \n".join(display_output)), color=0x363942)
+				win_amount = amount * 1400
+				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
+				em = guilded.Embed(title="JACKPOT!", description="{}\n\n<@{}> WON THE JACKPOT OF {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 				await ctx.send(embed=em)
-				win_amount = amount * 140
 				pocket_amount = user[6] + win_amount
 				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 				connection.commit()
