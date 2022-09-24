@@ -343,13 +343,7 @@ class Economy(commands.Cog):
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
-			async def getMember():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-					content = cursor.fetchone()
-				return content
-			member1 = await getMember()
+			member1 = await getUser(member.id)
 			info = user[10]
 			accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
 			cursor = connection.cursor()
@@ -418,13 +412,7 @@ class Economy(commands.Cog):
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
-			async def getMember():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-					content = cursor.fetchone()
-				return content
-			member1 = await getMember()
+			member1 = await getUser(member.id)
 			server = await getServer(guild.id)
 			prefix = server[3]
 			if amount > user[6]:
@@ -664,13 +652,7 @@ class Economy(commands.Cog):
 				await ctx.send(embed=em)
 				return
 			user = await getUser(author.id)
-			async def getMember():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM users WHERE ID = '{member.id}'")
-					content = cursor.fetchone()
-				return content
-			member1 = await getMember()
+			member1 = await getUser(member.id)
 			if member1 == None:
 				await _check_values_member(member)
 			if user == None:

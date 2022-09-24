@@ -312,12 +312,7 @@ async def check_leaderboard_author(author):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 		cursor = connection.cursor()
-		async def getUser():
-			with connection:
-				cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-				content = cursor.fetchone()
-			return content
-		user = await getUser()
+		user = await getUser(author.id)
 		new_LB_bal = user[3] + user[6]
 		cursor.execute(f"UPDATE leaderboard SET currency = {new_LB_bal} WHERE ID = '{author.id}'")
 		cursor.execute(f"UPDATE leaderboard SET name = '{author.name}' WHERE ID = '{author.id}'")
