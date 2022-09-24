@@ -915,7 +915,7 @@ class Economy(commands.Cog):
 				row_1_item_list = ['💚', '💜', '🖤']
 				row_1_chance_win = random.randint(1, 100)
 				row_1_chance_jackpot = random.randint(1, 100)
-				if row_1_chance_win <= 50:
+				if row_1_chance_win <= 65:
 					row_1_item_list.append('💰')
 				if row_1_chance_jackpot == 1:
 					row_1_item_list.append('💎')
@@ -925,7 +925,7 @@ class Economy(commands.Cog):
 				row_2_item_list = ['💚', '💜', '🖤']
 				row_2_chance_win = random.randint(1, 100)
 				row_2_chance_jackpot = random.randint(1, 100)
-				if row_2_chance_win <= 50:
+				if row_2_chance_win <= 65:
 					row_2_item_list.append('💰')
 				if row_2_chance_jackpot == 1:
 					row_2_item_list.append('💎')
@@ -935,7 +935,7 @@ class Economy(commands.Cog):
 				row_3_item_list = ['💚', '💜', '🖤']
 				row_3_chance_win = random.randint(1, 100)
 				row_3_chance_jackpot = random.randint(1, 100)
-				if row_3_chance_win <= 50:
+				if row_3_chance_win <= 65:
 					row_3_item_list.append('💰')
 				if row_3_chance_jackpot == 1:
 					row_3_item_list.append('💎')
