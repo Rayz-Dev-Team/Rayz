@@ -1,5 +1,6 @@
 import guilded
 from guilded.ext import commands
+import typing
 import asyncio
 import json
 import aiohttp
@@ -22,6 +23,7 @@ import psycopg2
 from psycopg2 import Error
 from core.database import *
 from psycopg2.extras import Json
+from psycopg2.extras import RealDictCursor
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -620,8 +622,14 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.send(embed=em)
 
+	# Time to start commenting the code. :)
+	# Below we add a page argument and default it to 1 if it's not provided
 	@commands.command(aliases=["lb"])
-	async def leaderboard(self, ctx):
+	async def leaderboard(self, ctx, page: typing.Optional[int] = 1):
+		# We need to know where to offset our query by if the number is greater than 1
+		# We need it to be greater because we need to start at 0 otherwise
+		offset = page * 10 if page > 1 else 0
+
 		author = ctx.author
 		guild = ctx.guild
 		if author.bot:
@@ -632,19 +640,31 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+
 			async def getUserLB():
 				with connection:
 					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM leaderboard")
+					# We don't use all the data so we're not going to bother to fetch all the values.
+					cursor.execute(f"SELECT name, currency FROM leaderboard ORDER BY currency DESC LIMIT 10 OFFSET {offset}")
 					result = cursor.fetchall()
-				return result
-			LB = await getUserLB()
+					# We want the total of all users in the leaderboard
+					cursor.execute('SELECT COUNT(*) from leaderboard')
+					total = cursor.fetchone()
+					# We return both in an array for ease of use
+				return [result,total]
+
+			[LB,total] = await getUserLB()
+			
+			# Now that we have the total, we calculate how many pages we have
+			numOfPages = math.ceil(total[0] / 10)
+			
 			async def getUser():
 				with connection:
 					cursor = connection.cursor()
 					cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
 					content = cursor.fetchone()
 				return content
+
 			user = await getUser()
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
@@ -652,14 +672,18 @@ class Economy(commands.Cog):
 				await ctx.send(embed=em)
 				connection.close()
 				return
-			LB_list = {}
-			for i in LB:
-				LB_list[i[1]] = "{}".format(i[2])
-			sort_orders = sorted(LB_list.items(), key=lambda x: int(x[1]), reverse=True)
-			sort_list = []
-			for i in sort_orders:
-				sort_list.append("{}: {:,}".format(i[0], int(i[1])))
-			em = guilded.Embed(title="Global leaderboard:".format(author.name), description="`1.` {}\n`2.` {}\n`3.` {}\n`4.` {}\n`5.` {}\n`6.` {}\n`7.` {}\n`8.` {}\n`9.` {}\n`10.` {}".format(sort_list[0], sort_list[1], sort_list[2], sort_list[3], sort_list[4], sort_list[5], sort_list[6], sort_list[7], sort_list[8], sort_list[9]), color=0x363942)
+
+			# Create an empty string to fill in with our users
+			description = ""
+			# Now we fill that description up
+			for num, member in enumerate(LB):
+				placement = num + 1
+				if(page > 1):
+					placement =  placement + ((page - 1) * 10)
+				description += f"`{placement}.` {member[0]}: {member[1]:,}\n"
+			em = guilded.Embed(title="Global leaderboard:".format(author.name), description=description, color=0x363942)
+			# Add our footer with the page we're on out of the total
+			em.set_footer(text=f"Page {page}/{numOfPages}")
 			await ctx.send(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
