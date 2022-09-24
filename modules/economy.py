@@ -236,13 +236,13 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		say_list = []
 		for key, i in prices["items"].items():
-			say_list.append("{} - {:,}".format(item_list["items"][key]["display_name"], i["price"]))
+			say_list.append("{} - {:,} {}".format(item_list["items"][key]["display_name"], i["price"], economy_settings["currency_name"]))
 		em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
 		await ctx.send(embed=em)
 
@@ -256,7 +256,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
 		item_list = fileIO("economy/items.json", "load")
@@ -297,7 +297,7 @@ class Economy(commands.Cog):
 					cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 					connection.commit()
-					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, author.id, total_amount, LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 					await ctx.send(embed=em)
 			else:
 				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
@@ -633,7 +633,7 @@ class Economy(commands.Cog):
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
-			LB = fileIO("config/economy_settings.json", "load")
+			economy_settings = fileIO("config/economy_settings.json", "load")
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
 				em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -662,7 +662,7 @@ class Economy(commands.Cog):
 			if delta >= 900.0 and delta>0:
 				if user[6] >= 250:
 					if member1[6] < 250:
-						em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, LB["currency_name"]), color=0x363942)
+						em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, economy_settings["currency_name"]), color=0x363942)
 						em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 						await ctx.send(embed=em)
 					else:
@@ -680,7 +680,7 @@ class Economy(commands.Cog):
 							cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 							connection.commit()
 							connection.close()
-							em = guilded.Embed(title="Nice!", description="<@{}> successfully robbed <@{}> for x{} {}.".format(author.id, member.id, random_rob, LB["currency_name"]), color=0x363942)
+							em = guilded.Embed(title="Nice!", description="<@{}> successfully robbed <@{}> for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
 							await ctx.send(embed=em)
 						else:
 							cursor = connection.cursor()
@@ -688,10 +688,10 @@ class Economy(commands.Cog):
 							cursor.execute(f"UPDATE users SET pocket = '{new_user_calc_caught}' WHERE ID = '{author.id}'")
 							connection.commit()
 							connection.close()
-							em = guilded.Embed(title="Oh no :(", description="<@{}> got caught robbing <@{}> and got fined for x{} {}.".format(author.id, member.id, random_rob, LB["currency_name"]), color=0x363942)
+							em = guilded.Embed(title="Oh no :(", description="<@{}> got caught robbing <@{}> and got fined for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
 							await ctx.send(embed=em)
 				else:
-					em = guilded.Embed(title="Uh oh!", description="You need more than x250 {} in your pocket to rob someone.".format(LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="You need more than x250 {} in your pocket to rob someone.".format(economy_settings["currency_name"]), color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 					await ctx.send(embed=em)
 			else:
@@ -715,7 +715,7 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -754,11 +754,11 @@ class Economy(commands.Cog):
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
 					if 30053086 in roles_list or 30053078 in roles_list or 30053069 in roles_list:
-						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, LB["currency_name"], edit_message), color=0x363942)
+						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, economy_settings["currency_name"], edit_message), color=0x363942)
 					else:
-						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, LB["currency_name"]), color=0x363942)
+						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 				else:
-					em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 				if server[5] > 1:
 					em.set_footer(text="The multiplier in this server boosted you by x{}".format(server[5]))
 				await ctx.send(embed=em)
@@ -791,7 +791,7 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
 		item_list = fileIO("economy/items.json", "load")
@@ -804,12 +804,27 @@ class Economy(commands.Cog):
 			user = await getUser(author.id)
 			server = await getServer(guild.id)
 			prefix = server[3]
+
+			slots_bet_min = economy_settings["slots_bet_min"]
+			slots_bet_max = economy_settings["slots_bet_max"]
+
+			slots_win_multiplier = economy_settings["slots_win_multiplier"]
+			slots_jackpot_multiplier = economy_settings["slots_jackpot_multiplier"]
+
+			slots_win_min = economy_settings["slots_win_min"]
+			slots_win_max = economy_settings["slots_win_max"]
+			slots_win_chance = economy_settings["slots_win_chance"]
+
+			slots_jackpot_min = economy_settings["slots_jackpot_min"]
+			slots_jackpot_max = economy_settings["slots_jackpot_max"]
+			slots_jackpot_chance = economy_settings["slots_jackpot_chance"]
+
 			if amount == None:
 				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x25 bonus.\nJACKPOT `-` x450 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
-			if amount < 100 or amount > 15000:
-				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `100-15,000`", color=0x363942)
+			if amount < slots_bet_min or amount > slots_bet_max:
+				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `{:,}-{:,}`".format(slots_bet_min, slots_bet_max), color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount > user[6]:
@@ -825,79 +840,79 @@ class Economy(commands.Cog):
 			win_bool = False
 			for i in range(3):
 				row_1_item_list = ['💚', '💜', '🖤']
-				row_1_chance_win = random.randint(1, 100)
-				row_1_chance_jackpot = random.randint(1, 100)
-				if row_1_chance_win <= 65:
+				row_1_chance_win = random.randint(slots_win_min, slots_win_max)
+				row_1_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
+				if row_1_chance_win <= slots_win_chance:
 					row_1_item_list.append('💰')
-				if row_1_chance_jackpot == 1:
+				if row_1_chance_jackpot == slots_jackpot_chanc:
 					row_1_item_list.append('💎')
 				row_1_a = random.choice(row_1_item_list)
 				row_1.append(row_1_a)
 				#ROW 2
 				row_2_item_list = ['💚', '💜', '🖤']
-				row_2_chance_win = random.randint(1, 100)
-				row_2_chance_jackpot = random.randint(1, 100)
-				if row_2_chance_win <= 65:
+				row_2_chance_win = random.randint(slots_win_min, slots_win_max)
+				row_2_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
+				if row_2_chance_win <= slots_win_chance:
 					row_2_item_list.append('💰')
-				if row_2_chance_jackpot == 1:
+				if row_2_chance_jackpot == slots_jackpot_chanc:
 					row_2_item_list.append('💎')
 				row_2_a = random.choice(row_2_item_list)
 				row_2.append(row_2_a)
 				#ROW 3
 				row_3_item_list = ['💚', '💜', '🖤']
-				row_3_chance_win = random.randint(1, 100)
-				row_3_chance_jackpot = random.randint(1, 100)
-				if row_3_chance_win <= 65:
+				row_3_chance_win = random.randint(slots_win_min, slots_win_max)
+				row_3_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
+				if row_3_chance_win <= slots_win_chance:
 					row_3_item_list.append('💰')
-				if row_3_chance_jackpot == 1:
+				if row_3_chance_jackpot == slots_jackpot_chanc:
 					row_3_item_list.append('💎')
 				row_3_a = random.choice(row_3_item_list)
 				row_3.append(row_3_a)
 			if row_1.count('💰') == 3:
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1.count('💎') ==3:
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 			if row_2.count('💰') == 3:
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_2.count('💎') ==3:
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 			if row_3.count('💰') == 3:
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_3.count('💎') ==3:
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 				win_bool = True
 			if row_1[0] == '💰' and row_2[0] == '💰' and row_3[0] == '💰':
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1[1] == '💰' and row_2[1] == '💰' and row_3[1] == '💰':
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1[2] == '💰' and row_2[2] == '💰' and row_3[2] == '💰':
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1[0] == '💰' and row_2[1] == '💰' and row_3[2] == '💰':
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1[2] == '💰' and row_2[1] == '💰' and row_3[0] == '💰':
-				multiplier_amount += 15
+				multiplier_amount += slots_win_multiplier
 				win_bool = True
 			if row_1[0] == '💎' and row_2[0] == '💎' and row_3[0] == '💎':
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 				win_bool = True
 			if row_1[1] == '💎' and row_2[1] == '💎' and row_3[1] == '💎':
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 				win_bool = True
 			if row_1[2] == '💎' and row_2[2] == '💎' and row_3[2] == '💎':
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 				win_bool = True
 			if row_1[0] == '💎' and row_2[1] == '💎' and row_3[2] == '💎':
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 				win_bool = True
 			if row_1[2] == '💎' and row_2[1] == '💎' and row_3[0] == '💎':
-				multiplier_amount += 650
+				multiplier_amount += slots_jackpot_multiplier
 			if win_bool == True:
 				win_amount = amount * multiplier_amount
 				display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
@@ -930,10 +945,31 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
 		item_list = fileIO("economy/items.json", "load")
+
+		common_min = economy_settings["common_min"]
+		common_max = economy_settings["common_max"]
+		common_chance = economy_settings["common_chance"]
+
+		rare_min = economy_settings["rare_min"]
+		rare_max = economy_settings["rare_max"]
+		rare_chance = economy_settings["rare_chance"]
+
+		epic_min = economy_settings["epic_min"]
+		epic_max = economy_settings["epic_max"]
+		epic_chance = economy_settings["epic_chance"]
+
+		legendary_min = economy_settings["legendary_min"]
+		legendary_max = economy_settings["legendary_max"]
+		legendary_chance = economy_settings["legendary_chance"]
+
+		unreal_min = economy_settings["unreal_min"]
+		unreal_max = economy_settings["unreal_max"]
+		unreal_chance = economy_settings["unreal_chance"]
+
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.send(embed=em)
@@ -966,39 +1002,39 @@ class Economy(commands.Cog):
 				multiplier_amount = float(server[5]) + booster_amount
 				gen_amount = random.randint(15, 150) * int(multiplier_amount)
 				gen_amount = math.ceil(gen_amount)
-				message_list.append("<@{}> gained {:,} coins!\n".format(author.id, gen_amount))
-				if LB["halloween_event"] == "True":
+				message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
+				if economy_settings["halloween_event"] == "True":
 					candycorn_gen_amount = random.randint(1, 10)
-					common_chance = random.randint(1, 100)
-					rare_chance = random.randint(1, 100)
-					epic_chance = random.randint(1, 100)
-					legendary_chance = random.randint(1, 1000)
+					common_chance_gen = roll_chance(common_min, common_max, common_chance)
+					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
 					work_event_lines_list = []
 					info = user[10]
-					if common_chance <= 50:
+					if common_chance_gen <= common_chance:
 						info["inventory"]["seasonal_items"]["halloween"]["candycorn"]["amount"] += candycorn_gen_amount
 						work_event_lines_list.append(f"[Common] +{candycorn_gen_amount} Candycorn")
-					if rare_chance <= 15:
+					if rare_chance_gen <= rare_chance:
 						rare_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[Rare] +{rare_amount} Jolly ranchers")
 						info["inventory"]["seasonal_items"]["halloween"]["jolly_ranchers"]["amount"] += rare_amount
-					if epic_chance == 1:
+					if epic_chance_gen == epic_chance:
 						epic_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[Epic] +{epic_amount} Nerds")
 						info["inventory"]["seasonal_items"]["halloween"]["nerds"]["amount"] += epic_amount
-					if legendary_chance == 1:
+					if legendary_chance_gen == legendary_chance:
 						legendary_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[LEGENDARY] +{legendary_amount} Dots")
 						info["inventory"]["seasonal_items"]["halloween"]["dots"]["amount"] += legendary_amount
 					if not work_event_lines_list == []:
 						message_list.append("__**Halloween event bonus:**__\n{}\n".format(" \n".join(work_event_lines_list)))
-				common_chance = roll_chance(1, 100, 50)
-				rare_chance = roll_chance(1, 100, 15)
-				epic_chance = roll_chance(1, 100, 1)
-				legendary_chance = roll_chance(1, 1000, 1)
-				unreal_chance = roll_chance(1, 10000, 1)
+				common_chance = roll_chance(common_min, common_max, common_chance)
+				rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+				epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+				legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+				unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
 				drops_lines_list = []
-				if common_chance:
+				if common_chance_gen:
 					drop_list = []
 					for i in item_drops["common"]:
 						drop_list.append(i)
@@ -1014,7 +1050,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Common] +{} {}".format(amount,item_list["items"][drop]["display_name"]))
-				if rare_chance:
+				if rare_chance_gen:
 					drop_list = []
 					for i in item_drops["rare"]:
 						drop_list.append(i)
@@ -1030,7 +1066,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if epic_chance:
+				if epic_chance_gen:
 					drop_list = []
 					for i in item_drops["epic"]:
 						drop_list.append(i)
@@ -1046,7 +1082,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if legendary_chance:
+				if legendary_chance_gen:
 					drop_list = []
 					for i in item_drops["legendary"]:
 						drop_list.append(i)
@@ -1062,7 +1098,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if unreal_chance:
+				if unreal_chance_gen:
 					drop_list = []
 					for i in item_drops["unreal"]:
 						drop_list.append(i)
@@ -1129,7 +1165,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -1141,7 +1177,7 @@ class Economy(commands.Cog):
 			if user == None:
 				await _check_values(author)
 			bank_code = user[4]
-			em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user[6], LB["currency_name"], user[3], LB["currency_name"], user[5], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
+			em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user[6], economy_settings["currency_name"], user[3], economy_settings["currency_name"], user[5], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
 			await ctx.send(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
@@ -1158,7 +1194,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
-		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:

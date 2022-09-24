@@ -1,7 +1,7 @@
 {
     "global_multiplier" : 1,
     "currency_name": "coins",
-    "halloween_event": "True",
+    "halloween_event": "False",
     "christmas_event": "False",
     "easter_event": "False",
     "slots_bet_min": 100,

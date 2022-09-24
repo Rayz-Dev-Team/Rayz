@@ -5,6 +5,7 @@ __pycache__
 # Local configs for running the bot
 config/banned_words.json
 config/config.json
+config/economy_settings.json
 
 # TODO -> PR to list valid reason here 
 # Fonts, I have no idea why they were added in the first place
