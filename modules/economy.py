@@ -893,7 +893,7 @@ class Economy(commands.Cog):
 			server = await getServer()
 			prefix = server[3]
 			if amount == None:
-				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x80 bonus.\nJACKPOT `-` x1400 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
+				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x50 bonus.\nJACKPOT `-` x650 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount < 100 or amount > 15000:
@@ -908,17 +908,17 @@ class Economy(commands.Cog):
 			final = []
 			display_output = []
 			for i in range(3):
-				item_list = ['🧡', '💛', '💚', '💙', '💜', '🖤']
+				item_list = ['🧡', '💛', '💚', '💜', '🖤']
 				chance_win = random.randint(1, 100)
-				chance_jackpot = random.randint(1, 1000)
-				if chance_win <= 75:
+				chance_jackpot = random.randint(1, 100)
+				if chance_win <= 85:
 					item_list.append('💰')
 				if chance_jackpot == 1:
 					item_list.append('💎')
 				a = random.choice(item_list)
 				final.append(a)
 			if final.count('💰') == 3:
-				win_amount = amount * 80
+				win_amount = amount * 50
 				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
 				em = guilded.Embed(title="WIN!", description="{}\n\n<@{}> WON {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 				await ctx.send(embed=em)
@@ -927,7 +927,7 @@ class Economy(commands.Cog):
 				connection.commit()
 				connection.close()
 			elif final.count('💎') ==3:
-				win_amount = amount * 1400
+				win_amount = amount * 650
 				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
 				em = guilded.Embed(title="JACKPOT!", description="{}\n\n<@{}> WON THE JACKPOT OF {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 				await ctx.send(embed=em)
