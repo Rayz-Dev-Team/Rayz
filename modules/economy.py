@@ -969,6 +969,9 @@ class Economy(commands.Cog):
 			if row_1[0] == '💰' and row_2[1] == '💰' and row_3[2] == '💰':
 				multiplier_amount += 15
 				win_bool = True
+			if row_1[2] == '💰' and row_2[1] == '💰' and row_3[0] == '💰':
+				multiplier_amount += 15
+				win_bool = True
 			if row_1[0] == '💎' and row_2[0] == '💎' and row_3[0] == '💎':
 				multiplier_amount += 650
 				win_bool = True
@@ -979,8 +982,10 @@ class Economy(commands.Cog):
 				multiplier_amount += 650
 				win_bool = True
 			if row_1[0] == '💎' and row_2[1] == '💎' and row_3[2] == '💎':
-				multiplier_amount += 15
+				multiplier_amount += 650
 				win_bool = True
+			if row_1[2] == '💎' and row_2[1] == '💎' and row_3[0] == '💎':
+				multiplier_amount += 650
 			if win_bool == True:
 				win_amount = amount * multiplier_amount
 				display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
