@@ -896,7 +896,7 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x30 bonus.\nJACKPOT `-` x140 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
-			if amount < 2500 or amount > 15000:
+			if amount < 100 or amount > 15000:
 				em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `2,500-15,000`", color=0x363942)
 				await ctx.send(embed=em)
 				return
