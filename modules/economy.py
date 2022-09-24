@@ -25,6 +25,7 @@ from core.database import *
 from psycopg2.extras import Json
 from tools.db_funcs import getUser
 from tools.functions import paginate
+from tools.functions import roll_chance
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -1025,7 +1026,6 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.send(embed=em)
 
- 
 	@commands.command()
 	async def work(self, ctx):
 		author = ctx.author
@@ -1111,13 +1111,13 @@ class Economy(commands.Cog):
 						info["inventory"]["seasonal_items"]["halloween"]["dots"]["amount"] += legendary_amount
 					if not work_event_lines_list == []:
 						message_list.append("__**Halloween event bonus:**__\n{}\n".format(" \n".join(work_event_lines_list)))
-				common_chance = random.randint(1, 100)
-				rare_chance = random.randint(1, 100)
-				epic_chance = random.randint(1, 100)
-				legendary_chance = random.randint(1, 1000)
-				unreal_chance = random.randint(1, 10000)
+				common_chance = roll_chance(1, 100, 50)
+				rare_chance = roll_chance(1, 100, 15)
+				epic_chance = roll_chance(1, 100, 1)
+				legendary_chance = roll_chance(1, 1000, 1)
+				unreal_chance = roll_chance(1, 10000, 1)
 				drops_lines_list = []
-				if common_chance <= 50:
+				if common_chance:
 					drop_list = []
 					for i in item_drops["common"]:
 						drop_list.append(i)
@@ -1133,7 +1133,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Common] +{} {}".format(amount,item_list["items"][drop]["display_name"]))
-				if rare_chance <= 15:
+				if rare_chance:
 					drop_list = []
 					for i in item_drops["rare"]:
 						drop_list.append(i)
@@ -1149,7 +1149,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if epic_chance == 1:
+				if epic_chance:
 					drop_list = []
 					for i in item_drops["epic"]:
 						drop_list.append(i)
@@ -1165,7 +1165,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if legendary_chance == 1:
+				if legendary_chance:
 					drop_list = []
 					for i in item_drops["legendary"]:
 						drop_list.append(i)
@@ -1181,7 +1181,7 @@ class Economy(commands.Cog):
 						new_amount = info["inventory"]["items"][drop]["amount"] + amount
 						info["inventory"]["items"][drop]["amount"] += amount
 						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if unreal_chance == 1:
+				if unreal_chance:
 					drop_list = []
 					for i in item_drops["unreal"]:
 						drop_list.append(i)

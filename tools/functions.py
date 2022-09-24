@@ -1,4 +1,5 @@
 import math
+import random
 
 ## Paginate function
 ## thing = List()
@@ -13,3 +14,11 @@ def paginate(thing, total, page):
       placement = placement + ((page - 1) * 10)
     textList += f"`{placement}.` {item[0]}: {item[1]:,}\n"
   return [textList, pages]
+
+#Chance generator
+def roll_chance(min,max,under):
+  rolled_chance = random.randint(min,max)
+  if_chance = False
+  if rolled_chance <= under:
+    if_chance = True
+  return if_chance
