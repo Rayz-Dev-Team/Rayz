@@ -31,6 +31,21 @@ Please read this document to understand how to contrbute to this project!
 
 - Run the bot
   - CD into project root dir.
+  - Using a Virtual Environment for the project is recommended:
+    - To create:
+      -  On Windows: Execute `python -m venv env`
+      -  On MacOS/Linux: Execute `python3 -m venv env`
+    - Activate virtual environment of the project, specific to OS and shell environment
+      - Using VSCode && Python extension might be helpful if you are new
+      - On Windows
+        - Execute `./env/Scripts/Activate.ps1` on windows if using PowerShell
+        - CD into the same dir and run `activate.bat` if using CMD
+      - On MacOS/Linux
+        - Execute `./env/Scripts/activate`
+  - Install project dependencies to the venv:
+    - On Windows: `pip install -r requirements.txt`
+    - On MacOS/Linux: `pip3 install -r requirements.txt`
+  - Configure via config.json taking inspiration from example
   - Use `./run.bat` or `python base.py` to get started if on windows.
   - Use `python3 base.py` to get started if on mac/linux.
 
