@@ -255,7 +255,7 @@ class Economy(commands.Cog):
 		item_list = fileIO("economy/items.json", "load")
 		say_list = []
 		for key, i in prices["items"].items():
-			say_list.append("{} - {:,}".format(item_list["items"][i]["display_name"], i["price"]))
+			say_list.append("{} - {:,}".format(item_list["items"][key]["display_name"], i["price"]))
 		em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
 		await ctx.send(embed=em)
 
@@ -893,7 +893,7 @@ class Economy(commands.Cog):
 			server = await getServer()
 			prefix = server[3]
 			if amount == None:
-				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x30 bonus.\nJACKPOT `-` x140 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
+				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x80 bonus.\nJACKPOT `-` x1400 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount < 100 or amount > 15000:
