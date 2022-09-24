@@ -329,13 +329,7 @@ async def check_leaderboard_author(author):
 async def _check_values(author):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		async def getUser():
-			with connection:
-				cursor = connection.cursor()
-				cursor.execute(f"SELECT * FROM users WHERE ID = '{author.id}'")
-				content = cursor.fetchone()
-			return content
-		user = await getUser()
+		user = await getUser(author.id)
 		if user == None:
 			cursor = connection.cursor()
 			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0)")
