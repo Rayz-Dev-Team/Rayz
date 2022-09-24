@@ -893,7 +893,7 @@ class Economy(commands.Cog):
 			server = await getServer()
 			prefix = server[3]
 			if amount == None:
-				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x50 bonus.\nJACKPOT `-` x650 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
+				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x25 bonus.\nJACKPOT `-` x450 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount < 100 or amount > 15000:
@@ -905,38 +905,87 @@ class Economy(commands.Cog):
 				await ctx.send(embed=em)
 				return
 			cursor = connection.cursor()
-			final = []
+			row_1 = []
+			row_2 = []
+			row_3 = []
 			display_output = []
+			multiplier_amount = 0
+			win_bool = False
 			for i in range(3):
-				item_list = ['💚', '💜', '🖤']
-				chance_win = random.randint(1, 100)
-				chance_jackpot = random.randint(1, 100)
-				if chance_win <= 85:
-					item_list.append('💰')
-				if chance_jackpot == 1:
-					item_list.append('💎')
-				a = random.choice(item_list)
-				final.append(a)
-			if final.count('💰') == 3:
-				win_amount = amount * 50
-				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
+				row_1_item_list = ['💚', '💜', '🖤']
+				row_1_chance_win = random.randint(1, 100)
+				row_1_chance_jackpot = random.randint(1, 100)
+				if row_1_chance_win <= 85:
+					row_1_item_list.append('💰')
+				if row_1_chance_jackpot == 1:
+					row_1_item_list.append('💎')
+				row_1_a = random.choice(row_1_item_list)
+				row_1.append(row_1_a)
+				#ROW 2
+				row_2_item_list = ['💚', '💜', '🖤']
+				row_2_chance_win = random.randint(1, 100)
+				row_2_chance_jackpot = random.randint(1, 100)
+				if row_2_chance_win <= 85:
+					row_2_item_list.append('💰')
+				if row_2_chance_jackpot == 1:
+					row_2_item_list.append('💎')
+				row_2_a = random.choice(row_2_item_list)
+				row_2.append(row_2_a)
+				#ROW 3
+				row_3_item_list = ['💚', '💜', '🖤']
+				row_3_chance_win = random.randint(1, 100)
+				row_3_chance_jackpot = random.randint(1, 100)
+				if row_3_chance_win <= 85:
+					row_3_item_list.append('💰')
+				if row_3_chance_jackpot == 1:
+					row_3_item_list.append('💎')
+				row_3_a = random.choice(row_3_item_list)
+				row_3.append(row_3_a)
+			if row_1.count('💰') == 3:
+				multiplier_amount += 25
+				win_bool = True
+			if row_1.count('💎') ==3:
+				multiplier_amount += 650
+			if row_2.count('💰') == 3:
+				multiplier_amount += 25
+				win_bool = True
+			if row_2.count('💎') ==3:
+				multiplier_amount += 650
+			if row_3.count('💰') == 3:
+				multiplier_amount += 25
+				win_bool = True
+			if row_3.count('💎') ==3:
+				multiplier_amount += 650
+				win_bool = True
+			if row_1[0] == '💰' and row_2[0] == '💰' and row_3[0] == '💰':
+				multiplier_amount += 25
+				win_bool = True
+			if row_1[1] == '💰' and row_2[1] == '💰' and row_3[1] == '💰':
+				multiplier_amount += 25
+				win_bool = True
+			if row_1[2] == '💰' and row_2[2] == '💰' and row_3[2] == '💰':
+				multiplier_amount += 25
+				win_bool = True
+			if row_1[0] == '💎' and row_2[0] == '💎' and row_3[0] == '💎':
+				multiplier_amount += 650
+				win_bool = True
+			if row_1[1] == '💎' and row_2[1] == '💎' and row_3[1] == '💎':
+				multiplier_amount += 650
+				win_bool = True
+			if row_1[2] == '💎' and row_2[2] == '💎' and row_3[2] == '💎':
+				multiplier_amount += 650
+				win_bool = True
+			if win_bool == True:
+				win_amount = amount * multiplier_amount
+				display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 				em = guilded.Embed(title="WIN!", description="{}\n\n<@{}> WON {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 				await ctx.send(embed=em)
 				pocket_amount = user[6] + win_amount
 				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-			elif final.count('💎') ==3:
-				win_amount = amount * 650
-				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
-				em = guilded.Embed(title="JACKPOT!", description="{}\n\n<@{}> WON THE JACKPOT OF {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
-				await ctx.send(embed=em)
-				pocket_amount = user[6] + win_amount
-				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
-				connection.commit()
-				connection.close()
-			else:
-				display_output.append(f"**Slots:**\n{final[0]}{final[1]}{final[2]}")
+			elif win_bool == False:
+				display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 				em = guilded.Embed(title="Lose", description="{}\n\n<@{}> lost a bet of {}".format(" \n".join(display_output), author.id, amount), color=0x363942)
 				await ctx.send(embed=em)
 				pocket_amount = user[6] - amount
