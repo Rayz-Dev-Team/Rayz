@@ -820,7 +820,7 @@ class Economy(commands.Cog):
 			slots_jackpot_chance = economy_settings["slots_jackpot_chance"]
 
 			if amount == None:
-				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x25 bonus.\nJACKPOT `-` x450 bonus\n\nUse `{}slots <amount>` to place a bet.".format(prefix), color=0x363942)
+				em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x{} bonus.\nJACKPOT `-` x{} bonus\n\nUse `{}slots <amount>` to place a bet.".format(slots_win_multiplier, slots_jackpot_multiplier, prefix), color=0x363942)
 				await ctx.send(embed=em)
 				return
 			if amount < slots_bet_min or amount > slots_bet_max:
