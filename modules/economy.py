@@ -977,9 +977,9 @@ class Economy(commands.Cog):
 				win_bool = True
 			if row_1[2] == '💎' and row_2[2] == '💎' and row_3[2] == '💎':
 				multiplier_amount += 650
+				win_bool = True
 			if row_1[0] == '💎' and row_2[1] == '💎' and row_3[2] == '💎':
 				multiplier_amount += 15
-				win_bool = True
 				win_bool = True
 			if win_bool == True:
 				win_amount = amount * multiplier_amount
