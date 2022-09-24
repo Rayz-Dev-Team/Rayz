@@ -844,7 +844,7 @@ class Economy(commands.Cog):
 				row_1_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
 				if row_1_chance_win <= slots_win_chance:
 					row_1_item_list.append('💰')
-				if row_1_chance_jackpot == slots_jackpot_chanc:
+				if row_1_chance_jackpot == slots_jackpot_chance:
 					row_1_item_list.append('💎')
 				row_1_a = random.choice(row_1_item_list)
 				row_1.append(row_1_a)
@@ -854,7 +854,7 @@ class Economy(commands.Cog):
 				row_2_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
 				if row_2_chance_win <= slots_win_chance:
 					row_2_item_list.append('💰')
-				if row_2_chance_jackpot == slots_jackpot_chanc:
+				if row_2_chance_jackpot == slots_jackpot_chance:
 					row_2_item_list.append('💎')
 				row_2_a = random.choice(row_2_item_list)
 				row_2.append(row_2_a)
@@ -864,7 +864,7 @@ class Economy(commands.Cog):
 				row_3_chance_jackpot = random.randint(slots_jackpot_min, slots_jackpot_max)
 				if row_3_chance_win <= slots_win_chance:
 					row_3_item_list.append('💰')
-				if row_3_chance_jackpot == slots_jackpot_chanc:
+				if row_3_chance_jackpot == slots_jackpot_chance:
 					row_3_item_list.append('💎')
 				row_3_a = random.choice(row_3_item_list)
 				row_3.append(row_3_a)
