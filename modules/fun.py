@@ -5,11 +5,11 @@ import json
 import aiohttp
 import random 
 from tools.dataIO import fileIO
-import nekos
 import psycopg2
 from psycopg2 import Error
 from core.database import *
 import requests
+import tools.urbandictionary as urbandict
 
 class Fun(commands.Cog):
 	def __init__(self,bot):
@@ -1037,6 +1037,44 @@ class Fun(commands.Cog):
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> waves".format(author.id), color=0x363942)
 					em.set_image(url=data)
+					await ctx.send(embed=em)
+			connection.close()
+		except psycopg2.DatabaseError as e:
+			await ctx.send(f'Error {e}')
+   
+	@commands.command()
+	async def urban(self, ctx):
+		author = ctx.author
+		guild = ctx.guild
+		message = ctx.message
+		try:
+			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+			async def getServer():
+				with connection:
+					cursor = connection.cursor()
+					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
+					content = cursor.fetchone()
+				return content
+			server = await getServer()
+			if server[7] == "Disabled":
+				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
+				await message.reply(private=True, embed=em)
+				await message.delete()
+				return
+			else:
+				searchwordslist = message.content.split(" ")[1::]
+				searchwords = ' '.join(searchwordslist)
+				try:
+					await message.delete()
+					definition = urbandict.define(searchwords)[0]
+					gibdef = definition.definition
+					if len(definition.definition) > 300:
+						gibdef = definition.definition[0:297]+'...'
+					em = guilded.Embed(title=f"Urban meaning of {definition.word}:",description=f"{gibdef} \n \n 👍: {definition.upvotes} \n 👎: {definition.downvotes}", color=0x363942)
+					await ctx.send(embed=em)
+				except:
+					await message.delete()
+					em = guilded.Embed(title=f"<@{author.id}> An error occurred please try again later. ", color=0x363942)
 					await ctx.send(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
