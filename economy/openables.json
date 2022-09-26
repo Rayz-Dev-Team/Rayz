@@ -1,0 +1,103 @@
+{
+    "items" : {
+        "golden_chest" : {
+            "item_list" : {
+                "common" : {
+                    "string" : {
+                        "min_amount" : 10,
+                        "max_amount" : 25
+                    }
+                },
+                "rare" : {
+                    "shovel" : {
+                        "min_amount" : 1,
+                        "max_amount" : 2
+                    }
+                },
+                "epic" : {
+                    "bank_lock" : {
+                        "min_amount" : 1,
+                        "max_amount" : 1
+                    }
+                },
+                "legendary" : {},
+                "unreal" : {}
+            },
+            "currency" : {
+                "min_amount" : 500,
+                "max_amount" : 1000
+            },
+            "locked" : "False",
+            "category" : "items"
+        },
+        "dark_chest" : {
+            "item_list" : {
+                "common" : {
+                    "broken_cpu" : {
+                        "min_amount" : 1,
+                        "max_amount" : 25
+                    }
+                },
+                "rare" : {
+                    "shovel" : {
+                        "min_amount" : 1,
+                        "max_amount" : 10
+                    }
+                },
+                "epic" : {
+                    "bank_lock" : {
+                        "min_amount" : 1,
+                        "max_amount" : 3
+                    },
+                    "lock_picker" : {
+                        "min_amount" : 1,
+                        "max_amount" : 10
+                    }
+                },
+                "legendary" : {},
+                "unreal" : {}
+            },
+            "currency" : {
+                "min_amount" : 1500,
+                "max_amount" : 20000
+            },
+            "locked" : "True",
+            "category" : "items"
+        },
+        "trick_or_treat_bag" : {
+            "item_list" : {
+                "common" : {
+                    "candycorn" : {
+                        "min_amount" : 10,
+                        "max_amount" : 100
+                    }
+                },
+                "rare" : {
+                    "jolly_ranchers" : {
+                        "min_amount" : 10,
+                        "max_amount" : 75
+                    }
+                },
+                "epic" : {
+                    "nerds" : {
+                        "min_amount" : 1,
+                        "max_amount" : 30
+                    }
+                },
+                "legendary" : {
+                    "dots" : {
+                        "min_amount" : 1,
+                        "max_amount" : 20
+                    }
+                },
+                "unreal" : {}
+            },
+            "currency" : {
+                "min_amount" : 100,
+                "max_amount" : 250
+            },
+            "locked" : "True",
+            "category" : "halloween"
+        }
+    }
+}

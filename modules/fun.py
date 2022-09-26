@@ -10,6 +10,8 @@ from psycopg2 import Error
 from core.database import *
 import requests
 import tools.urbandictionary as urbandict
+from tools.db_funcs import getUser
+from tools.db_funcs import getServer
 
 class Fun(commands.Cog):
 	def __init__(self,bot):
@@ -29,13 +31,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -74,13 +70,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -119,13 +109,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -167,13 +151,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -215,13 +193,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -263,13 +235,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -311,13 +277,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -359,13 +319,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -404,13 +358,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -449,13 +397,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -494,13 +436,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -539,13 +475,7 @@ class Fun(commands.Cog):
 		if not matching:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
-						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
+				server = await getServer(guild.id)
 				if server[7] == "Disabled":
 					em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
@@ -581,13 +511,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -620,13 +544,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -659,13 +577,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -698,13 +610,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -737,13 +643,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -776,13 +676,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -815,13 +709,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -854,13 +742,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -893,13 +775,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -932,13 +808,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -971,13 +841,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -1010,13 +874,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -1049,13 +907,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			async def getServer():
-				with connection:
-					cursor = connection.cursor()
-					cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-					content = cursor.fetchone()
-				return content
-			server = await getServer()
+			server = await getServer(guild.id)
 			if server[7] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
