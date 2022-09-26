@@ -207,6 +207,7 @@ class Generator(commands.Cog):
 
 async def _check_inventory(author):
 	try:
+		item_list = fileIO("economy/items.json", "load")
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 		user = await getUser(author.id)
 		if user[10] == None:
@@ -221,11 +222,26 @@ async def _check_inventory(author):
 			cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 			connection.commit()
 			connection.close()
+			return
+		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+		user = await getUser(author.id)
+		info = user[10]
+		for i in item_list["items"]:
+			if not i in info["inventory"]["items"]:
+				info["inventory"]["items"][i] = {
+					"amount": 0
+				}
+		infoJson = json.dumps(info)
+		cursor = connection.cursor()
+		cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+		connection.commit()
+		connection.close()
 	except psycopg2.DatabaseError as e:
 		print(f'Error {e}')
 
 async def _check_inventory_member(member):
 	try:
+		item_list = fileIO("economy/items.json", "load")
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 		user = await getUser(member.id)
 		if user[10] == None:
@@ -240,6 +256,20 @@ async def _check_inventory_member(member):
 			cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJson])
 			connection.commit()
 			connection.close()
+			return
+		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+		user = await getUser(author.id)
+		info = user[10]
+		for i in item_list["items"]:
+			if not i in info["inventory"]["items"]:
+				info["inventory"]["items"][i] = {
+					"amount": 0
+				}
+		infoJson = json.dumps(info)
+		cursor = connection.cursor()
+		cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+		connection.commit()
+		connection.close()
 	except psycopg2.DatabaseError as e:
 		print(f'Error {e}')
 

@@ -14,6 +14,8 @@ import operator
 from collections import OrderedDict
 from tools.dataIO import fileIO
 from modules.generator import _check_values
+from modules.generator import _check_inventory
+from modules.generator import _check_inventory_member
 from modules.generator import _check_values_member
 from modules.generator import _check_values_guild
 from modules.generator import check_leaderboard
@@ -77,8 +79,7 @@ class Economy(commands.Cog):
 	async def test2(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
-		pog = author.joined_at()
-		await ctx.send(pog)
+		await _check_inventory(author)
 
 	@commands.command()
 	async def test1(self, ctx):
@@ -211,6 +212,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
@@ -231,6 +233,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
@@ -292,6 +295,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
@@ -315,6 +319,7 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Member cannot be NoneType.", color=0x363942)
 			await ctx.send(embed=em)
 			return
+		await _check_inventory_member(member)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
@@ -366,6 +371,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -425,6 +431,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -486,6 +493,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -553,6 +561,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 
@@ -599,12 +608,19 @@ class Economy(commands.Cog):
 	async def rob(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
 		guild = ctx.guild
+		if member == None:
+			em = guilded.Embed(title="Uh oh!", description="The member argument was left empty.\n\nEx: `{}rob <member>`".format(prefix), color=0x363942)
+			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
+			await ctx.send(embed=em)
+			return
 		if author.bot:
 			return
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
+		await _check_inventory_member(member)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -616,11 +632,6 @@ class Economy(commands.Cog):
 				connection.close()
 				return
 			prefix = server[3]
-			if member == None:
-				em = guilded.Embed(title="Uh oh!", description="The member argument was left empty.\n\nEx: `{}rob <member>`".format(prefix), color=0x363942)
-				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
-				return
 			if author == member:
 				em = guilded.Embed(title="Uh oh!", description="You cannot rob yourself. Smhhhhhhh", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -690,6 +701,7 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -766,6 +778,7 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
@@ -920,6 +933,7 @@ class Economy(commands.Cog):
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
@@ -1140,6 +1154,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -1169,6 +1184,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
+		await _check_inventory(author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
