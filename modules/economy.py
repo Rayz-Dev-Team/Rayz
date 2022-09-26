@@ -52,45 +52,20 @@ class Economy(commands.Cog):
 	#			return content
 	#		user = await getUser()
 	#		for i in user:
-	#			if i[10] == None:
-	#				new_account = {
-	#					"inventory": {
-	#						"items": {},
-	#						"seasonal_items": {
-	#							"halloween": {
-	#								"candycorn": {
-	#									"amount": 0,
-	#									"description": "[Common] Part of the 2022 Halloween event series.",
-	#									"display_name": "Candycorn"
-	#								},
-	#								"jolly_ranchers": {
-	#									"amount": 0,
-	#									"description": "[Rare] Part of the 2022 Halloween event series.",
-	#									"display_name": "Jolly ranchers"
-	#								},
-	#								"nerds": {
-	#									"amount": 0,
-	#									"description": "[Epic] Part of the 2022 Halloween event series.",
-	#									"display_name": "Nerds"
-	#								},
-	#								"dots": {
-	#									"amount": 0,
-	#									"description": "[LEGENDARY] Part of the 2022 Halloween event series.",
-	#									"display_name": "Dots"
-	#								}
-	#							},
-	#							"christmas": {},
-	#							"easter": {},
-	#							"thanksgiving": {}
-	#						},
-	#						"consumables": {}
-	#					}
-	#				}
+	#			new_account = i[10]
+	#			try:
+	#				for a in new_account["inventory"]["items"]:
+	#					if "description" in new_account["inventory"]["items"][a]:
+	#						del new_account["inventory"]["items"][a]["description"]
+	#					if "display_name" in new_account["inventory"]["items"][a]:
+	#						del new_account["inventory"]["items"][a]["display_name"]
 	#				infoJson = json.dumps(new_account)
 	#				cursor = connection.cursor()
 	#				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{i[0]}'",  [infoJson])
 	#				connection.commit()
-	#				print(f"New inventory made for: {i[0]}")
+	#				print(f"Moved halloween items for: {i[0]}")
+	#			except:
+	#				pass
 	#		else:
 	#			await ctx.send(user[10])
 	#		connection.close()
@@ -1003,37 +978,37 @@ class Economy(commands.Cog):
 				gen_amount = random.randint(15, 150) * int(multiplier_amount)
 				gen_amount = math.ceil(gen_amount)
 				message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
+				info = user[10]
 				if economy_settings["halloween_event"] == "True":
-					candycorn_gen_amount = random.randint(1, 10)
 					common_chance_gen = roll_chance(common_min, common_max, common_chance)
 					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
 					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
 					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+					candycorn_gen_amount = random.randint(1, 10)
 					work_event_lines_list = []
-					info = user[10]
 					if common_chance_gen <= common_chance:
-						info["inventory"]["seasonal_items"]["halloween"]["candycorn"]["amount"] += candycorn_gen_amount
+						info["inventory"]["items"]["candycorn"]["amount"] += candycorn_gen_amount
 						work_event_lines_list.append(f"[Common] +{candycorn_gen_amount} Candycorn")
 					if rare_chance_gen <= rare_chance:
 						rare_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[Rare] +{rare_amount} Jolly ranchers")
-						info["inventory"]["seasonal_items"]["halloween"]["jolly_ranchers"]["amount"] += rare_amount
+						info["inventory"]["items"]["jolly_ranchers"]["amount"] += rare_amount
 					if epic_chance_gen == epic_chance:
 						epic_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[Epic] +{epic_amount} Nerds")
-						info["inventory"]["seasonal_items"]["halloween"]["nerds"]["amount"] += epic_amount
+						info["inventory"]["items"]["nerds"]["amount"] += epic_amount
 					if legendary_chance_gen == legendary_chance:
 						legendary_amount = random.randint(1, 10)
 						work_event_lines_list.append(f"[LEGENDARY] +{legendary_amount} Dots")
-						info["inventory"]["seasonal_items"]["halloween"]["dots"]["amount"] += legendary_amount
+						info["inventory"]["items"]["dots"]["amount"] += legendary_amount
 					if not work_event_lines_list == []:
 						message_list.append("__**Halloween event bonus:**__\n{}\n".format(" \n".join(work_event_lines_list)))
-				common_chance = roll_chance(common_min, common_max, common_chance)
+				drops_lines_list = []
+				common_chance_gen = roll_chance(common_min, common_max, common_chance)
 				rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
 				epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
 				legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
 				unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-				drops_lines_list = []
 				if common_chance_gen:
 					drop_list = []
 					for i in item_drops["common"]:
@@ -1185,7 +1160,7 @@ class Economy(commands.Cog):
 			await ctx.send(embed=em)
 
 	@commands.command(aliases=["inventory"])
-	async def inv(self, ctx, *, num: str=None):
+	async def inv(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
 		if author.bot:
@@ -1210,27 +1185,14 @@ class Economy(commands.Cog):
 				await _check_values(author)
 			info = user[10]
 			bank_code = user[4]
-			halloween_print_list = []
 			default_print_list = []
-			for key, i in info["inventory"]["seasonal_items"]["halloween"].items():
-				if i["amount"] > 0:
-					halloween_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
-			if halloween_print_list == []:
-				halloween_print_list.append("None")
 			for key, i in info["inventory"]["items"].items():
 				if i["amount"] > 0:
-					default_print_list.append("{} -\n`1.` • Amount: {}\n`2.` • Description: {}\n".format(item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
+					default_print_list.append("`{}:` {}".format(item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
-			if num == None:
-				em = guilded.Embed(title="Inventory - Help menu".format(author.name), description="__**Inventory pages:**__\n`1` • Default\n`2` • Halloween\n\nUse `{}inv <page>`".format(prefix), color=0x363942)
-				await ctx.send(embed=em)
-			elif num == "1" or num.lower() == "default":
-				em = guilded.Embed(title="Inventory - Page 1".format(author.name), description="__**Inventory:**__\n{}".format(" \n".join(default_print_list)), color=0x363942)
-				await ctx.send(embed=em)
-			elif num == "2" or num.lower() == "halloween":
-				em = guilded.Embed(title="Inventory - Page 2".format(author.name), description="__**Halloween inventory:**__\n{}".format(" \n".join(halloween_print_list)), color=0x363942)
-				await ctx.send(embed=em)
+			em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
+			await ctx.send(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)

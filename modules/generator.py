@@ -213,33 +213,6 @@ async def _check_inventory(author):
 			new_account = {
 				"inventory": {
 					"items": {},
-					"seasonal_items": {
-						"halloween": {
-							"candycorn": {
-								"amount": 0,
-								"description": "[Common] Part of the 2022 Halloween event series.",
-								"display_name": "Candycorn"
-							},
-							"jolly_ranchers": {
-								"amount": 0,
-								"description": "[Rare] Part of the 2022 Halloween event series.",
-								"display_name": "Jolly ranchers"
-							},
-							"nerds": {
-								"amount": 0,
-								"description": "[Epic] Part of the 2022 Halloween event series.",
-								"display_name": "Nerds"
-							},
-							"dots": {
-								"amount": 0,
-								"description": "[LEGENDARY] Part of the 2022 Halloween event series.",
-								"display_name": "Dots"
-							}
-						},
-						"christmas": {},
-						"easter": {},
-						"thanksgiving": {}
-					},
 					"consumables": {}
 				}
 			}
@@ -259,12 +232,6 @@ async def _check_inventory_member(member):
 			new_account = {
 				"inventory": {
 					"items": {},
-					"seasonal_items": {
-						"halloween": {},
-						"christmas": {},
-						"easter": {},
-						"thanksgiving": {}
-					},
 					"consumables": {}
 				}
 			}
