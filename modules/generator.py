@@ -258,7 +258,7 @@ async def _check_inventory_member(member):
 			connection.close()
 			return
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-		user = await getUser(author.id)
+		user = await getUser(member.id)
 		info = user[10]
 		for i in item_list["items"]:
 			if not i in info["inventory"]["items"]:
@@ -267,7 +267,7 @@ async def _check_inventory_member(member):
 				}
 		infoJson = json.dumps(info)
 		cursor = connection.cursor()
-		cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+		cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJson])
 		connection.commit()
 		connection.close()
 	except psycopg2.DatabaseError as e:
