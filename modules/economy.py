@@ -261,7 +261,7 @@ class Economy(commands.Cog):
 			accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
 			cursor = connection.cursor()
 			if item.lower() in accepted_responses:
-				if amount > info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]:
+				if amount > info["inventory"]["items"][item.lower()]["amount"]:
 					em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 					await ctx.send(embed=em)
 				else:
@@ -269,8 +269,8 @@ class Economy(commands.Cog):
 					total_amount = price_amount * amount
 					pocket_before = user[6]
 					pocket_after = pocket_before + total_amount
-					loss_amount = info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"] - amount
-					info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"] = loss_amount
+					loss_amount = info["inventory"]["items"][item.lower()]["amount"] - amount
+					info["inventory"]["items"][item.lower()]["amount"] = loss_amount
 					infoJson = json.dumps(info)
 					cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
