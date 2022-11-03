@@ -52,6 +52,16 @@ class Generator(commands.Cog):
 			print(f'Error {e}')
 
 	@commands.Cog.listener()
+	async def on_bot_add(self, event: guilded.BotAddEvent):
+		guild = event.server
+		user = event.member
+		support_guild = await self.bot.fetch_server("Mldgz04R")
+		channel = await support_guild.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
+		await _check_values_guild(guild)
+		em = guilded.Embed(title="Rayz joined a Guild!", description="**__{}__**\n**Inivted by:** `{} ({})`".format(guild.name, user.name, user.id), color=0x363942)
+		await channel.send(embed=em)
+
+	@commands.Cog.listener()
 	async def on_member_join(self, event: guilded.MemberJoinEvent):
 		author = event.member
 		guild = event.server

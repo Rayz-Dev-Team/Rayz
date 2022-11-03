@@ -40,7 +40,7 @@ class Help(commands.Cog):
 			elif server[8] == "Disabled":
 				economy_status = "Disabled"
 			if num == None:
-				em = guilded.Embed(title="Rayz - Help menu | Command modules", description=f"[optional] • <required>\n-------------------------------------------------\nIt's almost October and Halloween's approaching fast! We have a ton of cool new seasonal features for you to discover. Have a spooktacular day!\n\n• Use `{prefix}halloween` for more information!\n-------------------------------------------------\n\n• Filter a page using `{prefix}help 1`\n\n🎃 __**Help pages**__\n`1` • General `-` Enabled\n`2` • Fun `-` {fun_status}\n`3` • Moderation `-` {mod_status}\n`4` • Economy module `-` {economy_status}\n\n👻 __**Other**__\n• `{prefix}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
+				em = guilded.Embed(title="Rayz - Help menu | Command modules", description=f"[optional] • <required>\n• Filter a page using `{prefix}help 1`\n\n__**Help pages**__\n`1` • General `-` Enabled\n`2` • Fun `-` {fun_status}\n`3` • Moderation `-` {mod_status}\n`4` • Economy module `-` {economy_status}\n\n__**Other**__\n• `{prefix}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
 				em.set_footer(text=f"{last_update}")
 				await ctx.send(embed=em)
 			elif num == "1" or num.lower() == "general" or num.lower() == "general module":
