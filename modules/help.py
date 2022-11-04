@@ -1,17 +1,8 @@
 import guilded
 from guilded.ext import commands
-import asyncio
-import json
-import aiohttp
-import random 
-from tools.dataIO import fileIO
-from modules.generator import _check_values
 from modules.generator import _check_values_guild
-from core import checks
 import psycopg2
-from psycopg2 import Error
 from core.database import *
-from tools.db_funcs import getUser
 from tools.db_funcs import getServer
 
 class Help(commands.Cog):
@@ -23,7 +14,8 @@ class Help(commands.Cog):
 		guild = ctx.guild
 		await _check_values_guild(guild)
 		try:
-			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+			# connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+			# unused connection removed to save bandwidth and resources and speed up
 			server = await getServer(guild.id)
 			last_update = "Last updated on 09/26/2022 at 10:15AM PST."
 			prefix = server[3]
@@ -63,21 +55,22 @@ class Help(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.send(embed=em)
 
-	@commands.command()
-	async def halloween(self, ctx):
-		guild = ctx.guild
-		await _check_values_guild(guild)
-		try:
-			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-			server = await getServer(guild.id)
-			footer = "The halloween event is now live!"
-			prefix = server[3]
-			em = guilded.Embed(title="Halloween information", description=f"[optional] • <required>\n-------------------------------------------------\nIt's almost October and Halloween's approaching fast! We have a ton of cool new seasonal features for you to discover. Have a spooktacular day!\n\n🎃 __**Information**__\nCandies have been added, along with rarities in `{prefix}work`. It's probably best you collect these, and trade people for a price!\n\n__**New commands!**__\n{prefix}prices `-` View candy sell prices\n{prefix}sell <item> <amount> `-` Sell your candy\n{prefix}give <item> <amount> <user> `-` Give others your candy!\n{prefix}inv `-` View your inventory.\n{prefix}gift <amount> <user> `-` Gift your currency to others. Trading?\n\n👻 __**Other**__\n• `{prefix}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
-			em.set_footer(text=f"{footer}")
-			await ctx.send(embed=em)
-		except psycopg2.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+	# removed because not halloween
+	# @commands.command()
+	# async def halloween(self, ctx):
+	# 	guild = ctx.guild
+	# 	await _check_values_guild(guild)
+	# 	try:
+	# 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+	# 		server = await getServer(guild.id)
+	# 		footer = "The halloween event is now live!"
+	# 		prefix = server[3]
+	# 		em = guilded.Embed(title="Halloween information", description=f"[optional] • <required>\n-------------------------------------------------\nIt's almost October and Halloween's approaching fast! We have a ton of cool new seasonal features for you to discover. Have a spooktacular day!\n\n🎃 __**Information**__\nCandies have been added, along with rarities in `{prefix}work`. It's probably best you collect these, and trade people for a price!\n\n__**New commands!**__\n{prefix}prices `-` View candy sell prices\n{prefix}sell <item> <amount> `-` Sell your candy\n{prefix}give <item> <amount> <user> `-` Give others your candy!\n{prefix}inv `-` View your inventory.\n{prefix}gift <amount> <user> `-` Gift your currency to others. Trading?\n\n👻 __**Other**__\n• `{prefix}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
+	# 		em.set_footer(text=f"{footer}")
+	# 		await ctx.send(embed=em)
+	# 	except psycopg2.DatabaseError as e:
+	# 		em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+	# 		await ctx.send(embed=em)
 
 def setup(bot):
 	bot.remove_command('help')
