@@ -37,7 +37,7 @@ def _get_urban_json(url):
 def _parse_urban_json(json, check_result=True):
     result = []
     if json is None or any(e in json for e in ('error', 'errors')):
-        raise ValueException('UD: Invalid input for Urban Dictionary API')
+        raise ValueError('UD: Invalid input for Urban Dictionary API')
     if check_result and ('list' not in json or len(json['list']) == 0):
         return result
     for definition in json['list']:
