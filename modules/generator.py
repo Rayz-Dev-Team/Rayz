@@ -1,19 +1,11 @@
 import guilded
 from guilded.ext import commands
-import asyncio
 import json
-import aiohttp
-import random 
 import uuid
-import os
-import glob
-import datetime
 from tools.dataIO import fileIO
 import re
 import psycopg2
-from psycopg2 import Error
 from core.database import *
-from psycopg2.extras import Json
 from tools.db_funcs import getUser
 from tools.db_funcs import getServer
 
