@@ -1,6 +1,4 @@
 aiohttp==3.8.3
-discord.py==2.0.1
-guilded==0.0.4
-nekos==0.1
+guilded.py==1.5.0
 psycopg2==2.9.3
-requests==2.28.1
+# asyncpg==0.27.0 - This is coming soon! (YumYummity)

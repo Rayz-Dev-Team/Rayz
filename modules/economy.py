@@ -1,17 +1,10 @@
 import guilded
 from guilded.ext import commands
 import typing
-import asyncio
 import json
-import aiohttp
 import random 
 import math
 import time
-import os
-import glob
-import datetime
-import operator
-from collections import OrderedDict
 from tools.dataIO import fileIO
 from modules.generator import _check_values
 from modules.generator import _check_inventory
@@ -20,11 +13,8 @@ from modules.generator import _check_values_member
 from modules.generator import _check_values_guild
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
-import re
 import psycopg2
-from psycopg2 import Error
 from core.database import *
-from psycopg2.extras import Json
 from tools.db_funcs import getUser
 from tools.db_funcs import getServer
 from tools.functions import paginate
@@ -35,9 +25,9 @@ class Economy(commands.Cog):
 		self.bot = bot
 
 	@commands.command()
-	async def tos(self, ctx):
+	async def tos(self, ctx:commands.Context):
 		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above 2 lines, 'data' is refered to Rayz's economy system, and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's economy, you agree for your username, and data to be displayed in other servers.\n`b.3` `-` Alt accounts to farm 'coins' is **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot is **not** allowed unless you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 
 	#@commands.command()
 	#async def test_values(self, ctx):
@@ -69,16 +59,15 @@ class Economy(commands.Cog):
 	#			except:
 	#				pass
 	#		else:
-	#			await ctx.send(user[10])
+	#			await ctx.reply(user[10])
 	#		connection.close()
 	#	except psycopg2.DatabaseError as e:
 	#		em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-	#		await ctx.send(embed=em)
+	#		await ctx.reply(embed=em)
 
 	@commands.command()
 	async def test2(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
 		await _check_inventory(author)
 
 	@commands.command()
@@ -91,9 +80,9 @@ class Economy(commands.Cog):
 		if 30053069 in roles_list:
 			boost_or_not = True
 		if boost_or_not:
-			await ctx.send("Has role")
+			await ctx.reply("Has role")
 		else:
-			await ctx.send("Doesn't have role")
+			await ctx.reply("Doesn't have role")
 
 	@commands.command()
 	async def test(self, ctx):
@@ -104,13 +93,13 @@ class Economy(commands.Cog):
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
 			if user[10] == None:
-				await ctx.send("Is None")
+				await ctx.reply("Is None")
 			else:
-				await ctx.send(user[10])
+				await ctx.reply(user[10])
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def add(self, ctx, member: guilded.Member=None, *, amount: int=None):
@@ -131,10 +120,10 @@ class Economy(commands.Cog):
 			connection.commit()
 			connection.close()
 			em = guilded.Embed(title="Woo hoo!".format(author.name), description="<@{}> has been given {:,} coins".format(member.id, amount), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def e_ban(self, ctx, *, member: guilded.Member=None):
@@ -153,12 +142,12 @@ class Economy(commands.Cog):
 			LB_bans["bans"].remove(member.id)
 			fileIO("economy/bans.json", "save", LB_bans)
 			em = guilded.Embed(title="Hurray!", description="<@{}> has been **unbanned** from the Economy.".format(member.id), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		elif not member.id in LB_bans["bans"]:
 			LB_bans["bans"].append(member.id)
 			fileIO("economy/bans.json", "save", LB_bans)
 			em = guilded.Embed(title="Oh no :(", description="<@{}> has been **banned** from the Economy.".format(member.id), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def toggle_partner(self, ctx):
@@ -185,7 +174,7 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(guild.name), color=0x363942)
 				em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 				em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				connection.close()
 			elif server[4] == "True":
 				cursor = connection.cursor()
@@ -196,11 +185,11 @@ class Economy(commands.Cog):
 				connection.commit()
 				em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked!".format(guild.name), color=0x363942)
 				em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def prices(self, ctx):
@@ -221,7 +210,7 @@ class Economy(commands.Cog):
 		for key, i in prices["items"].items():
 			say_list.append("{} - {:,} {}".format(item_list["items"][key]["display_name"], i["price"], economy_settings["currency_name"]))
 		em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 
 	@commands.command()
 	async def sell(self, ctx, item: str=None, amount: int=None):
@@ -240,19 +229,19 @@ class Economy(commands.Cog):
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if item == None:
 			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount == None:
 			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount < 0:
 			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -263,7 +252,7 @@ class Economy(commands.Cog):
 			if item.lower() in accepted_responses:
 				if amount > info["inventory"]["items"][item.lower()]["amount"]:
 					em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				else:
 					price_amount = prices["items"][item.lower()]["price"]
 					total_amount = price_amount * amount
@@ -276,14 +265,14 @@ class Economy(commands.Cog):
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 					connection.commit()
 					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 			else:
 				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def give(self, ctx, item: str=None, amount: int=None, *, member: guilded.Member=None):
@@ -301,23 +290,23 @@ class Economy(commands.Cog):
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if item == None:
 			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount == None:
 			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount < 0:
 			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="Member cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		await _check_inventory_member(member)
 		try:
@@ -330,7 +319,7 @@ class Economy(commands.Cog):
 			if item.lower() in accepted_responses:
 				if amount > info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]:
 					em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				else:
 					info_member = member1[10]
 					#Take from info
@@ -348,7 +337,7 @@ class Economy(commands.Cog):
 					connection.commit()
 					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
 					em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					guild1 = await self.bot.fetch_server("Mldgz04R")
 					channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
 					em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
@@ -356,10 +345,10 @@ class Economy(commands.Cog):
 				connection.close()
 			else:
 				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def gift(self, ctx, amount: int=None, *, member: guilded.Member=None):
@@ -376,19 +365,19 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount == None:
 			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if amount < 0:
 			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="Member cannot be NoneType.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -398,7 +387,7 @@ class Economy(commands.Cog):
 			prefix = server[3]
 			if amount > user[6]:
 				em = guilded.Embed(title="Uh oh!", description="`You don't have {:,} in your pocket.".format(amount), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			else:
 				if member1 == None:
@@ -411,7 +400,7 @@ class Economy(commands.Cog):
 				connection.commit()
 				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, LB["currency_name"], author.id, member.id, amount, LB["currency_name"]), color=0x363942)
 				em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				guild1 = await self.bot.fetch_server("Mldgz04R")
 				channel = await guild1.fetch_channel("82204345-aa8d-487f-8808-17afc525a735")
 				em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, LB["currency_name"]), color=0x363942)
@@ -419,7 +408,7 @@ class Economy(commands.Cog):
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command(aliases=["with"])
 	async def withdraw(self, ctx, amount: str=None):
@@ -436,7 +425,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -444,7 +433,7 @@ class Economy(commands.Cog):
 			if amount.lower() == "all":
 				if user[3] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				bank_bal = user[3]
 				bank_bal = bank_bal
@@ -457,15 +446,15 @@ class Economy(commands.Cog):
 				connection.commit()
 				connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			else:
 				if user[3] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[3]:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				bank_bal = int(amount)
 				pocket_val = user[6]
@@ -478,10 +467,10 @@ class Economy(commands.Cog):
 				connection.commit()
 				connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command(aliases=["dep"])
 	async def deposit(self, ctx, amount: str=None):
@@ -501,7 +490,7 @@ class Economy(commands.Cog):
 				del LB["tracker"][author.id]
 				fileIO("config/economy_settings.json", "save", LB)
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -509,7 +498,7 @@ class Economy(commands.Cog):
 			if amount.lower() == "all":
 				if user[6] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your pocket balance is 0.".format(author.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				bank_bal = user[6]
 				bank_new_bal = user[3] + user[6]
@@ -519,15 +508,15 @@ class Economy(commands.Cog):
 				connection.commit()
 				connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			else:
 				if user[6] <= 0:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, your pocket balance is 0.".format(author.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[6]:
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				bank_bal = user[3] + int(amount)
 				pocket_val = user[6] - int(amount)
@@ -537,10 +526,10 @@ class Economy(commands.Cog):
 				connection.commit()
 				connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	# Time to start commenting the code. :)
 	# Below we add a page argument and default it to 1 if it's not provided
@@ -565,7 +554,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			connection.close()
 			return
 		try:
@@ -588,7 +577,7 @@ class Economy(commands.Cog):
 			
 			if page > numOfPages:
 				em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				connection.close()
 				return
 
@@ -598,11 +587,11 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Global leaderboard:".format(author.name), description=description, color=0x363942)
 			# Add our footer with the page we're on out of the total
 			em.set_footer(text=f"Page {page}/{numOfPages}")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def rob(self, ctx, *, member: guilded.Member=None):
@@ -611,7 +600,7 @@ class Economy(commands.Cog):
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="The member argument was left empty.\n\nEx: `{}rob <member>`".format(prefix), color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		if author.bot:
 			return
@@ -628,14 +617,14 @@ class Economy(commands.Cog):
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
 				em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				connection.close()
 				return
 			prefix = server[3]
 			if author == member:
 				em = guilded.Embed(title="Uh oh!", description="You cannot rob yourself. Smhhhhhhh", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			user = await getUser(author.id)
 			member1 = await getUser(member.id)
@@ -650,7 +639,7 @@ class Economy(commands.Cog):
 					if member1[6] < 250:
 						em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, economy_settings["currency_name"]), color=0x363942)
 						em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 					else:
 						num = random.randint(1, 10)
 						num = num
@@ -667,7 +656,7 @@ class Economy(commands.Cog):
 							connection.commit()
 							connection.close()
 							em = guilded.Embed(title="Nice!", description="<@{}> successfully robbed <@{}> for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
-							await ctx.send(embed=em)
+							await ctx.reply(embed=em)
 						else:
 							cursor = connection.cursor()
 							cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
@@ -675,20 +664,20 @@ class Economy(commands.Cog):
 							connection.commit()
 							connection.close()
 							em = guilded.Embed(title="Oh no :(", description="<@{}> got caught robbing <@{}> and got fined for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
-							await ctx.send(embed=em)
+							await ctx.reply(embed=em)
 				else:
 					em = guilded.Embed(title="Uh oh!", description="You need more than x250 {} in your pocket to rob someone.".format(economy_settings["currency_name"]), color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 			else:
 				seconds = 900 - delta
 				m, s = divmod(seconds, 60)
 				h, m = divmod(m, 60)
 				em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot rob someone yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def weekly(self, ctx):
@@ -706,7 +695,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -748,7 +737,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 				if server[5] > 1:
 					em.set_footer(text="The multiplier in this server boosted you by x{}".format(server[5]))
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				gen_amount = user[6] + gen_amount
 				cursor = connection.cursor()
 				cursor.execute(f"UPDATE users SET pocket = '{gen_amount}' WHERE ID = '{author.id}'")
@@ -761,11 +750,11 @@ class Economy(commands.Cog):
 				h, m = divmod(m, 60)
 				d, h = divmod(h, 24)
 				em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot get your weekly bonus yet.\n`Time left:` {}d {}m {}s".format(author.id, int(d), int(m), int(s)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def slots(self, ctx, *, amount: int=None):
@@ -785,7 +774,7 @@ class Economy(commands.Cog):
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -815,15 +804,15 @@ class Economy(commands.Cog):
 			if delta >= curr_cooldown and delta>0:
 				if amount == None:
 					em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x{} bonus.\nJACKPOT `-` x{} bonus\n\nUse `{}slots <amount>` to place a bet.".format(slots_win_multiplier, slots_jackpot_multiplier, prefix), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				if amount < slots_bet_min or amount > slots_bet_max:
 					em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `{:,}-{:,}`".format(slots_bet_min, slots_bet_max), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				if amount > user[6]:
 					em = guilded.Embed(title="Uh oh!", description="You don't have {:,} in your pocket.".format(amount), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				cursor = connection.cursor()
 				row_1 = []
@@ -911,14 +900,14 @@ class Economy(commands.Cog):
 					win_amount = amount * multiplier_amount
 					display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 					em = guilded.Embed(title="WIN!", description="{}\n\n<@{}> WON {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					pocket_amount = user[6] + win_amount
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 					connection.commit()
 				elif win_bool == False:
 					display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 					em = guilded.Embed(title="Lose", description="{}\n\n<@{}> lost a bet of {}".format(" \n".join(display_output), author.id, amount), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					pocket_amount = user[6] - amount
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET slots_timeout = '{curr_time}' WHERE ID = '{author.id}'")
@@ -928,11 +917,11 @@ class Economy(commands.Cog):
 				m, s = divmod(seconds, 60)
 				h, m = divmod(m, 60)
 				em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot use slots yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def work(self, ctx):
@@ -973,7 +962,7 @@ class Economy(commands.Cog):
 
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -1135,7 +1124,7 @@ class Economy(commands.Cog):
 					message_list.append(edit_message)
 				em = guilded.Embed(title="{} has worked.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
 				em.set_footer(text="You were boosted by x{}".format(multiplier_amount))
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				pocket_amount = user[6] + gen_amount
 				infoJson = json.dumps(info)
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
@@ -1149,11 +1138,11 @@ class Economy(commands.Cog):
 				m, s = divmod(seconds, 60)
 				h, m = divmod(m, 60)
 				em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot work yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		
 	#Obv know what this is
 	@commands.command(aliases=["me", "bal", "balance"])
@@ -1171,7 +1160,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -1180,11 +1169,11 @@ class Economy(commands.Cog):
 				await _check_values(author)
 			bank_code = user[4]
 			em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user[6], economy_settings["currency_name"], user[3], economy_settings["currency_name"], user[5], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command(aliases=["inventory"])
 	async def inv(self, ctx):
@@ -1202,7 +1191,7 @@ class Economy(commands.Cog):
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -1220,11 +1209,11 @@ class Economy(commands.Cog):
 			if default_print_list == []:
 				default_print_list.append("None")
 			em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	#Get guild stats, is partner, and booster multiplier
 	@commands.command()
@@ -1236,7 +1225,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		server = await getServer(guild.id)
 		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server[4], server[5]), color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 
 def setup(bot):
 	bot.add_cog(Economy(bot))

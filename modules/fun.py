@@ -1,20 +1,13 @@
 import guilded
 from guilded.ext import commands
-import asyncio
-import json
 import aiohttp
-import random 
-from tools.dataIO import fileIO
 import psycopg2
-from psycopg2 import Error
 from core.database import *
-import requests
 import tools.urbandictionary as urbandict
-from tools.db_funcs import getUser
 from tools.db_funcs import getServer
 
 class Fun(commands.Cog):
-	def __init__(self,bot):
+	def __init__(self, bot):
 		self.bot = bot
 
 	@commands.command()
@@ -40,15 +33,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/hug")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/hug") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> hugs <@{}> :hugging_face:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/hug")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/hug") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> hugs <@{}> :hugging_face:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -79,15 +76,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/cuddle")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/cuddle") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> cuddles <@{}> :flushed:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/cuddle")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/cuddle") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> cuddles <@{}> :flushed:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -121,15 +122,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/kiss")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/kiss") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> kisses <@{}> :kissing_smiling_eyes:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/kiss")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/kiss") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> kisses <@{}> :kissing_smiling_eyes:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -163,15 +168,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/feed")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/feed") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> feeds <@{}> :pancakes:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/feed")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/feed") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> feeds <@{}> :pancakes:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -205,15 +214,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/tickle")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/tickle") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> tickles <@{}> :laughing:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/tickle")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/tickle") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> tickles <@{}> :laughing:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -247,15 +260,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/pat")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/pat") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> pats <@{}> :flushed:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/pat")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/pat") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> pats <@{}> :flushed:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -289,15 +306,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/slap")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/slap") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> slaps <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/slap")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/slap") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> slaps <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -328,15 +349,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/yeet")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/yeet") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> yeets <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/yeet")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/yeet") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> yeets <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -367,15 +392,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/handhold")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/handhold") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> holds <@{}>'s hand".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/handhold")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/handhold") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> holds <@{}>'s hand".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -406,15 +435,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/highfive")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/highfive") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> highfives <@{}>".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/highfive")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/highfive") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> highfives <@{}>".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -445,15 +478,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/punch")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/punch") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> punches <@{}>".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/punch")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/punch") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title="<@{}> punches <@{}>".format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -487,15 +524,19 @@ class Fun(commands.Cog):
 				else:
 					try:
 						await message.delete()
-						resp = requests.get("https://nekos.best/api/v2/bite")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/bite") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> bites <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
 						await ctx.send(embed=em)
 					except:
-						resp = requests.get("https://nekos.best/api/v2/bite")
-						data = resp.json()
+						async with aiohttp.ClientSession() as cs:
+							async with cs.get("https://nekos.best/api/v2/bite") as r:
+								data = await r.json()
+								await cs.close()
 						data = data["results"][0]["url"]
 						em = guilded.Embed(title='<@{}> bites <@{}> :rage:'.format(author.id, member.id), color=0x363942)
 						em.set_image(url=data)
@@ -520,15 +561,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/cry")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/cry") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title='<@{}> cries :sob:'.format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/cry")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/cry") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title='<@{}> cries :sob:'.format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -553,15 +598,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/bored")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/bored") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title='<@{}> is bored ;-;'.format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/bored")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/bored") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title='<@{}> is bored ;-;'.format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -586,15 +635,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/blush")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/blush") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> blushes '-'".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/blush")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/blush") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> blushes '-'".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -619,15 +672,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/dance")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/dance") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> dances :D".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/dance")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/dance") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> dances :D".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -652,15 +709,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/facepalm")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/facepalm") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> facepalms smh".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/facepalm")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/facepalm") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> facepalms smh".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -685,15 +746,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/happy")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/happy") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> is happy :3".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/happy")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/happy") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> is happy :3".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -718,15 +783,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/laugh")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/laugh") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> is laughing :joy:".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/laugh")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/laugh") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> is laughing :joy:".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -751,15 +820,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/pout")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/pout") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> pouts ;-;".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/pout")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/pout") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> pouts ;-;".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -784,15 +857,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/shrug")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/shrug") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> shrugs".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/shrug")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/shrug") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> shrugs".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -817,15 +894,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/sleep")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/sleep") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> sleeps".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/sleep")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/sleep") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> sleeps".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -850,15 +931,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/wink")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/wink") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> winks".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/wink")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/wink") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> winks".format(author.id), color=0x363942)
 					em.set_image(url=data)
@@ -883,15 +968,19 @@ class Fun(commands.Cog):
 			else:
 				try:
 					await message.delete()
-					resp = requests.get("https://nekos.best/api/v2/wave")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/wave") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> waves".format(author.id), color=0x363942)
 					em.set_image(url=data)
 					await ctx.send(embed=em)
 				except:
-					resp = requests.get("https://nekos.best/api/v2/wave")
-					data = resp.json()
+					async with aiohttp.ClientSession() as cs:
+						async with cs.get("https://nekos.best/api/v2/wave") as r:
+							data = await r.json()
+							await cs.close()
 					data = data["results"][0]["url"]
 					em = guilded.Embed(title="<@{}> waves".format(author.id), color=0x363942)
 					em.set_image(url=data)
