@@ -1,7 +1,4 @@
-import os
-import re
-import discord
-from discord.ext import commands
+from guilded.ext import commands
 from tools.dataIO import fileIO
 
 def is_dm_check(ctx):
