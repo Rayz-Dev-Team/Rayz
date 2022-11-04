@@ -25,7 +25,7 @@ Please read this document to understand how to contrbute to this project!
 
 - Make a test bot via Guilded on your own private server to test your changes on.
 
-- Get it's token.
+- Get its token.
 
 - Paste it into config/config.json make the file if it's not there already.
 
