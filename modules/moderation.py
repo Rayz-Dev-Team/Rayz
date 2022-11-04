@@ -1,14 +1,8 @@
 import guilded
 from guilded.ext import commands
-import asyncio
-import json
-import aiohttp
-import random 
 from tools.dataIO import fileIO
-from modules.generator import _check_values
 from core import checks
 import psycopg2
-from psycopg2 import Error
 from core.database import *
 
 class Moderation(commands.Cog):
@@ -23,7 +17,7 @@ class Moderation(commands.Cog):
 		if author == guild.owner:
 			if arg == None:
 				em = guilded.Embed(title="Uh oh!", description="Message cannot be None.\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -38,14 +32,14 @@ class Moderation(commands.Cog):
 				cursor.execute(f"UPDATE servers SET welcome_message = '{arg}' WHERE ID = '{guild.id}'")
 				connection.commit()
 				em = guilded.Embed(title="New welcome message set", description="{}".format(arg), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				connection.close()
 			except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def settrafficlogs(self, ctx, *, arg: str=None):
@@ -68,20 +62,20 @@ class Moderation(commands.Cog):
 						cursor.execute(f"UPDATE servers SET log_traffic = 'None' WHERE ID = '{guild.id}'")
 						connection.commit()
 						em = guilded.Embed(title="Traffic channel reset", description="None", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 				else:
 					cursor = connection.cursor()
 					cursor.execute(f"UPDATE servers SET log_traffic = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
 					connection.commit()
 					em = guilded.Embed(title="Traffic channel set", description="{}".format(ctx.channel.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				connection.close()
 			except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def setactionlogs(self, ctx, *, arg: str=None):
@@ -104,20 +98,20 @@ class Moderation(commands.Cog):
 						cursor.execute(f"UPDATE servers SET log_actions = 'None' WHERE ID = '{guild.id}'")
 						connection.commit()
 						em = guilded.Embed(title="Action channel reset", description="None", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 				else:
 					cursor = connection.cursor()
 					cursor.execute(f"UPDATE servers SET log_actions = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
 					connection.commit()
 					em = guilded.Embed(title="Action channel set", description="{}".format(ctx.channel.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				connection.close()
 			except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def setwelcomechannel(self, ctx, *, arg: str=None):
@@ -140,20 +134,20 @@ class Moderation(commands.Cog):
 						cursor.execute(f"UPDATE servers SET welcome_channel = 'None' WHERE ID = '{guild.id}'")
 						connection.commit()
 						em = guilded.Embed(title="Welcome channel reset", description="None", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 				else:
 					cursor = connection.cursor()
 					cursor.execute(f"UPDATE servers SET welcome_channel = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
 					connection.commit()
 					em = guilded.Embed(title="Welcome channel set", description="{}".format(ctx.channel.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				connection.close()
 			except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def addowner(self, ctx, *, member: guilded.Member=None):
@@ -163,7 +157,7 @@ class Moderation(commands.Cog):
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="The member argument was NULL", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			async def getServer():
@@ -182,7 +176,7 @@ class Moderation(commands.Cog):
 				cursor.execute(stmt, (list_people,))
 				connection.commit()
 				em = guilded.Embed(title="New owner added:", description="<@{}>".format(member.id), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			else:
 				if not server[9] == None:
 					for i in server[9]:
@@ -190,7 +184,7 @@ class Moderation(commands.Cog):
 						list_people_display.append("<@{}>".format(i))
 				if member.id in list_people:
 					em = guilded.Embed(title="Uh oh!", description="<@{}> is already an owner.".format(member.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				else:
 					list_people.append(member.id)
 					cursor = connection.cursor()
@@ -198,10 +192,10 @@ class Moderation(commands.Cog):
 					cursor.execute(stmt, (list_people,))
 					connection.commit()
 					em = guilded.Embed(title="New owner added:", description="<@{}>\n\n__**Current owners:**__\n{}\n<@{}>".format(member.id, " \n".join(list_people_display), member.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 
 
 	@commands.command()
@@ -227,7 +221,7 @@ class Moderation(commands.Cog):
 				return
 			if word == None:
 				em = guilded.Embed(title="Uh oh!", description="The word argument cannot be blank.!\n\n`Ex:` {}unbanword <word>".format(prefix), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			moderator_or_not = False
 			for i in author.roles:
@@ -238,7 +232,7 @@ class Moderation(commands.Cog):
 			if moderator_or_not == True:
 				if server[1] == None:
 					em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					connection.close()
 					return
 				else:
@@ -252,17 +246,17 @@ class Moderation(commands.Cog):
 						cursor.execute(stmt, (list_server,))
 						connection.commit()
 						em = guilded.Embed(title="Nice!", description="The word argument has been unbanned.", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 					else:
 						em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 				connection.close()
 			else:
 				em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 
 	@commands.command()
 	async def banword(self, ctx, *, word: str=None):
@@ -287,7 +281,7 @@ class Moderation(commands.Cog):
 				return
 			if word == None:
 				em = guilded.Embed(title="Uh oh!", description="The word argument cannot be blank.!\n\n`Ex:` {}banword <word>".format(prefix), color=0x363942)
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			moderator_or_not = False
 			for i in author.roles:
@@ -305,7 +299,7 @@ class Moderation(commands.Cog):
 							wordlist.append(i)
 				if str(word).lower() in wordlist:
 					em = guilded.Embed(title="Wew!", description="The word argument is already banned.", color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				else:
 					if server[1] == None:
 						cursor = connection.cursor()
@@ -315,7 +309,7 @@ class Moderation(commands.Cog):
 						connection.commit()
 						connection.close()
 						em = guilded.Embed(title="Nice!", description="The word argument has been banned.", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 					else:
 						list_server = []
 						for i in server[1]:
@@ -327,13 +321,13 @@ class Moderation(commands.Cog):
 						connection.commit()
 						connection.close()
 						em = guilded.Embed(title="Nice!", description="The word argument has been banned.", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 			else:
 				em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 
 
 	@commands.command()
@@ -349,7 +343,7 @@ class Moderation(commands.Cog):
 			await message.delete()
 			return
 		em = guilded.Embed(title="Uh oh!", description=":warning: Certain moderator commands are disabled until bots can fetch user roles/perms from the API again.", color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 		return
 		moderator_or_not = False
 		for i in author.roles:
@@ -361,7 +355,7 @@ class Moderation(commands.Cog):
 			if member == None:
 				em = guilded.Embed(title="Uh oh!", description="A user was not provided.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			if member == author:
 				return
@@ -369,7 +363,7 @@ class Moderation(commands.Cog):
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def ban(self, ctx, *, member: guilded.Member=None):
@@ -384,7 +378,7 @@ class Moderation(commands.Cog):
 			await message.delete()
 			return
 		em = guilded.Embed(title="Uh oh!", description=":warning: Certain moderator commands are disabled until bots can fetch user roles/perms from the API again.", color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 		return
 		moderator_or_not = False
 		for i in author.roles:
@@ -396,7 +390,7 @@ class Moderation(commands.Cog):
 			if member == None:
 				em = guilded.Embed(title="Uh oh!", description="A user was not provided.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 				return
 			if member == author:
 				return
@@ -404,7 +398,7 @@ class Moderation(commands.Cog):
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def setlogchannel(self, ctx, *, arg: str=None):
@@ -433,20 +427,20 @@ class Moderation(commands.Cog):
 						cursor.execute(f"UPDATE servers SET logs_channel_id = 'None' WHERE ID = '{guild.id}'")
 						connection.commit()
 						em = guilded.Embed(title="Logs channel reset", description="None", color=0x363942)
-						await ctx.send(embed=em)
+						await ctx.reply(embed=em)
 				else:
 					cursor = connection.cursor()
 					cursor.execute(f"UPDATE servers SET logs_channel_id = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
 					connection.commit()
 					em = guilded.Embed(title="Logs channel set", description="{}".format(ctx.channel.id), color=0x363942)
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 				connection.close()
 			except psycopg2.DatabaseError as e:
-				await ctx.send(f'Error {e}')
+				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have mod perms to set a log channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def channelid(self, ctx):
@@ -461,7 +455,7 @@ class Moderation(commands.Cog):
 			moderator_or_not = True
 		if moderator_or_not == True:
 			em = guilded.Embed(title="Channel ID retrieved.", description="{}".format(channel.id), color=0x363942)
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	@checks.is_dev()
@@ -475,7 +469,7 @@ class Moderation(commands.Cog):
 			member_count += i.member_count
 		em = guilded.Embed(title="Rayz's Information", description="**Guilds:** {}\n**Ping:** {}{}ms\n**Users:** {}".format(len(self.bot.guilds), latency[2], latency[3], member_count), color=0x363942)
 		em.set_footer(text="Reminder: This is only what's cached (It gets reset often). It doesn't display ALL information.")
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 
 	@commands.command()
 	@checks.is_dev()
@@ -487,7 +481,7 @@ class Moderation(commands.Cog):
 		for i in self.bot.guilds:
 			guild_list.append(i.name)
 		em = guilded.Embed(title="Rayz's Guild list", description="**Guilds:**\n{}".format(" \n".join(guild_list)), color=0x363942)
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 
 async def kick_check(self, ctx, member):
 	author = ctx.author
@@ -504,7 +498,7 @@ async def kick_check(self, ctx, member):
 	if bot_has_perms == False:
 		em = guilded.Embed(title="Uh oh!", description="I don't have permissions to kick members from the server.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 	else:
 		for i in member.roles:
 			if i.position > members_highest_role_num:
@@ -512,7 +506,7 @@ async def kick_check(self, ctx, member):
 		if bots_highest_role_num <= members_highest_role_num:
 			em = guilded.Embed(title="Uh oh!", description="I cannot kick this user, they have a role equal to or higher than me.", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		else:
 			authors_highest_role_num = -10000
 			for i in author.roles:
@@ -521,13 +515,13 @@ async def kick_check(self, ctx, member):
 			if authors_highest_role_num <= members_highest_role_num:
 				em = guilded.Embed(title="Uh oh!", description="The user has the same, or higher role than you. I cannot kick them.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			else:
 				member_name = member.name
 				if member.bot:
 					em = guilded.Embed(title="Uh oh!", description="I'm programmed to avoid kicking bots, for crash related reasons.", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				await member.kick()
 				em1 = guilded.Embed(title="User kicked.", description="**{}** was successfully kicked by <@{}>".format(member_name, author.id), color=0x363942)
@@ -544,7 +538,7 @@ async def kick_check(self, ctx, member):
 					except:
 						em1.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 						em1.set_footer(icon_url= "https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160", text="There was an issue trying to send to the log channel. You might have to fix the ID.")
-				await ctx.send(embed=em1)
+				await ctx.reply(embed=em1)
 
 async def ban_check(self, ctx, member):
 	author = ctx.author
@@ -561,7 +555,7 @@ async def ban_check(self, ctx, member):
 	if bot_has_perms == False:
 		em = guilded.Embed(title="Uh oh!", description="I don't have permissions to ban members from the server.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-		await ctx.send(embed=em)
+		await ctx.reply(embed=em)
 	else:
 		for i in member.roles:
 			if i.position > members_highest_role_num:
@@ -569,7 +563,7 @@ async def ban_check(self, ctx, member):
 		if bots_highest_role_num <= members_highest_role_num:
 			em = guilded.Embed(title="Uh oh!", description="I cannot ban this user, they have a role equal to or higher than me.", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-			await ctx.send(embed=em)
+			await ctx.reply(embed=em)
 		else:
 			authors_highest_role_num = -10000
 			for i in author.roles:
@@ -578,13 +572,13 @@ async def ban_check(self, ctx, member):
 			if authors_highest_role_num <= members_highest_role_num:
 				em = guilded.Embed(title="Uh oh!", description="The user has the same, or higher role than you. I cannot ban them.", color=0x363942)
 				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-				await ctx.send(embed=em)
+				await ctx.reply(embed=em)
 			else:
 				member_name = member.name
 				if member.bot:
 					em = guilded.Embed(title="Uh oh!", description="I'm programmed to avoid banning bots, for crash related reasons.", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-					await ctx.send(embed=em)
+					await ctx.reply(embed=em)
 					return
 				await member.ban()
 				em1 = guilded.Embed(title="User banned.", description="**{}** was successfully banned by <@{}>".format(member_name, author.id), color=0x363942)
@@ -601,7 +595,7 @@ async def ban_check(self, ctx, member):
 					except:
 						em1.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 						em1.set_footer(icon_url= "https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160", text="There was an issue trying to send to the log channel. You might have to fix the ID.")
-				await ctx.send(embed=em1)
+				await ctx.reply(embed=em1)
 
 def setup(bot):
 	bot.add_cog(Moderation(bot))
