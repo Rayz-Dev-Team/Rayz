@@ -1,4 +1,3 @@
-import asyncio
 import psycopg2
 from core.database import *
 
