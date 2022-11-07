@@ -109,6 +109,10 @@ async def on_message(message:guilded.Message):
                 await message.add_reaction('❌')
             else:
                 await message.add_reaction('✅')
+    try:
+        await bot.process_commands(message)
+    except:
+        pass
 
 
 if __name__ == '__main__':
