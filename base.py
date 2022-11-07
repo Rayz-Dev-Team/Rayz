@@ -95,8 +95,8 @@ async def on_message(message:guilded.Message):
         exec(f'async def __ex(message):\n    '+(''.join(f'\n    {l}'for l in code.split('\n'))).strip())
         return (await locals()['__ex'](message))
     if checks.is_dev_check():
-        if ((message.content).lower()).startswith('r-eval\n```python') or ((message.content).lower()).startswith('r-exec\n```python'):
-            cmd = (((message.content)[17:])[:len(((message.content)[16:]))-4]).strip()
+        if ((message.content).lower()).startswith('r-eval\n') or ((message.content).lower()).startswith('r-exec\n'):
+            cmd = (((message.content)[7:])[:len(((message.content)[7:]))-0]).strip()
             try:
                 await aexec(cmd, message)
             except Warning as e:
@@ -109,6 +109,10 @@ async def on_message(message:guilded.Message):
                 await message.add_reaction('❌')
             else:
                 await message.add_reaction('✅')
+    try:
+        await bot.process_commands(message)
+    except:
+        pass
 
 
 if __name__ == '__main__':
