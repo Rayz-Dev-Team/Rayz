@@ -7,6 +7,7 @@ import os
 from core import checks
 from core import prefix
 import traceback
+from tools.dataIO import fileIO
 import logging
 
 logger = logging.getLogger('guilded')
@@ -94,7 +95,13 @@ async def on_message(message:guilded.Message):
     async def aexec(code, message:guilded.Message):
         exec(f'async def __ex(message):\n    '+(''.join(f'\n    {l}'for l in code.split('\n'))).strip())
         return (await locals()['__ex'](message))
-    if checks.is_dev_check():
+    def evalcheck(message:guilded.Message):
+        config = fileIO("config/config.json", "load")
+        if str(message.author_id) in config["Developer"]:
+            return True
+        else:
+            return False
+    if evalcheck(message):
         if ((message.content).lower()).startswith('r-eval\n') or ((message.content).lower()).startswith('r-exec\n'):
             cmd = (((message.content)[7:])[:len(((message.content)[7:]))-0]).strip()
             try:
@@ -111,7 +118,7 @@ async def on_message(message:guilded.Message):
                 await message.add_reaction('✅')
     try:
         await bot.process_commands(message)
-    except:
+    except commands.CommandNotFound:
         pass
 
 
