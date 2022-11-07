@@ -2,7 +2,7 @@ import guilded
 from guilded.ext import commands
 import typing
 import json
-import random 
+import random
 import math
 import time
 from tools.dataIO import fileIO
@@ -574,7 +574,7 @@ class Economy(commands.Cog):
 
 			[LB,total] = await getUserLB()
 			[description, numOfPages] = paginate(LB,total[0],page)
-			
+
 			if page > numOfPages:
 				em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
 				await ctx.reply(embed=em)
@@ -583,7 +583,7 @@ class Economy(commands.Cog):
 
 			# We're now importing this function
 			user = await getUser(author.id)
-			
+
 			em = guilded.Embed(title="Global leaderboard:".format(author.name), description=description, color=0x363942)
 			# Add our footer with the page we're on out of the total
 			em.set_footer(text=f"Page {page}/{numOfPages}")
@@ -979,8 +979,8 @@ class Economy(commands.Cog):
 				curr_cooldown = 60
 			delta = float(curr_time) - float(user[9])
 			if delta >= curr_cooldown and delta>0:
-				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				cursor = connection.cursor()
+				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				message_list = []
 				booster_amount = 0
 				if author in members_support_guild:
@@ -1145,7 +1145,7 @@ class Economy(commands.Cog):
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
-		
+
 	#Obv know what this is
 	@commands.command(aliases=["me", "bal", "balance"])
 	async def profile(self, ctx):
