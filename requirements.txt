@@ -1,4 +1,5 @@
 aiohttp==3.8.3
 guilded.py==1.5.0
 psycopg2==2.9.3
+asyncio==3.4.3
 # asyncpg==0.27.0 - This is coming soon! (YumYummity)
