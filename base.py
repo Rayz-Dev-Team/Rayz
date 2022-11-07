@@ -6,6 +6,7 @@ import sys
 import os
 from core import checks
 from core import prefix
+import traceback
 import logging
 
 logger = logging.getLogger('guilded')
@@ -87,6 +88,28 @@ async def reload(ctx, *, cog_name: str = None):
         else:
             em = guilded.Embed(description="**Module reloaded.** :)", color=0x363942)
             await ctx.reply(embed=em)
+
+@bot.event
+async def on_message(message:guilded.Message):
+    async def aexec(code, message:guilded.Message):
+        exec(f'async def __ex(message):\n    '+(''.join(f'\n    {l}'for l in code.split('\n'))).strip())
+        return (await locals()['__ex'](message))
+    if checks.is_dev_check():
+        if ((message.content).lower()).startswith('r-eval\n```python') or ((message.content).lower()).startswith('r-exec\n```python'):
+            cmd = (((message.content)[17:])[:len(((message.content)[16:]))-4]).strip()
+            try:
+                await aexec(cmd, message)
+            except Warning as e:
+                result = ("".join(traceback.format_exception(e, e, e.__traceback__))).replace('`', '\`')
+                await message.reply(f'**Eval ran with an warning:**\n\n```python\n{result}\n```')
+                await message.add_reaction('⚠️')
+            except Exception as e:
+                result = ("".join(traceback.format_exception(e, e, e.__traceback__))).replace('`', '\`')
+                await message.reply(f'**Eval failed with Exception:**\n\n```python\n{result}\n```')
+                await message.add_reaction('❌')
+            else:
+                await message.add_reaction('✅')
+
 
 if __name__ == '__main__':
     for thing in startup:

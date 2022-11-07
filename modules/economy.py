@@ -924,47 +924,49 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 
 	@commands.command()
-	async def work(self, ctx):
+	async def work(self, ctx:commands.Context):
+		if ctx.author.bot:
+			return
 		author = ctx.author
 		guild = ctx.guild
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		members_support_guild = await support_guild.fetch_members()
-		if author.bot:
-			return
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await _check_inventory(author)
-		economy_settings = fileIO("config/economy_settings.json", "load")
+
 		LB_bans = fileIO("economy/bans.json", "load")
-		item_drops = fileIO("economy/drops.json", "load")
-		item_list = fileIO("economy/items.json", "load")
-
-		common_min = economy_settings["common_min"]
-		common_max = economy_settings["common_max"]
-		common_chance = economy_settings["common_chance"]
-
-		rare_min = economy_settings["rare_min"]
-		rare_max = economy_settings["rare_max"]
-		rare_chance = economy_settings["rare_chance"]
-
-		epic_min = economy_settings["epic_min"]
-		epic_max = economy_settings["epic_max"]
-		epic_chance = economy_settings["epic_chance"]
-
-		legendary_min = economy_settings["legendary_min"]
-		legendary_max = economy_settings["legendary_max"]
-		legendary_chance = economy_settings["legendary_chance"]
-
-		unreal_min = economy_settings["unreal_min"]
-		unreal_max = economy_settings["unreal_max"]
-		unreal_chance = economy_settings["unreal_chance"]
 
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
+			economy_settings = fileIO("config/economy_settings.json", "load")
+			item_drops = fileIO("economy/drops.json", "load")
+			item_list = fileIO("economy/items.json", "load")
+
+			common_min = economy_settings["common_min"]
+			common_max = economy_settings["common_max"]
+			common_chance = economy_settings["common_chance"]
+
+			rare_min = economy_settings["rare_min"]
+			rare_max = economy_settings["rare_max"]
+			rare_chance = economy_settings["rare_chance"]
+
+			epic_min = economy_settings["epic_min"]
+			epic_max = economy_settings["epic_max"]
+			epic_chance = economy_settings["epic_chance"]
+
+			legendary_min = economy_settings["legendary_min"]
+			legendary_max = economy_settings["legendary_max"]
+			legendary_chance = economy_settings["legendary_chance"]
+
+			unreal_min = economy_settings["unreal_min"]
+			unreal_max = economy_settings["unreal_max"]
+			unreal_chance = economy_settings["unreal_chance"]
+
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
 			server = await getServer(guild.id)
@@ -977,6 +979,7 @@ class Economy(commands.Cog):
 				curr_cooldown = 60
 			delta = float(curr_time) - float(user[9])
 			if delta >= curr_cooldown and delta>0:
+				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				cursor = connection.cursor()
 				message_list = []
 				booster_amount = 0
@@ -1129,7 +1132,6 @@ class Economy(commands.Cog):
 				infoJson = json.dumps(info)
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
-				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				connection.commit()
 				await check_leaderboard_author(author)
 				connection.close()
