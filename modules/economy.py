@@ -979,8 +979,6 @@ class Economy(commands.Cog):
 				curr_cooldown = 60
 			delta = float(curr_time) - float(user[9])
 			if delta >= curr_cooldown and delta>0:
-				cursor = connection.cursor()
-				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				message_list = []
 				booster_amount = 0
 				if author in members_support_guild:
@@ -1130,6 +1128,8 @@ class Economy(commands.Cog):
 				await ctx.reply(embed=em)
 				pocket_amount = user[6] + gen_amount
 				infoJson = json.dumps(info)
+				cursor = connection.cursor()
+				cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 				cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 				connection.commit()
