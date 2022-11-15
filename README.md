@@ -19,7 +19,7 @@ Please read this document to understand how to contrbute to this project!
 
 ## > How to use
 
-- Please make sure you have python 3 installed.
+- Please make sure you have a recent version of python 3 installed.
 
 - Clone this repo.
 
