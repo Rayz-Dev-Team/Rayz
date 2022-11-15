@@ -48,7 +48,6 @@ class Generator(commands.Cog):
 		guild = event.server
 		user = event.member
 		send_channel = await guild.fetch_default_channel()
-		support_guild = await self.bot.fetch_server("Mldgz04R")
 		channel = await support_guild.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
 		await _check_values_guild(guild)
 		em = guilded.Embed(title="Hello community!", description="`-` Thanks <@{}> for inviting me to **{}!**\n`-` My default prefix/help command is `?help`\n`-` Rayz is a multipurpose bot featuring moderation, logging, a global economy, interaction commands, and more!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
@@ -319,7 +318,7 @@ async def command_processed(message, author):
 		cursor.execute(f"UPDATE users SET commands_used = {total_amount} WHERE ID = '{author.id}'")
 		connection.commit()
 		if total_amount == 5:
-			em = guilded.Embed(title="Hello {}!", description="I see that you like using me! Here are some links that may be useful to you!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
+			em = guilded.Embed(title="Hello {}!".format(author.name), description="I see that you like using me! Here are some links that may be useful to you!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)", color=0x363942)
 			em.set_footer(text="This message will only appear once for you.")
 			await message.reply(embed=em, private=True)
 		connection.close()

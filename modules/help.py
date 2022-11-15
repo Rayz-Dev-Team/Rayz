@@ -12,6 +12,7 @@ class Help(commands.Cog):
 
 	@commands.command()
 	async def help(self, ctx, *, num: str=None):
+		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
 		await _check_values_guild(guild)
