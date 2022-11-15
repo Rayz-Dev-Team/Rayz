@@ -5,6 +5,7 @@ import psycopg2
 from core.database import *
 import tools.urbandictionary as urbandict
 from tools.db_funcs import getServer
+from modules.generator import command_processed
 
 class Fun(commands.Cog):
 	def __init__(self, bot):
@@ -15,6 +16,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "hug"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to hug.", color=0x363942)
@@ -59,6 +61,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "cuddle"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -102,6 +105,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "kiss"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -148,6 +152,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "feed"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -194,6 +199,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "tickle"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -240,6 +246,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "pat"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -286,6 +293,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "slap"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to slap.", color=0x363942)
@@ -332,6 +340,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "yeet"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to yeet.", color=0x363942)
@@ -375,6 +384,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "holdhand"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to hold hands with.", color=0x363942)
@@ -418,6 +428,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "highfive"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to highfive.", color=0x363942)
@@ -461,6 +472,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "punch"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to punch.", color=0x363942)
@@ -504,6 +516,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		action = "bite"
 		if member == None:
 			em = guilded.Embed(description="You didn't mention anyone to cuddle.", color=0x363942)
@@ -550,6 +563,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -587,6 +601,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -624,6 +639,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -661,6 +677,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -698,6 +715,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -735,6 +753,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -772,6 +791,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -809,6 +829,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -846,6 +867,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -883,6 +905,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -920,6 +943,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -957,6 +981,7 @@ class Fun(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -988,12 +1013,13 @@ class Fun(commands.Cog):
 			connection.close()
 		except psycopg2.DatabaseError as e:
 			await ctx.send(f'Error {e}')
-   
+
 	@commands.command()
 	async def urban(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)

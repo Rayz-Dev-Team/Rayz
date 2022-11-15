@@ -4,6 +4,7 @@ from tools.dataIO import fileIO
 from core import checks
 import psycopg2
 from core.database import *
+from modules.generator import command_processed
 
 class Moderation(commands.Cog):
 	def __init__(self,bot):
@@ -14,6 +15,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		if author == guild.owner:
 			if arg == None:
 				em = guilded.Embed(title="Uh oh!", description="Message cannot be None.\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
@@ -46,6 +48,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		if author == guild.owner:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -82,6 +85,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		if author == guild.owner:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -118,6 +122,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		if author == guild.owner:
 			try:
 				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -154,6 +159,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="The member argument was NULL", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -203,6 +209,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			async def getServer():
@@ -263,6 +270,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			async def getServer():
@@ -405,6 +413,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		channel = ctx.message.channel
+		await command_processed(message, author)
 		moderator_or_not = False
 		for i in author.roles:
 			if i.permissions.manage_messages == True or i.permissions.kick_members == True:
@@ -446,7 +455,9 @@ class Moderation(commands.Cog):
 	async def channelid(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		channel = await guild.fetch_channel(ctx.channel.id)
+		await command_processed(message, author)
 		moderator_or_not = False
 		for i in author.roles:
 			if i.permissions.manage_messages == True or i.permissions.kick_members == True:

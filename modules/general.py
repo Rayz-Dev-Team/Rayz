@@ -6,6 +6,7 @@ from modules.generator import _check_values_guild
 import psycopg2
 from core.database import *
 from tools.db_funcs import getServer
+from modules.generator import command_processed
 
 class General(commands.Cog):
 	def __init__(self,bot):
@@ -13,10 +14,11 @@ class General(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def changeprefix(self, ctx, pref: str=None):
-		channel = ctx.channel 
+		channel = ctx.channel
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
+		await command_processed(message, author)
 		await _check_values_guild(guild)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -48,11 +50,12 @@ class General(commands.Cog):
 
 	@commands.command(pass_context=True)
 	async def togglemodule(self, ctx):
-		channel = ctx.channel 
+		channel = ctx.channel
 		guild = ctx.guild
 		author = ctx.author
 		message = ctx.message
 		await _check_values_guild(guild)
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -173,7 +176,9 @@ class General(commands.Cog):
 		author = ctx.message.author
 		channel = ctx.message.channel
 		guild = ctx.guild
+		message = ctx.message
 		await _check_values(author)
+		await command_processed(message, author)
 		em = guilded.Embed(title="Uh oh!", description="This command has been disabled by the Developer.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 		return
@@ -213,7 +218,9 @@ class General(commands.Cog):
 		author = ctx.message.author
 		channel = ctx.message.channel
 		guild = ctx.guild
+		message = ctx.message
 		await _check_values(author)
+		await command_processed(message, author)
 		em = guilded.Embed(title="Uh oh!", description="This command has been disabled by the Developer.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 		return
@@ -255,7 +262,9 @@ class General(commands.Cog):
 		author = ctx.message.author
 		channel = ctx.message.channel
 		guild = ctx.guild
+		message = ctx.message
 		await _check_values(author)
+		await command_processed(message, author)
 		em = guilded.Embed(title="Uh oh!", description="This command has been disabled by the Developer.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 		return

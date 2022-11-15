@@ -320,6 +320,7 @@ async def command_processed(message, author):
 		connection.commit()
 		if total_amount == 5:
 			em = guilded.Embed(title="Hello {}!", description="I see that you like using me! Here are some links that may be useful to you!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
+			em.set_footer(text="This message will only appear once for you.")
 			await message.reply(embed=em, private=True)
 		connection.close()
 	except psycopg2.DatabaseError as e:

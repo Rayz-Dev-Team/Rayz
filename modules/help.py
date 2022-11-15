@@ -4,6 +4,7 @@ from modules.generator import _check_values_guild
 import psycopg2
 from core.database import *
 from tools.db_funcs import getServer
+from modules.generator import command_processed
 
 class Help(commands.Cog):
 	def __init__(self,bot):
@@ -12,7 +13,9 @@ class Help(commands.Cog):
 	@commands.command()
 	async def help(self, ctx, *, num: str=None):
 		guild = ctx.guild
+		message = ctx.message
 		await _check_values_guild(guild)
+		await command_processed(message, author)
 		try:
 			# connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			# unused connection removed to save bandwidth and resources and speed up

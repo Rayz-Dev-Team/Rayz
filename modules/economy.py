@@ -196,6 +196,7 @@ class Economy(commands.Cog):
 	async def prices(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -203,6 +204,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
@@ -217,6 +219,7 @@ class Economy(commands.Cog):
 	async def sell(self, ctx, item: str=None, amount: int=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -224,6 +227,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
@@ -279,6 +283,7 @@ class Economy(commands.Cog):
 	async def give(self, ctx, item: str=None, amount: int=None, *, member: guilded.Member=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -286,6 +291,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
@@ -355,6 +361,7 @@ class Economy(commands.Cog):
 	async def gift(self, ctx, amount: int=None, *, member: guilded.Member=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -362,6 +369,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -415,6 +423,7 @@ class Economy(commands.Cog):
 	async def withdraw(self, ctx, amount: str=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -422,6 +431,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -477,6 +487,7 @@ class Economy(commands.Cog):
 	async def deposit(self, ctx, amount: str=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -484,6 +495,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -545,6 +557,7 @@ class Economy(commands.Cog):
 
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -552,6 +565,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -598,6 +612,7 @@ class Economy(commands.Cog):
 	async def rob(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="The member argument was left empty.\n\nEx: `{}rob <member>`".format(prefix), color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -611,6 +626,7 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
 		await _check_inventory_member(member)
+		await command_processed(message, author)
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			server = await getServer(guild.id)
@@ -684,6 +700,7 @@ class Economy(commands.Cog):
 	async def weekly(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		members_support_guild = await support_guild.fetch_members()
 		if author.bot:
@@ -692,6 +709,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -761,6 +779,7 @@ class Economy(commands.Cog):
 	async def slots(self, ctx, *, amount: int=None):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		members_support_guild = await support_guild.fetch_members()
 		if author.bot:
@@ -769,6 +788,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
@@ -1154,6 +1174,7 @@ class Economy(commands.Cog):
 	async def profile(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -1161,6 +1182,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -1184,6 +1206,7 @@ class Economy(commands.Cog):
 	async def inv(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
@@ -1191,6 +1214,7 @@ class Economy(commands.Cog):
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
@@ -1225,9 +1249,11 @@ class Economy(commands.Cog):
 	async def stats(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values_guild(guild)
+		await command_processed(message, author)
 		server = await getServer(guild.id)
 		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server[4], server[5]), color=0x363942)
 		await ctx.reply(embed=em)
