@@ -73,7 +73,7 @@ async def unload(ctx, *, cog_name: str):
 @checks.is_dev()
 async def reload(ctx, *, cog_name: str = None):
     if cog_name == None:
-        embed = guilded.Embed(description="Reloading... ('thank you not here, you are amazing, I love you' - Beezo)",colour=0x363942)
+        embed = guilded.Embed(description="Reloading.... ('thank you not here, you are amazing, I love you' - Beezo)",colour=0x363942)
         await ctx.reply(embed = embed)
         os.execv(sys.executable, ['python'] + sys.argv)
     else:
