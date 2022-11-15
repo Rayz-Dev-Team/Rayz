@@ -47,9 +47,12 @@ class Generator(commands.Cog):
 	async def on_bot_add(self, event: guilded.BotAddEvent):
 		guild = event.server
 		user = event.member
+		send_channel = await guild.fetch_default_channel()
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		channel = await support_guild.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
 		await _check_values_guild(guild)
+		em = guilded.Embed(title="Hello community!", description="`-` Thanks <@{}> for inviting me to **{}!**\n`-` My default prefix/help command is `?help`\n`-` Rayz is a multipurpose bot featuring moderation, logging, a global economy, interaction commands, and more!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
+		await send_channel.send(embed=em)
 		em = guilded.Embed(title="Rayz joined a Guild!", description="**__{}__**\n**Inivted by:** `{} ({})`".format(guild.name, user.name, user.id), color=0x363942)
 		await channel.send(embed=em)
 
@@ -78,7 +81,7 @@ class Generator(commands.Cog):
 						pass
 					try:
 						welcome_message = welcome_message.replace("<server>", f"{guild.name}")
-					except: 
+					except:
 						pass
 					em = guilded.Embed(title="A member has joined!", description="{}".format(welcome_message), color=0x363942)
 					try:
@@ -131,7 +134,7 @@ class Generator(commands.Cog):
 					captures.append(word)
 					message_safe = False
 			if not message_safe:
-				moderator_or_not = False	
+				moderator_or_not = False
 				for i in author.roles:
 					if i.permissions.manage_messages == True or i.permissions.kick_members == True:
 						moderator_or_not = True
