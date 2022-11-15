@@ -284,7 +284,7 @@ async def _check_values_member(member):
 		user = await getUser(member.id)
 		if user == None:
 			cursor = connection.cursor()
-			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0)")
+			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0)")
 			connection.commit()
 		await _check_inventory_member(member)
 		connection.close()
@@ -310,6 +310,22 @@ async def check_leaderboard(author):
 	except psycopg2.DatabaseError as e:
 		print(f'Error {e}')
 
+async def command_processed(message, author):
+	try:
+		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+		cursor = connection.cursor()
+		user = await getUser(author.id)
+		total_amount = user[12] + 1
+		cursor.execute(f"UPDATE users SET commands_used = {total_amount} WHERE ID = '{author.id}'")
+		connection.commit()
+		if total_amount == 5:
+			em = guilded.Embed(title="Hello {}!", description="I see that you like using me! Here are some links that may be useful to you!\n\n**Links**\n[Support server](https://www.guilded.gg/i/E6g8PZG2) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
+			await message.reply(embed=em, private=True)
+		connection.close()
+	except psycopg2.DatabaseError as e:
+		print(f'Error {e}')
+
+
 async def check_leaderboard_author(author):
 	try:
 		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
@@ -329,7 +345,7 @@ async def _check_values(author):
 		user = await getUser(author.id)
 		if user == None:
 			cursor = connection.cursor()
-			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0)")
+			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0)")
 			connection.commit()
 		await _check_inventory(author)
 		connection.close()

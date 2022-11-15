@@ -13,6 +13,7 @@ from modules.generator import _check_values_member
 from modules.generator import _check_values_guild
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
+from modules.generator import command_processed
 import psycopg2
 from core.database import *
 from tools.db_funcs import getUser
@@ -929,12 +930,14 @@ class Economy(commands.Cog):
 			return
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		members_support_guild = await support_guild.fetch_members()
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await _check_inventory(author)
+		await command_processed(message, author)
 
 		LB_bans = fileIO("economy/bans.json", "load")
 
