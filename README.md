@@ -4,7 +4,7 @@
 
 <p align = "left">
 
-A warm welcome to the ***Rayz*** development team! <br />
+A warm welcome to the **Rayz** development team! <br />
 Please read this document to understand how to contrbute to this project!
 
 ## > Preface
