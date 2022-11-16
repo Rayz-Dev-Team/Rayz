@@ -275,8 +275,7 @@ class Economy(commands.Cog):
 							connection.commit()
 							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(answer1.message.content, i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
-					except:
-						except Exception as e:
+					except Exception as e:
 						print(''.join(traceback.format_exception(e, e, e.__traceback__)))
 						em = guilded.Embed(description="There was an error processing your command.", color=0x363942)
 						em.set_footer(text="Accepted response: Must be an integer.")
