@@ -246,7 +246,9 @@ class Economy(commands.Cog):
 			user = await getUser(author.id)
 			info = user[10]
 			cursor = connection.cursor()
+			accepted_responses = []
 			for key, i in prices["items"].items():
+				accepted_responses.append(i["display_name"].lower())
 				if i["display_name"].lower() == item.lower():
 					em = guilded.Embed(description="How many would you like to sell?", color=0x363942)
 					em.set_footer(text="Accepted response: Must be an integer.")
@@ -280,10 +282,10 @@ class Economy(commands.Cog):
 						em = guilded.Embed(description="There was an error processing your command.", color=0x363942)
 						em.set_footer(text="Accepted response: Must be an integer.")
 						await ctx.reply(embed=em)
-				else:
-					em = guilded.Embed(title="Uh oh!", description="That item cannot be sold.", color=0x363942)
-					em.set_footer(text="Check the prices command to see what you can sell.")
-					await ctx.reply(embed=em)
+			if not item.lower() in accepted_responses:
+				em = guilded.Embed(title="Uh oh!", description="That item cannot be sold.", color=0x363942)
+				em.set_footer(text="Check the prices command to see what you can sell.")
+				await ctx.reply(embed=em)
 			connection.close()
 		except Exception as e:
 			print(''.join(traceback.format_exception(e, e, e.__traceback__)))
