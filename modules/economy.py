@@ -259,16 +259,16 @@ class Economy(commands.Cog):
 							em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
 							await ctx.reply(embed=em)
 							return
-						if int(answer1.message.content) > info["inventory"]["items"][i]["amount"]:
+						if int(answer1.message.content) > info["inventory"]["items"][key]["amount"]:
 							em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
-							price_amount = prices["items"][i]["price"]
+							price_amount = prices["items"][key]["price"]
 							total_amount = price_amount * int(answer1.message.content)
 							pocket_before = user[6]
 							pocket_after = pocket_before + total_amount
-							loss_amount = info["inventory"]["items"][i]["amount"] - int(answer1.message.content)
-							info["inventory"]["items"][i]["amount"] = loss_amount
+							loss_amount = info["inventory"]["items"][key]["amount"] - int(answer1.message.content)
+							info["inventory"]["items"][key]["amount"] = loss_amount
 							infoJson = json.dumps(info)
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 							cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
