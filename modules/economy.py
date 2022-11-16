@@ -4,6 +4,7 @@ import typing
 import json
 import random
 import math
+import traceback
 import time
 from tools.dataIO import fileIO
 from modules.generator import _check_values
@@ -282,9 +283,8 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
 				await ctx.reply(embed=em)
 			connection.close()
-		except psycopg2.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.reply(embed=em)
+		except Exception as e:
+			print(''.join(traceback.format_exception(e, e, e.__traceback__)))
 
 	@commands.command()
 	async def give(self, ctx, item: str=None, amount: int=None, *, member: guilded.Member=None):
