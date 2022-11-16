@@ -253,23 +253,23 @@ class Economy(commands.Cog):
 			user = await getUser(author.id)
 			info = user[10]
 			cursor = connection.cursor()
-			for i in item_list["items"]:
+			for i in prices["items"]:
 				if i["display_name"].lower() == item.lower():
 					if amount > info["inventory"]["items"][i]["amount"]:
 						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 						await ctx.reply(embed=em)
 					else:
-						price_amount = prices["items"][item.lower()]["price"]
+						price_amount = prices["items"][i]["price"]
 						total_amount = price_amount * amount
 						pocket_before = user[6]
 						pocket_after = pocket_before + total_amount
-						loss_amount = info["inventory"]["items"][item.lower()]["amount"] - amount
-						info["inventory"]["items"][item.lower()]["amount"] = loss_amount
+						loss_amount = info["inventory"]["items"][i]["amount"] - amount
+						info["inventory"]["items"][i]["amount"] = loss_amount
 						infoJson = json.dumps(info)
 						cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 						connection.commit()
-						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 						await ctx.reply(embed=em)
 			else:
 				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
