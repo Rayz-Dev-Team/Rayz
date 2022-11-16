@@ -21,3 +21,5 @@ modules/demo.py
 
 # Ignoring extra packages installed in venv
 env
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
