@@ -240,10 +240,6 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
-		if amount < 0:
-			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-			await ctx.reply(embed=em)
-			return
 		try:
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
@@ -258,6 +254,10 @@ class Economy(commands.Cog):
 						return m.message.author == message.author
 					answer1 = await self.bot.wait_for("message", check=pred)
 					try:
+						if int(answer1.message.content) < 0:
+							em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
+							await ctx.reply(embed=em)
+							return
 						if int(answer1.message.content) > info["inventory"]["items"][i]["amount"]:
 							em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 							await ctx.reply(embed=em)
