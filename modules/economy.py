@@ -278,7 +278,6 @@ class Economy(commands.Cog):
 							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 					except Exception as e:
-						print(''.join(traceback.format_exception(e, e, e.__traceback__)))
 						em = guilded.Embed(description="There was an error processing your command.", color=0x363942)
 						em.set_footer(text="Accepted response: Must be an integer.")
 						await ctx.reply(embed=em)
@@ -287,8 +286,9 @@ class Economy(commands.Cog):
 				em.set_footer(text="Check the prices command to see what you can sell.")
 				await ctx.reply(embed=em)
 			connection.close()
-		except Exception as e:
-			print(''.join(traceback.format_exception(e, e, e.__traceback__)))
+		except psycopg2.DatabaseError as e:
+			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def give(self, ctx, item: str=None, amount: int=None, *, member: guilded.Member=None):
@@ -467,7 +467,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
 				if user[3] <= 0:
@@ -475,7 +475,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[3]:
-					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{:,} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				bank_bal = int(amount)
@@ -488,7 +488,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
@@ -531,7 +531,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = 0 WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{:,} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
 				if user[6] <= 0:
@@ -539,7 +539,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[6]:
-					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{:,} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				bank_bal = user[3] + int(amount)
@@ -549,7 +549,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{:,} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
