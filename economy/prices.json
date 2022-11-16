@@ -1,20 +1,48 @@
 {
-    "items" : {
-        "candycorn" : {
-            "price" : 30,
-            "display_name" : "Candycorn"
+    "items": {
+        "candycorn": {
+            "price": 30,
+            "display_name": "Candycorn"
         },
-        "jolly_ranchers" : {
-            "price" : 45,
-            "display_name" : "Jolly ranchers"
+        "jolly_ranchers": {
+            "price": 45,
+            "display_name": "Jolly ranchers"
         },
-        "nerds" : {
-            "price" : 1500,
-            "display_name" : "Nerds"
+        "nerds": {
+            "price": 1500,
+            "display_name": "Nerds"
         },
-        "dots" : {
-            "price" : 90000,
-            "display_name" : "Dots"
+        "dots": {
+            "price": 90000,
+            "display_name": "Dots"
+        },
+        "string": {
+            "price": 3,
+            "display_name": "String"
+        },
+        "dead_batteries": {
+            "price": 6,
+            "display_name": "Dead batteries"
+        },
+        "dirty_socks": {
+            "price": 12,
+            "display_name": "Dirty socks"
+        },
+        "broken_cpu": {
+            "price": 20,
+            "display_name": "Broken CPU"
+        },
+        "bank_lock": {
+            "price": 120,
+            "display_name": "Bank lock"
+        },
+        "lock_picker": {
+            "price": 250,
+            "display_name": "Lockpick"
+        },
+        "dark_chest": {
+            "price": 150000,
+            "display_name": "Dark chest"
         }
     }
 }

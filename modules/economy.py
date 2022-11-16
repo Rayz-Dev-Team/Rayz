@@ -210,11 +210,25 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
 		item_list = fileIO("economy/items.json", "load")
-		say_list = []
-		for key, i in prices["items"].items():
-			say_list.append("{} - {:,} {}".format(item_list["items"][key]["display_name"], i["price"], economy_settings["currency_name"]))
-		em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
-		await ctx.reply(embed=em)
+		try:
+			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
+			user = await getUser(author.id)
+			info = user[10]
+			cursor = connection.cursor()
+			current_item_list = []
+			for i in info["inventory"]["items"]:
+				current_item_list.append(i)
+			say_list = []
+			for key, i in prices["items"].items():
+				if key in current_item_list:
+					if info["inventory"]["items"][key]["amount"] > 0:
+						say_list.append("{} - {:,} {}".format(item_list["items"][key]["display_name"], i["price"], economy_settings["currency_name"]))
+			em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
+			em.set_footer(text="This only shows the items in your inventory that are currently sellable.")
+			await ctx.reply(embed=em)
+		except psycopg2.DatabaseError as e:
+			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def sell(self, ctx, *, item: str=None):
