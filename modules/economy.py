@@ -273,7 +273,7 @@ class Economy(commands.Cog):
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 							cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 							connection.commit()
-							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), key["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 					except Exception as e:
 						print(''.join(traceback.format_exception(e, e, e.__traceback__)))
