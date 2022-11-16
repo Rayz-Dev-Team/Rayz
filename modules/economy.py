@@ -280,7 +280,8 @@ class Economy(commands.Cog):
 						em.set_footer(text="Accepted response: Must be an integer.")
 						await ctx.reply(embed=em)
 			else:
-				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="That item cannot be sold.", color=0x363942)
+				em.set_footer(text="Check the prices command to see what you can sell.")
 				await ctx.reply(embed=em)
 			connection.close()
 		except Exception as e:
