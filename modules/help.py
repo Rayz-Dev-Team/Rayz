@@ -21,7 +21,7 @@ class Help(commands.Cog):
 			# connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			# unused connection removed to save bandwidth and resources and speed up
 			server = await getServer(guild.id)
-			last_update = "Last updated on 09/26/2022 at 10:15AM PST."
+			last_update = "Last updated on 11/16/2022 at 3:02PM PST."
 			prefix = server[3]
 			if server[7] == "Enabled":
 				fun_status = "Enabled"
@@ -52,7 +52,7 @@ class Help(commands.Cog):
 				em.set_footer(text=f"{last_update}")
 				await ctx.send(embed=em)
 			elif num == "4" or num.lower() == "economy" or num.lower() == "economy module":
-				em = guilded.Embed(title="Economy Module | Page 4", description=f"[optional] • <required>\n\n__**Economy**__ [{economy_status}]\n{prefix}profile `-` Display profile, and balance information.\n{prefix}work `-` Work for currency\n{prefix}weekly `-` Receive your weekly bonus.\n{prefix}gift <amount> <user> `-` Gift currency to a user.\n{prefix}withdraw <amount/all> `-` Make a withdraw from your bank.\n{prefix}deposit <amount/all> `-` Make a depsosit into your bank.\n{prefix}stats `-` View the economy settings for the guild.\n{prefix}leaderboard `-` Display the global economy leaderboard.\n{prefix}gift <amount> <user> `-` Gift others your currency.\n{prefix}give <item> <amount> <user> `-` Give others your items\nsell <item> <amount> `-` Sell your items.\nprices `-` View a list of sellable item prices.\ninventory `-` View your inventory.\nslots <amount> `-` Bet and play some slots.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
+				em = guilded.Embed(title="Economy Module | Page 4", description=f"[optional] • <required>\n\n__**Economy**__ [{economy_status}]\n{prefix}profile `-` Display profile, and balance information.\n{prefix}work `-` Work for currency\n{prefix}weekly `-` Receive your weekly bonus.\n{prefix}gift <amount> <user> `-` Gift currency to a user.\n{prefix}withdraw <amount/all> `-` Make a withdraw from your bank.\n{prefix}deposit <amount/all> `-` Make a depsosit into your bank.\n{prefix}stats `-` View the economy settings for the guild.\n{prefix}leaderboard `-` Display the global economy leaderboard.\n{prefix}gift <amount> <user> `-` Gift others your currency.\n{prefix}give <item> <amount> <user> `-` Give others your items\nsell <item> `-` Sell your items.\nprices `-` View a list of sellable item prices.\ninventory `-` View your inventory.\nslots <amount> `-` Bet and play some slots.\n\n[Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)\n[Support Server](https://www.guilded.gg/i/E0LaMb4E)", color=0x363942)
 				em.set_footer(text=f"{last_update}")
 				await ctx.send(embed=em)
 		except psycopg2.DatabaseError as e:
