@@ -246,7 +246,7 @@ class Economy(commands.Cog):
 			user = await getUser(author.id)
 			info = user[10]
 			cursor = connection.cursor()
-			for i in prices["items"]:
+			for key, i in prices["items"].items():
 				if i["display_name"].lower() == item.lower():
 					em = guilded.Embed(description="How many would you like to sell?", color=0x363942)
 					em.set_footer(text="Accepted response: Must be an integer.")
