@@ -216,7 +216,7 @@ class Economy(commands.Cog):
 		await ctx.reply(embed=em)
 
 	@commands.command()
-	async def sell(self, ctx, *, item: str=None):
+	async def sell(self, ctx, item: str=None):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
