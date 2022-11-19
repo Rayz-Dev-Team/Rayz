@@ -28,5 +28,7 @@
     "legendary_chance": 1,
     "unreal_min": 1,
     "unreal_max": 10000,
-    "unreal_chance": 1
+    "unreal_chance": 1,
+    "drop_slots_chance": 100,
+    "drop_slots_chance_decrease": 15
 }

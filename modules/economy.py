@@ -1015,6 +1015,15 @@ class Economy(commands.Cog):
 			unreal_max = economy_settings["unreal_max"]
 			unreal_chance = economy_settings["unreal_chance"]
 
+			# Static is so you can pull the original chance range amount (So it can easily be changed)
+			static_drop_slot_chance = economy_settings["drop_slots_chance"]
+
+			# Drained meaning the part that will be decreased (Pulled from Static)
+			drained_drop_slot_chance = static_drop_slot_chance
+
+			# How much the required range for a valid drop decreases by
+			decrease_drop_slot_chance = economy_settings["drop_slots_chance_decrease"]
+
 			connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			user = await getUser(author.id)
 			server = await getServer(guild.id)
@@ -1038,6 +1047,46 @@ class Economy(commands.Cog):
 						booster_amount += 2
 					elif 30058569 in roles_list:
 						booster_amount += 1.5
+
+
+				drop_slots = 0
+				drop_slots_fail = False
+				drop_counter = 1
+
+				def calculatedropslots():
+					nonlocal drop_slots_fail
+					nonlocal drop_slots
+					nonlocal drained_drop_slot_chance
+					nonlocal static_drop_slot_chance
+					nonlocal decrease_drop_slot_chance
+					if drop_slots_fail == False:
+						gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
+						if gen_for_drop:
+							drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
+							drop_slots += 1
+							return calculatedropslots
+						else:
+							drop_slots_fail = True
+
+				while drop_slots_fail == False:
+					calculatedropslots()
+				
+				def calculatedropslots():
+					nonlocal drop_slots_fail
+					nonlocal drop_slots
+					nonlocal drained_drop_slot_chance
+					nonlocal static_drop_slot_chance
+					nonlocal decrease_drop_slot_chance
+					if drop_slots_fail == False:
+						gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
+						if gen_for_drop:
+							drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
+							drop_slots += 1
+							return calculatedropslots
+						else:
+							drop_slots_fail = True
+				calculatedropslots()
+
 				multiplier_amount = float(server[5]) + booster_amount
 				gen_amount = random.randint(15, 150) * int(multiplier_amount)
 				gen_amount = math.ceil(gen_amount)
@@ -1068,91 +1117,106 @@ class Economy(commands.Cog):
 					if not work_event_lines_list == []:
 						message_list.append("__**Halloween event bonus:**__\n{}\n".format(" \n".join(work_event_lines_list)))
 				drops_lines_list = []
-				common_chance_gen = roll_chance(common_min, common_max, common_chance)
-				rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-				epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-				legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-				unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-				if common_chance_gen:
-					drop_list = []
-					for i in item_drops["common"]:
-						drop_list.append(i)
-					drop = random.choice(drop_list)
-					amount = random.randint(item_drops["common"][drop]["min_amount"], item_drops["common"][drop]["max_amount"])
-					if not drop in info["inventory"]["items"]:
-						info["inventory"]["items"][drop] = {
-							"amount": amount
-						}
-						new_amount = amount
-						drops_lines_list.append("[Common] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
+				for i in range(drop_slots):
+					common_chance_gen = roll_chance(common_min, common_max, common_chance)
+					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
+					if unreal_chance_gen:
+						drop_list = []
+						for i in item_drops["unreal"]:
+							drop_list.append(i)
+						drop = random.choice(drop_list)
+						amount = random.randint(item_drops["unreal"][drop]["min_amount"], item_drops["unreal"][drop]["max_amount"])
+						if not drop in info["inventory"]["items"]:
+							info["inventory"]["items"][drop] = {
+								"amount": amount
+							}
+							new_amount = amount
+							drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+						else:
+							new_amount = info["inventory"]["items"][drop]["amount"] + amount
+							info["inventory"]["items"][drop]["amount"] += amount
+							drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+					elif legendary_chance_gen:
+						drop_list = []
+						for i in item_drops["legendary"]:
+							drop_list.append(i)
+						drop = random.choice(drop_list)
+						amount = random.randint(item_drops["legendary"][drop]["min_amount"], item_drops["legendary"][drop]["max_amount"])
+						if not drop in info["inventory"]["items"]:
+							info["inventory"]["items"][drop] = {
+								"amount": amount
+							}
+							new_amount = amount
+							drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+						else:
+							new_amount = info["inventory"]["items"][drop]["amount"] + amount
+							info["inventory"]["items"][drop]["amount"] += amount
+							drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+					elif epic_chance_gen:
+						drop_list = []
+						for i in item_drops["epic"]:
+							drop_list.append(i)
+						drop = random.choice(drop_list)
+						amount = random.randint(item_drops["epic"][drop]["min_amount"], item_drops["epic"][drop]["max_amount"])
+						if not drop in info["inventory"]["items"]:
+							info["inventory"]["items"][drop] = {
+								"amount": amount
+							}
+							new_amount = amount
+							drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+						else:
+							new_amount = info["inventory"]["items"][drop]["amount"] + amount
+							info["inventory"]["items"][drop]["amount"] += amount
+							drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+					elif rare_chance_gen:
+						drop_list = []
+						for i in item_drops["rare"]:
+							drop_list.append(i)
+						drop = random.choice(drop_list)
+						amount = random.randint(item_drops["rare"][drop]["min_amount"], item_drops["rare"][drop]["max_amount"])
+						if not drop in info["inventory"]["items"]:
+							info["inventory"]["items"][drop] = {
+								"amount": amount
+							}
+							new_amount = amount
+							drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+						else:
+							new_amount = info["inventory"]["items"][drop]["amount"] + amount
+							info["inventory"]["items"][drop]["amount"] += amount
+							drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+					elif common_chance_gen:
+						drop_list = []
+						for i in item_drops["common"]:
+							drop_list.append(i)
+						drop = random.choice(drop_list)
+						amount = random.randint(item_drops["common"][drop]["min_amount"], item_drops["common"][drop]["max_amount"])
+						if not drop in info["inventory"]["items"]:
+							info["inventory"]["items"][drop] = {
+								"amount": amount
+							}
+							new_amount = amount
+							drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drop_counter += 1
+						else:
+							new_amount = info["inventory"]["items"][drop]["amount"] + amount
+							info["inventory"]["items"][drop]["amount"] += amount
+							drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount,item_list["items"][drop]["display_name"]))
+							drop_counter += 1
 					else:
-						new_amount = info["inventory"]["items"][drop]["amount"] + amount
-						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Common] +{} {}".format(amount,item_list["items"][drop]["display_name"]))
-				if rare_chance_gen:
-					drop_list = []
-					for i in item_drops["rare"]:
-						drop_list.append(i)
-					drop = random.choice(drop_list)
-					amount = random.randint(item_drops["rare"][drop]["min_amount"], item_drops["rare"][drop]["max_amount"])
-					if not drop in info["inventory"]["items"]:
-						info["inventory"]["items"][drop] = {
-							"amount": amount
-						}
-						new_amount = amount
-						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-					else:
-						new_amount = info["inventory"]["items"][drop]["amount"] + amount
-						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Rare] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if epic_chance_gen:
-					drop_list = []
-					for i in item_drops["epic"]:
-						drop_list.append(i)
-					drop = random.choice(drop_list)
-					amount = random.randint(item_drops["epic"][drop]["min_amount"], item_drops["epic"][drop]["max_amount"])
-					if not drop in info["inventory"]["items"]:
-						info["inventory"]["items"][drop] = {
-							"amount": amount
-						}
-						new_amount = amount
-						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-					else:
-						new_amount = info["inventory"]["items"][drop]["amount"] + amount
-						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[Epic] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if legendary_chance_gen:
-					drop_list = []
-					for i in item_drops["legendary"]:
-						drop_list.append(i)
-					drop = random.choice(drop_list)
-					amount = random.randint(item_drops["legendary"][drop]["min_amount"], item_drops["legendary"][drop]["max_amount"])
-					if not drop in info["inventory"]["items"]:
-						info["inventory"]["items"][drop] = {
-							"amount": amount
-						}
-						new_amount = amount
-						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-					else:
-						new_amount = info["inventory"]["items"][drop]["amount"] + amount
-						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[LEGENDARY] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-				if unreal_chance_gen:
-					drop_list = []
-					for i in item_drops["unreal"]:
-						drop_list.append(i)
-					drop = random.choice(drop_list)
-					amount = random.randint(item_drops["unreal"][drop]["min_amount"], item_drops["unreal"][drop]["max_amount"])
-					if not drop in info["inventory"]["items"]:
-						info["inventory"]["items"][drop] = {
-							"amount": amount
-						}
-						new_amount = amount
-						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
-					else:
-						new_amount = info["inventory"]["items"][drop]["amount"] + amount
-						info["inventory"]["items"][drop]["amount"] += amount
-						drops_lines_list.append("[UNREAL] +{} {}".format(amount, item_list["items"][drop]["display_name"]))
+						drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
+						drop_counter += 1
+
 				if not drops_lines_list == []:
 					message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
 
