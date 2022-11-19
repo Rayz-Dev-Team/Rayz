@@ -317,7 +317,6 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
-		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
@@ -396,6 +395,7 @@ class Economy(commands.Cog):
 		await _check_inventory(author)
 		await command_processed(message, author)
 		LB = fileIO("config/economy_settings.json", "load")
+		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -432,12 +432,12 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {reducted_amount} WHERE ID = '{author.id}'")
 				cursor.execute(f"UPDATE users SET pocket = {new_amount} WHERE ID = '{member.id}'")
 				connection.commit()
-				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, LB["currency_name"], author.id, member.id, amount, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, economy_settings["currency_name"], author.id, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 				em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 				await ctx.reply(embed=em)
-				guild1 = await self.bot.fetch_server("Mldgz04R")
+				guild1 = await self.bot.fetch_server(economy_settings["support_server_id"])
 				channel = await guild1.fetch_channel("82204345-aa8d-487f-8808-17afc525a735")
-				em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 				await channel.send(embed=em)
 			connection.close()
 		except psycopg2.DatabaseError as e:
@@ -481,7 +481,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
 				if user[3] <= 0:
@@ -489,7 +489,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[3]:
-					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{:,} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have {:,} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				bank_bal = int(amount)
@@ -502,7 +502,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew x{:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
@@ -545,7 +545,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = 0 WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{:,} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
 				if user[6] <= 0:
@@ -553,7 +553,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					return
 				if int(amount) > user[6]:
-					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have x{:,} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have {:,} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				bank_bal = user[3] + int(amount)
@@ -563,7 +563,7 @@ class Economy(commands.Cog):
 				cursor.execute(f"UPDATE users SET pocket = {pocket_val} WHERE ID = '{author.id}'")
 				connection.commit()
 				connection.close()
-				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited x{:,} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
+				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg2.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
@@ -726,8 +726,6 @@ class Economy(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
-		support_guild = await self.bot.fetch_server("Mldgz04R")
-		members_support_guild = await support_guild.fetch_members()
 		if author.bot:
 			return
 		await _check_values(author)
@@ -737,6 +735,8 @@ class Economy(commands.Cog):
 		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
+		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_guild = await support_guild.fetch_members()
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
@@ -805,8 +805,6 @@ class Economy(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
-		support_guild = await self.bot.fetch_server("Mldgz04R")
-		members_support_guild = await support_guild.fetch_members()
 		if author.bot:
 			return
 		await _check_values(author)
@@ -818,6 +816,8 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
 		item_list = fileIO("economy/items.json", "load")
+		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_guild = await support_guild.fetch_members()
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
@@ -976,8 +976,6 @@ class Economy(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
-		support_guild = await self.bot.fetch_server("Mldgz04R")
-		members_support_guild = await support_guild.fetch_members()
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
@@ -994,6 +992,9 @@ class Economy(commands.Cog):
 			economy_settings = fileIO("config/economy_settings.json", "load")
 			item_drops = fileIO("economy/drops.json", "load")
 			item_list = fileIO("economy/items.json", "load")
+
+			support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
+			members_support_guild = await support_guild.fetch_members()
 
 			common_min = economy_settings["common_min"]
 			common_max = economy_settings["common_max"]
@@ -1014,6 +1015,14 @@ class Economy(commands.Cog):
 			unreal_min = economy_settings["unreal_min"]
 			unreal_max = economy_settings["unreal_max"]
 			unreal_chance = economy_settings["unreal_chance"]
+
+			tier_1_sub_role_id = economy_settings["tier_1_sub_role_id"]
+			tier_2_sub_role_id = economy_settings["tier_2_sub_role_id"]
+			tier_3_sub_role_id = economy_settings["tier_3_sub_role_id"]
+
+			tier_1_sub_boost_amount = economy_settings["tier_1_sub_boost_amount"]
+			tier_2_sub_boost_amount = economy_settings["tier_2_sub_boost_amount"]
+			tier_3_sub_boost_amount = economy_settings["tier_3_sub_boost_amount"]
 
 			# Static is so you can pull the original chance range amount (So it can easily be changed)
 			static_drop_slot_chance = economy_settings["drop_slots_chance"]
@@ -1041,12 +1050,12 @@ class Economy(commands.Cog):
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
-					if 30058586 in roles_list:
-						booster_amount += 3
-					elif 30058578 in roles_list:
-						booster_amount += 2
-					elif 30058569 in roles_list:
-						booster_amount += 1.5
+					if tier_3_sub_role_id in roles_list:
+						booster_amount += tier_3_sub_boost_amount
+					elif tier_2_sub_role_id in roles_list:
+						booster_amount += tier_2_sub_boost_amount
+					elif tier_1_sub_role_id in roles_list:
+						booster_amount += tier_1_sub_boost_amount
 
 
 				drop_slots = 0
@@ -1223,14 +1232,14 @@ class Economy(commands.Cog):
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
-					if 30058586 in roles_list:
-						edit_message = ":Gold_tier: Elite supporter boosted you by `x3`"
+					if tier_3_sub_role_id in roles_list:
+						edit_message = ":Gold_tier: Elite supporter boosted you by `x{}`".format(tier_3_sub_boost_amount)
 						message_list.append(edit_message)
-					elif 30058578 in roles_list:
-						edit_message = ":Silver_tier: Epic supporter boosted you by `x2`"
+					elif tier_2_sub_role_id in roles_list:
+						edit_message = ":Silver_tier: Epic supporter boosted you by `x{}`".format(tier_2_sub_boost_amount)
 						message_list.append(edit_message)
-					elif 30058569 in roles_list:
-						edit_message = ":Copper_tier: Supporter boosted you by `x1.5`"
+					elif tier_1_sub_role_id in roles_list:
+						edit_message = ":Copper_tier: Supporter boosted you by `x{}`".format(tier_1_sub_boost_amount)
 						message_list.append(edit_message)
 				if server[4] == "True":
 					edit_message = ":handshake: Server partner boosted you by `x{}`".format(float(server[5]))

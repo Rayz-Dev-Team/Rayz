@@ -1,5 +1,5 @@
 {
-    "global_multiplier" : 1,
+    "global_multiplier": 1,
     "currency_name": "coins",
     "halloween_event": "False",
     "christmas_event": "False",
@@ -30,5 +30,12 @@
     "unreal_max": 10000,
     "unreal_chance": 1,
     "drop_slots_chance": 100,
-    "drop_slots_chance_decrease": 15
+    "drop_slots_chance_decrease": 15,
+    "support_server_id": "ABC",
+    "tier_1_sub_role_id": 123,
+    "tier_2_sub_role_id": 123,
+    "tier_3_sub_role_id": 123,
+    "tier_1_sub_boost_amount": 1.5,
+    "tier_2_sub_boost_amount": 2,
+    "tier_3_sub_boost_amount":  3
 }
