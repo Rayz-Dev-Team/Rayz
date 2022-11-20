@@ -284,7 +284,7 @@ async def _check_values_member(member):
 		user = await getUser(member.id)
 		if user == None:
 			cursor = connection.cursor()
-			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0)")
+			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
 			connection.commit()
 		await _check_inventory_member(member)
 		connection.close()
@@ -346,7 +346,7 @@ async def _check_values(author):
 		user = await getUser(author.id)
 		if user == None:
 			cursor = connection.cursor()
-			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0)")
+			cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
 			connection.commit()
 		await _check_inventory(author)
 		connection.close()

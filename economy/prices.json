@@ -43,6 +43,66 @@
         "dark_chest": {
             "price": 150000,
             "display_name": "Dark chest"
+        },
+        "quartz": {
+            "price": 35,
+            "display_name": "Quartz"
+        },
+        "black_opal": {
+            "price": 35,
+            "display_name": "Black Opal"
+        },
+        "amber": {
+            "price": 35,
+            "display_name": "Amber"
+        },
+        "rubies": {
+            "price": 75,
+            "display_name": "Ruby"
+        },
+        "grandidierite": {
+            "price": 75,
+            "display_name": "Grandidierite"
+        },
+        "alexandrite": {
+            "price": 75,
+            "display_name": "Alexandrite"
+        },
+        "diamond": {
+            "price": 500,
+            "display_name": "Diamond"
+        },
+        "jadeite": {
+            "price": 500,
+            "display_name": "Jadeite"
+        },
+        "painite": {
+            "price": 500,
+            "display_name": "Painite"
+        },
+        "emerald": {
+            "price": 5000,
+            "display_name": "Emerald"
+        },
+        "sapphire": {
+            "price": 5000,
+            "display_name": "Sapphire"
+        },
+        "tanzanite": {
+            "price": 50000,
+            "display_name": "Tanzanite"
+        },
+        "benitoite": {
+            "price": 50000,
+            "display_name": "Benitoite"
+        },
+        "poudretteite": {
+            "price": 50000,
+            "display_name": "Poudretteite"
+        },
+        "taaffeite": {
+            "price": 50000,
+            "display_name": "Taaffeite"
         }
     }
 }

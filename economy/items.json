@@ -1,84 +1,159 @@
 {
-  "items": {
-    "candycorn": {
-      "display_name": "Candycorn",
-      "description": "[Common] Part of the 2022 Halloween event series.",
-      "rarity": "Common"
-    },
-    "jolly_ranchers": {
-      "display_name": "Jolly ranchers",
-      "description": "[Rare] Part of the 2022 Halloween event series.",
-      "rarity": "Rare"
-    },
-    "nerds": {
-      "display_name": "Nerds",
-      "description": "[Epic] Part of the 2022 Halloween event series.",
-      "rarity": "Epic"
-    },
-    "dots": {
-      "display_name": "Dots",
-      "description": "[LEGENDARY] Part of the 2022 Halloween event series.",
-      "rarity": "LEGENDARY"
-    },
-    "string": {
-      "display_name": "String",
-      "description": "Just string.",
-      "rarity": "Common"
-    },
-    "broken_cpu": {
-      "display_name": "Broken CPU",
-      "description": "010121",
-      "rarity": "Common"
-    },
-    "dirty_socks": {
-      "display_name": "Dirty socks",
-      "description": "Dang, these things smell.",
-      "rarity": "Common"
-    },
-    "dead_batteries": {
-      "display_name": "Dead batteries",
-      "description": "No charge left.",
-      "rarity": "Common"
-    },
-    "shovel": {
-      "display_name": "Shovel",
-      "description": "Dig things up?",
-      "rarity": "Rare"
-    },
-    "golden_chest": {
-      "display_name": "Golden chest",
-      "description": "A locked chest. Who knows what's inside.",
-      "rarity": "Rare"
-    },
-    "trick_or_treat_bag": {
-      "display_name": "Trick or treat bag",
-      "description": "Do you dare to open it?",
-      "rarity": "Rare"
-    },
-    "bank_lock": {
-      "display_name": "Bank lock",
-      "description": "Secure your bank.",
-      "rarity": "Epic"
-    },
-    "lock_picker": {
-      "display_name": "Lockpick",
-      "description": "Unlock things!",
-      "rarity": "Epic"
-    },
-    "2022_halloween_event_chest": {
-      "display_name": "2022 Halloween event series chest",
-      "description": "Contains higher drop rates specific to the 2022 halloween items, and a higher amount of drops.",
-      "rarity": "LEGENDARY"
-    },
-    "dark_chest": {
-      "display_name": "Dark chest",
-      "description": "A locked chest. Who knows what's inside.",
-      "rarity": "LEGENDARY"
-    },
-    "hacking_tablet": {
-      "display_name": "Hacking tablet",
-      "description": "I would watch others do this before you attempt. Capable of hacking banks.",
-      "rarity": "UNREAL"
+    "items": {
+        "candycorn": {
+            "display_name": "Candycorn",
+            "description": "[Common] Part of the 2022 Halloween event series.",
+            "rarity": "Common"
+        },
+        "jolly_ranchers": {
+            "display_name": "Jolly ranchers",
+            "description": "[Rare] Part of the 2022 Halloween event series.",
+            "rarity": "Rare"
+        },
+        "nerds": {
+            "display_name": "Nerds",
+            "description": "[Epic] Part of the 2022 Halloween event series.",
+            "rarity": "Epic"
+        },
+        "dots": {
+            "display_name": "Dots",
+            "description": "[LEGENDARY] Part of the 2022 Halloween event series.",
+            "rarity": "LEGENDARY"
+        },
+        "string": {
+            "display_name": "String",
+            "description": "Just string.",
+            "rarity": "Common"
+        },
+        "broken_cpu": {
+            "display_name": "Broken CPU",
+            "description": "010121",
+            "rarity": "Common"
+        },
+        "dirty_socks": {
+            "display_name": "Dirty socks",
+            "description": "Dang, these things smell.",
+            "rarity": "Common"
+        },
+        "dead_batteries": {
+            "display_name": "Dead batteries",
+            "description": "No charge left.",
+            "rarity": "Common"
+        },
+        "shovel": {
+            "display_name": "Shovel",
+            "description": "Dig things up?",
+            "rarity": "Rare"
+        },
+        "golden_chest": {
+            "display_name": "Golden chest",
+            "description": "A locked chest. Who knows what's inside.",
+            "rarity": "Rare"
+        },
+        "trick_or_treat_bag": {
+            "display_name": "Trick or treat bag",
+            "description": "Do you dare to open it?",
+            "rarity": "Rare"
+        },
+        "bank_lock": {
+            "display_name": "Bank lock",
+            "description": "Secure your bank.",
+            "rarity": "Epic"
+        },
+        "lock_picker": {
+            "display_name": "Lockpick",
+            "description": "Unlock things!",
+            "rarity": "Epic"
+        },
+        "2022_halloween_event_chest": {
+            "display_name": "2022 Halloween event series chest",
+            "description": "Contains higher drop rates specific to the 2022 halloween items, and a higher amount of drops.",
+            "rarity": "LEGENDARY"
+        },
+        "dark_chest": {
+            "display_name": "Dark chest",
+            "description": "A locked chest. Who knows what's inside.",
+            "rarity": "LEGENDARY"
+        },
+        "hacking_tablet": {
+            "display_name": "Hacking tablet",
+            "description": "I would watch others do this before you attempt. Capable of hacking banks.",
+            "rarity": "UNREAL"
+        },
+        "quartz": {
+            "display_name": "Quartz",
+            "description": "Can be dug",
+            "rarity": "Common"
+        },
+        "black_opal": {
+            "display_name": "Black Opal",
+            "description": "Can be dug",
+            "rarity": "Common"
+        },
+        "amber": {
+            "display_name": "Amber",
+            "description": "Can be dug",
+            "rarity": "Common"
+        },
+        "rubies": {
+            "display_name": "Ruby",
+            "description": "Can be dug",
+            "rarity": "Rare"
+        },
+        "grandidierite": {
+            "display_name": "Grandidierite",
+            "description": "Can be dug",
+            "rarity": "Rare"
+        },
+        "alexandrite": {
+            "display_name": "Alexandrite",
+            "description": "Can be dug",
+            "rarity": "Rare"
+        },
+        "diamond": {
+            "display_name": "Diamond",
+            "description": "Can be dug",
+            "rarity": "Epic"
+        },
+        "jadeite": {
+            "display_name": "Jadeite",
+            "description": "Can be dug",
+            "rarity": "Epic"
+        },
+        "painite": {
+            "display_name": "Painite",
+            "description": "Can be dug",
+            "rarity": "Epic"
+        },
+        "emerald": {
+            "display_name": "Emerald",
+            "description": "Can be dug",
+            "rarity": "LEGENDARY"
+        },
+        "sapphire": {
+            "display_name": "Sapphire",
+            "description": "Can be dug",
+            "rarity": "LEGENDARY"
+        },
+        "tanzanite": {
+            "display_name": "Tanzanite",
+            "description": "Can be dug",
+            "rarity": "UNREAL"
+        },
+        "benitoite": {
+            "display_name": "Benitoite",
+            "description": "Can be dug",
+            "rarity": "UNREAL"
+        },
+        "poudretteite": {
+            "display_name": "Poudretteite",
+            "description": "Can be dug",
+            "rarity": "UNREAL"
+        },
+        "taaffeite": {
+            "display_name": "Taaffeite",
+            "description": "Can be dug",
+            "rarity": "UNREAL"
+        }
     }
-  }
 }

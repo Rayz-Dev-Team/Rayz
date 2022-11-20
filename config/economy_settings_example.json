@@ -31,6 +31,8 @@
     "unreal_chance": 1,
     "drop_slots_chance": 100,
     "drop_slots_chance_decrease": 15,
+    "dig_drop_slots_chance": 100,
+    "dig_drop_slots_chance_decrease": 25,
     "support_server_id": "ABC",
     "tier_1_sub_role_id": 123,
     "tier_2_sub_role_id": 123,

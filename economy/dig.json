@@ -1,0 +1,72 @@
+{
+    "common": {
+        "quartz": {
+            "min_amount": 1,
+            "max_amount": 30
+        },
+        "black_opal": {
+            "min_amount": 1,
+            "max_amount": 30
+        },
+        "amber": {
+            "min_amount": 1,
+            "max_amount": 30
+        }
+    },
+    "rare": {
+        "rubies": {
+            "min_amount": 10,
+            "max_amount": 40
+        },
+        "grandidierite": {
+            "min_amount": 10,
+            "max_amount": 40
+        },
+        "alexandrite": {
+            "min_amount": 10,
+            "max_amount": 40
+        }
+    },
+    "epic": {
+        "diamond": {
+            "min_amount": 5,
+            "max_amount": 15
+        },
+        "jadeite": {
+            "min_amount": 5,
+            "max_amount": 15
+        },
+        "painite": {
+            "min_amount": 5,
+            "max_amount": 15
+        }
+    },
+    "legendary": {
+        "emerald": {
+            "min_amount": 1,
+            "max_amount": 15
+        },
+        "sapphire": {
+            "min_amount": 1,
+            "max_amount": 15
+        }
+    },
+    "unreal": {
+        "tanzanite": {
+            "min_amount": 1,
+            "max_amount": 5
+        },
+        "benitoite": {
+            "min_amount": 1,
+            "max_amount": 5
+        },
+        "poudretteite": {
+            "min_amount": 1,
+            "max_amount": 5
+        },
+        "taaffeite": {
+            "min_amount": 1,
+            "max_amount": 5
+        }
+    }
+}
