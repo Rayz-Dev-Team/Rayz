@@ -1,6 +1,6 @@
 import guilded
 from guilded.ext import commands
-from modules.generator import _check_values_guild
+from modules.generator import *
 import psycopg2
 from core.database import *
 from tools.db_funcs import getServer
