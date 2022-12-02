@@ -1,10 +1,16 @@
 import guilded
 from guilded.ext import commands
-from modules.generator import *
+from modules.generator import _check_values
+from modules.generator import _check_inventory
+from modules.generator import _check_inventory_member
+from modules.generator import _check_values_member
+from modules.generator import _check_values_guild
+from modules.generator import check_leaderboard
+from modules.generator import check_leaderboard_author
+from modules.generator import command_processed
 import psycopg2
 from core.database import *
 from tools.db_funcs import getServer
-from modules.generator import command_processed
 
 class Help(commands.Cog):
 	def __init__(self,bot):
