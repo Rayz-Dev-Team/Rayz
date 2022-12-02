@@ -4,6 +4,7 @@
     "halloween_event": "False",
     "christmas_event": "False",
     "easter_event": "False",
+    "thanksgiving_event":  "False",
     "slots_bet_min": 100,
     "slots_bet_max": 15000,
     "slots_win_multiplier": 15,

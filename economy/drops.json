@@ -38,10 +38,11 @@
         }
     },
     "legendary" : {
-        "dark_chest" : {
-            "min_amount" : 1,
-            "max_amount" : 1
-        }
+        "dark_chest": {
+            "min_amount": 1,
+            "max_amount": 1
+        },
+
     },
     "unreal" : {
         "hacking_tablet" : {

@@ -154,6 +154,11 @@
             "display_name": "Taaffeite",
             "description": "Can be dug",
             "rarity": "UNREAL"
+        },
+        "golden_turkey": {
+            "display_name": "Golden Turkey",
+            "description": "A very valuable, golden Turkey",
+            "rarity":  "LEGENDARY"
         }
     }
 }

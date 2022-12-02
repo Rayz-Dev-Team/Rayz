@@ -1310,11 +1310,34 @@ class Economy(commands.Cog):
 				gen_amount = math.ceil(gen_amount)
 				message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
 				info = user[10]
+				thanksgiving_drop_lines_list = []
+				if economy_settings["thanksgiving_event"] == "True":
+					common_chance_gen = roll_chance(common_min, common_max, common_chance)
+					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
+					turkey_gen_amount = random.randint(1, 2)
+					if legendary_chance_gen:
+						if not "golden_turkey" in info["inventory"]["items"]:
+							info["inventory"]["items"]["golden_turkey"] = {
+								"amount": turkey_gen_amount
+							}
+							new_amount = turkey_gen_amount
+							thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(amount, item_list["items"]["golden_turkey"]["display_name"]))
+						else:
+							new_amount = info["inventory"]["items"]["golden_turkey"]["amount"] + amount
+							info["inventory"]["items"]["golden_turkey"]["amount"] += amount
+							thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(amount, item_list["items"]["golden_turkey"]["display_name"]))
+					else:
+						thanksgiving_drop_lines_list.append("Nothing found.")
+
 				if economy_settings["halloween_event"] == "True":
 					common_chance_gen = roll_chance(common_min, common_max, common_chance)
 					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
 					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
 					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
 					candycorn_gen_amount = random.randint(1, 10)
 					work_event_lines_list = []
 					if common_chance_gen <= common_chance:
@@ -1434,6 +1457,9 @@ class Economy(commands.Cog):
 					else:
 						drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
 						drop_counter += 1
+
+				if not thanksgiving_drop_lines_list == []:
+					message_list.append("__**Thanksgiving event drop:**__\n`-` {}\n".format(" \n".join(thanksgiving_drop_lines_list)))
 
 				if not drops_lines_list == []:
 					message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
