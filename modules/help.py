@@ -17,6 +17,7 @@ class Help(commands.Cog):
 		message = ctx.message
 		await _check_values_guild(guild)
 		await command_processed(message, author)
+		await _check_values(author)
 		try:
 			# connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 			# unused connection removed to save bandwidth and resources and speed up
