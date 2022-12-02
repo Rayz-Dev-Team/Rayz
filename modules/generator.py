@@ -47,6 +47,11 @@ class Generator(commands.Cog):
 	async def on_bot_add(self, event: guilded.BotAddEvent):
 		guild = event.server
 		user = event.member
+		author = user
+		await _check_values(author)
+		await _check_values_guild(guild)
+		await check_leaderboard(author)
+		await _check_inventory(author)
 		send_channel = await guild.fetch_default_channel()
 		support_guild = await self.bot.fetch_server("Mldgz04R")
 		channel = await support_guild.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
