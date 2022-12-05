@@ -1,7 +1,5 @@
-import psycopg2
 import psycopg
 from psycopg_pool import ConnectionPool 
-from psycopg import connect, ClientCursor
 from core.database import *
 
 ## Get User

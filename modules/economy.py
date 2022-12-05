@@ -15,9 +15,8 @@ from modules.generator import _check_values_guild
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
 from modules.generator import command_processed
-import psycopg2
 import psycopg
-from psycopg_pool import ConnectionPool 
+from psycopg_pool import ConnectionPool
 from core.database import *
 from tools.db_funcs import getUser
 from tools.db_funcs import getServer
@@ -93,17 +92,11 @@ class Economy(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		await _check_values_guild(guild)
-		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			user = await getUser(author.id)
-			if user[10] == None:
-				await ctx.reply("Is None")
-			else:
-				await ctx.reply(user[10])
-			connection.close()
-		except psycopg.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.reply(embed=em)
+		user = await getUser(author.id)
+		if user[10] == None:
+			await ctx.reply("Is None")
+		else:
+			await ctx.reply(user[10])
 
 	@commands.command()
 	async def add(self, ctx, member: guilded.Member=None, *, amount: int=None):
@@ -116,7 +109,7 @@ class Economy(commands.Cog):
 		if not author.id in DEV["Developer"]:
 			return
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+			connection = asyncConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				cursor = conn.cursor()
@@ -126,7 +119,7 @@ class Economy(commands.Cog):
 				connection.close()
 				em = guilded.Embed(title="Woo hoo!".format(author.name), description="<@{}> has been given {:,} coins".format(member.id, amount), color=0x363942)
 				await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -193,7 +186,7 @@ class Economy(commands.Cog):
 					em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 					await ctx.reply(embed=em)
 					connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -231,7 +224,7 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
 				em.set_footer(text="This only shows the items in your inventory that are currently sellable.")
 				await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -306,7 +299,7 @@ class Economy(commands.Cog):
 					em.set_footer(text="Check the prices command to see what you can sell.")
 					await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -384,7 +377,7 @@ class Economy(commands.Cog):
 				else:
 					em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
 					await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -448,7 +441,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 					await channel.send(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -513,7 +506,7 @@ class Economy(commands.Cog):
 					connection.close()
 					em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -575,7 +568,7 @@ class Economy(commands.Cog):
 					connection.close()
 					em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -640,7 +633,7 @@ class Economy(commands.Cog):
 				em.set_footer(text=f"Page {page}/{numOfPages}")
 				await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -729,7 +722,7 @@ class Economy(commands.Cog):
 					h, m = divmod(m, 60)
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot rob someone yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
 					await ctx.reply(embed=em)
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -809,7 +802,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot get your weekly bonus yet.\n`Time left:` {}d {}m {}s".format(author.id, int(d), int(m), int(s)), color=0x363942)
 					await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -979,7 +972,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot use slots yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
 					await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -1204,7 +1197,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
 					await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -1514,7 +1507,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot work yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
 					await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -1548,7 +1541,7 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user[6], economy_settings["currency_name"], user[3], economy_settings["currency_name"], user[5], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
 				await ctx.reply(embed=em)
 				conn.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
@@ -1591,7 +1584,7 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
 				await ctx.reply(embed=em)
 				connection.close()
-		except psycopg2.DatabaseError as e:
+		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
