@@ -50,4 +50,4 @@ def GetServerCount():
 
 if __name__ == "__main__":
     print("API online.")
-    app.run(debug=True )
+    app.run(debug=True)
