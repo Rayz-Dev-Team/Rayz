@@ -27,7 +27,7 @@ class Moderation(commands.Cog):
 			try:
 				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 				with connection.connection() as conn:
-					server = await getServer()
+					server = await getServer(guild.id)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE servers SET welcome_message = '{arg}' WHERE ID = '{guild.id}'")
 					conn.commit()
@@ -52,7 +52,7 @@ class Moderation(commands.Cog):
 				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 				with connection.connection() as conn:
 					cursor = conn.cursor()
-					server = await getServer()
+					server = await getServer(guild.id)
 					if not arg == None:
 						if arg.lower() == "none" or arg.lower() == "reset":
 							cursor.execute(f"UPDATE servers SET log_traffic = 'None' WHERE ID = '{guild.id}'")
@@ -83,7 +83,7 @@ class Moderation(commands.Cog):
 				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 				with connection.connection() as conn:
 					cursor = conn.cursor()
-					server = await getServer()
+					server = await getServer(guild.id)
 					if not arg == None:
 						if arg.lower() == "none" or arg.lower() == "reset":
 							cursor.execute(f"UPDATE servers SET log_actions = 'None' WHERE ID = '{guild.id}'")
@@ -114,7 +114,7 @@ class Moderation(commands.Cog):
 				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 				with connection.connection() as conn:
 					cursor = conn.cursor()
-					server = await getServer()
+					server = await getServer(guild.id)
 					if not arg == None:
 						if arg.lower() == "none" or arg.lower() == "reset":
 							cursor.execute(f"UPDATE servers SET welcome_channel = 'None' WHERE ID = '{guild.id}'")
@@ -148,7 +148,7 @@ class Moderation(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				cursor = conn.cursor()
-				server = await getServer()
+				server = await getServer(guild.id)
 				list_people = []
 				list_people_display = []
 				if server[9] == None:
@@ -188,7 +188,7 @@ class Moderation(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				cursor = conn.cursor()
-				server = await getServer()
+				server = await getServer(guild.id)
 				prefix = server[3]
 				channel = ctx.message.channel
 				if server[6] == "Disabled":
@@ -244,7 +244,7 @@ class Moderation(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				cursor = conn.cursor()
-				server = await getServer()
+				server = await getServer(guild.id)
 				prefix = server[3]
 				channel = ctx.message.channel
 				if server[6] == "Disabled":
