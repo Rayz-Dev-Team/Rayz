@@ -28,15 +28,15 @@ class Generator(commands.Cog):
 		if server["log_actions"] == None:
 			return
 		if banned == True:
-			channel = await guild.fetch_channel(server[15])
+			channel = await guild.fetch_channel(server["log_actions"])
 			em = guilded.Embed(title="A member was banned:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 		elif kicked  == True:
-			channel = await guild.fetch_channel(server[15])
+			channel = await guild.fetch_channel(server["log_actions"])
 			em = guilded.Embed(title="A member was kicked:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 		else:
-			channel = await guild.fetch_channel(server[14])
+			channel = await guild.fetch_channel(server["log_traffic"])
 			em = guilded.Embed(title="A member has left:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 
