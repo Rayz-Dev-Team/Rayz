@@ -9,6 +9,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from psycopg.rows import dict_row
 
 class General(commands.Cog):
 	def __init__(self,bot):
@@ -65,8 +66,8 @@ class General(commands.Cog):
 				server = await getServer(guild.id)
 				cursor = conn.cursor()
 				if author == guild.owner:
-					fun_status = server[7]
-					mod_status = server[6]
+					fun_status = server["fun_module"]
+					mod_status = server["moderation_module"]
 					if fun_status == "Enabled":
 						fun_status = ":Rayz_Enabled:"
 					elif fun_status == "Disabled":
@@ -82,15 +83,15 @@ class General(commands.Cog):
 						return m.message.author == message.author
 					answer1 = await self.bot.wait_for("message", check=pred)
 					if answer1.message.content.lower() == "d" or answer1.message.content.lower() == "disable":
-						if server[7] == "Disabled" and server[6] == "Disabled":
+						if server["fun_module"] == "Disabled" and server["moderation_module"] == "Disabled":
 							em = guilded.Embed(title="Uh oh!", description="There are no modules to disable. All modules are already disabled.", color=0x363942)
 							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 							await ctx.reply(embed=em)
 						else:
 							modules = []
-							if server[7] == "Enabled":
+							if server["fun_module"] == "Enabled":
 								modules.append("fun")
-							if server[6] == "Enabled":
+							if server["moderation_module"] == "Enabled":
 								modules.append("moderation")
 							em = guilded.Embed(title="Module config", description="Which module would you like to disable?\n{}".format(" \n".join(modules)), color=0x363942)
 							await ctx.reply(embed=em)
@@ -99,13 +100,13 @@ class General(commands.Cog):
 							answer1 = await self.bot.wait_for("message", check=pred)
 							if answer1.message.content.lower() in modules:
 								if answer1.message.content.lower() == "fun":
-									if server[7] == "Enabled":
+									if server["fun_module"] == "Enabled":
 										cursor.execute(f"UPDATE servers SET fun_module = 'Disabled' WHERE ID = '{guild.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Fun module has been disabled.", color=0x363942)
 										await ctx.reply(embed=em)
 								elif answer1.message.content.lower() == "moderation":
-									if server[6] == "Enabled":
+									if server["moderation_module"] == "Enabled":
 										cursor.execute(f"UPDATE servers SET moderation_module = 'Disabled' WHERE ID = '{guild.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Moderation module has been disabled.", color=0x363942)
@@ -123,15 +124,15 @@ class General(commands.Cog):
 								em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 								await ctx.reply(embed=em)
 					elif answer1.message.content.lower() == "e" or answer1.message.content.lower() == "enable":
-						if server[7] == "Enabled" and server[6] == "Enabled":
+						if server["fun_module"] == "Enabled" and server["moderation_module"] == "Enabled":
 							em = guilded.Embed(title="Uh oh!", description="There are no modules to enable. All modules are already enabled.", color=0x363942)
 							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 							await ctx.reply(embed=em)
 						else:
 							modules = []
-							if server[7] == "Disabled":
+							if server["fun_module"] == "Disabled":
 								modules.append("fun")
-							if server[6] == "Disabled":
+							if server["moderation_module"] == "Disabled":
 								modules.append("moderation")
 							em = guilded.Embed(title="Module config", description="Which module would you like to enable?\n{}".format(" \n".join(modules)), color=0x363942)
 							await ctx.reply(embed=em)
@@ -140,13 +141,13 @@ class General(commands.Cog):
 							answer1 = await self.bot.wait_for("message", check=pred)
 							if answer1.message.content.lower() in modules:
 								if answer1.message.content.lower() == "fun":
-									if server[7] == "Disabled":
+									if server["fun_module"] == "Disabled":
 										cursor.execute(f"UPDATE servers SET fun_module = 'Enabled' WHERE ID = '{guild.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Fun module has been enabled.", color=0x363942)
 										await ctx.reply(embed=em)
 								elif answer1.message.content.lower() == "moderation":
-									if server[6] == "Disabled":
+									if server["moderation_module"] == "Disabled":
 										cursor.execute(f"UPDATE servers SET moderation_module = 'Enabled' WHERE ID = '{guild.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Moderation module has been enabled.", color=0x363942)

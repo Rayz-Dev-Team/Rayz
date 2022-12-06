@@ -9,6 +9,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from psycopg.rows import dict_row
 
 class Generator(commands.Cog):
 	def __init__(self,bot):
@@ -24,7 +25,7 @@ class Generator(commands.Cog):
 			return
 		await _check_values_guild(guild)
 		server = await getServer(guild.id)
-		if server[15] == None:
+		if server["log_actions"] == None:
 			return
 		if banned == True:
 			channel = await guild.fetch_channel(server[15])
@@ -65,15 +66,15 @@ class Generator(commands.Cog):
 			return
 		await _check_values_guild(guild)
 		server = await getServer(guild.id)
-		if server[13] == None:
+		if server["welcome_channel"] == None:
 			pass
 		else:
 			try:
 				channel = await guild.fetch_channel(server[13])
-				if server[12] == None:
+				if server["welcome_message"] == None:
 					welcome_message = f"Welcome <@{author.id}> to {guild.name}!"
 				else:
-					welcome_message = server[12]
+					welcome_message = server["welcome_message"]
 				try:
 					welcome_message = welcome_message.replace("<user>", f"<@{author.id}>")
 				except:
@@ -90,7 +91,7 @@ class Generator(commands.Cog):
 				await channel.send(embed=em)
 			except:
 				pass
-			if server[14] == None:
+			if server["log_traffic"] == None:
 				pass
 			else:
 				channel = await guild.fetch_channel(server[14])
@@ -111,11 +112,11 @@ class Generator(commands.Cog):
 		info = fileIO("config/banned_words.json", "load")
 
 		server = await getServer(guild.id)
-		prefix = server[3]
-		if server[1] == None:
+		prefix = server["server_prefix"]
+		if server["custom_blocked_words"] == None:
 			append_it = ["111111111111111111111111111111111111111111111111111111111111111111111111111111111"]
 		else:
-			append_it = server[1]
+			append_it = server["custom_blocked_words"]
 		swearwords = info["banned_words"] + append_it
 		message_safe = True
 		things_said = []
@@ -135,14 +136,14 @@ class Generator(commands.Cog):
 					moderator_or_not = True
 					await message.add_reaction(90002078)
 			if moderator_or_not == False:
-				if server[2] == "None":
+				if server["logs_channel_id"] == "None":
 					em = guilded.Embed(title="A blacklisted word was used.", description="<@{}> **said:**\n{}".format(author.id, " \n".join(things_said)), color=0x363942)
 					em.set_footer(icon_url= "https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160s", text="Make sure to set a log channel to get the full details next time.")
 					await message.reply(embed=em, private=True)
 					await message.delete()
 				else:
 					try:
-						channel = await guild.fetch_channel(server[2])
+						channel = await guild.fetch_channel(server["logs_channel_id"])
 						em = guilded.Embed(title="A blacklisted word was used.", description="**User** {}\n**ID:** {}\n\n__**READ AT YOUR OWN RISK**__\n`Captures:`\n{}\n\n`Message content:`\n{}".format(author.name, author.id, " \n".join(captures), message.content), color=0x363942)
 						await channel.send(embed=em)
 						em = guilded.Embed(title="A blacklisted word was used.", description="<@{}> **said:**\n{}".format(author.id, " \n".join(things_said)), color=0x363942)
@@ -165,7 +166,7 @@ class Generator(commands.Cog):
 			return
 
 		server = await getServer(guild.id)
-		if server[2] is not None:
+		if server["logs_channel_id"] is not None:
 			try:
 				channel = await guild.fetch_channel(server[2])
 				em = guilded.Embed(title="Message edit event.", description="**User:** {}\n**ID:** {}\n\n__**EDIT EVENT**__\n`Before:`\n{}\n\n`After:`\n{}".format(author.name, author.id, before.content, after.content), color=0x363942)
@@ -185,9 +186,9 @@ class Generator(commands.Cog):
 			return
 
 		server = await getServer(guild.id)
-		if server[2] is not None:
+		if server["logs_channel_id"] is not None:
 			try:
-				channel = await guild.fetch_channel(server[2])
+				channel = await guild.fetch_channel(server["logs_channel_id"])
 				em = guilded.Embed(title="Message delete event.", description="**User:** {}\n**ID:** {}\n\n__**DELETE EVENT**__\n**Deleted message:** {}".format(author.name, author.id, message.content), color=0x363942)
 				await channel.send(embed=em)
 			except:
@@ -203,7 +204,7 @@ async def _check_inventory(author):
 		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 		with connection.connection() as conn:
 			cursor = conn.cursor()
-			if user[10] == None:
+			if user["inventory"] == None or user["inventory"] == {}:
 				new_account = {
 					"inventory": {
 						"items": {},
@@ -216,7 +217,7 @@ async def _check_inventory(author):
 				conn.commit()
 				connection.close()
 			else:
-				info = user[10]
+				info = user["inventory"]
 				for i in item_list["items"]:
 					if not i in info["inventory"]["items"]:
 						info["inventory"]["items"][i] = {
@@ -236,7 +237,7 @@ async def _check_inventory_member(member):
 		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 		with connection.connection() as conn:
 			cursor = conn.cursor()
-			if user[10] == None:
+			if user["inventory"] == None:
 				new_account = {
 					"inventory": {
 						"items": {},
@@ -248,7 +249,7 @@ async def _check_inventory_member(member):
 				conn.commit()
 				connection.close()
 			else:
-				info = user[10]
+				info = user["inventory"]
 				for i in item_list["items"]:
 					if not i in info["inventory"]["items"]:
 						info["inventory"]["items"][i] = {
@@ -295,7 +296,7 @@ async def command_processed(message, author):
 		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 		with connection.connection() as conn:
 			cursor = conn.cursor()
-			total_amount = user[12] + 1
+			total_amount = user["commands_used"] + 1
 			cursor.execute(f"UPDATE users SET commands_used = {total_amount} WHERE ID = '{author.id}'")
 			conn.commit()
 			if total_amount == 5:
@@ -313,7 +314,7 @@ async def check_leaderboard_author(author):
 		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 		with connection.connection() as conn:
 			cursor = conn.cursor()
-			new_LB_bal = user[3] + user[6]
+			new_LB_bal = user["bank"] + user["pocket"]
 			cursor.execute(f"UPDATE leaderboard SET currency = {new_LB_bal} WHERE ID = '{author.id}'")
 			cursor.execute(f"UPDATE leaderboard SET name = '{author.name}' WHERE ID = '{author.id}'")
 			conn.commit()

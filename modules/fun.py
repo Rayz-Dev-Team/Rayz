@@ -8,6 +8,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from psycopg.rows import dict_row
 
 class Fun(commands.Cog):
 	def __init__(self, bot):
@@ -27,7 +28,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -66,7 +67,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -105,7 +106,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -147,7 +148,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -189,7 +190,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -231,7 +232,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -273,7 +274,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -315,7 +316,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -354,7 +355,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -393,7 +394,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -432,7 +433,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -471,7 +472,7 @@ class Fun(commands.Cog):
 		matching = await match_check(ctx, member, action)
 		if not matching:
 			server = await getServer(guild.id)
-			if server[7] == "Disabled":
+			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
 				await message.delete()
@@ -507,7 +508,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -540,7 +541,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -573,7 +574,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -606,7 +607,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -639,7 +640,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -672,7 +673,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -705,7 +706,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -738,7 +739,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -771,7 +772,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -804,7 +805,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -837,7 +838,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -870,7 +871,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()
@@ -903,7 +904,7 @@ class Fun(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		if server[7] == "Disabled":
+		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
 			await message.delete()

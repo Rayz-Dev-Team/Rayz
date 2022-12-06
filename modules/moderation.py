@@ -8,6 +8,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from psycopg.rows import dict_row
 
 class Moderation(commands.Cog):
 	def __init__(self,bot):
@@ -385,29 +386,24 @@ class Moderation(commands.Cog):
 			moderator_or_not = True
 		if moderator_or_not == True:
 			try:
-				connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
-				async def getServer():
-					with connection:
+				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+				with connection.connection() as conn:
+					server = await getServer(guild.id)
+					if not arg == None:
+						if arg.lower() == "none" or arg.lower() == "reset":
+							cursor = connection.cursor()
+							cursor.execute(f"UPDATE servers SET logs_channel_id = 'None' WHERE ID = '{guild.id}'")
+							connection.commit()
+							em = guilded.Embed(title="Logs channel reset", description="None", color=0x363942)
+							await ctx.reply(embed=em)
+					else:
 						cursor = connection.cursor()
-						cursor.execute(f"SELECT * FROM servers WHERE ID = '{guild.id}'")
-						content = cursor.fetchone()
-					return content
-				server = await getServer()
-				if not arg == None:
-					if arg.lower() == "none" or arg.lower() == "reset":
-						cursor = connection.cursor()
-						cursor.execute(f"UPDATE servers SET logs_channel_id = 'None' WHERE ID = '{guild.id}'")
+						cursor.execute(f"UPDATE servers SET logs_channel_id = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
 						connection.commit()
-						em = guilded.Embed(title="Logs channel reset", description="None", color=0x363942)
+						em = guilded.Embed(title="Logs channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-				else:
-					cursor = connection.cursor()
-					cursor.execute(f"UPDATE servers SET logs_channel_id = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
-					connection.commit()
-					em = guilded.Embed(title="Logs channel set", description="{}".format(ctx.channel.id), color=0x363942)
-					await ctx.reply(embed=em)
-				connection.close()
-			except psycopg2.DatabaseError as e:
+					connection.close()
+			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have mod perms to set a log channel.", color=0x363942)

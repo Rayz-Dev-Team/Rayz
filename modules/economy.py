@@ -20,6 +20,7 @@ from psycopg_pool import ConnectionPool
 from core.database import *
 from tools.db_funcs import getUser
 from tools.db_funcs import getServer
+from psycopg.rows import dict_row
 from tools.functions import paginate
 from tools.functions import roll_chance
 
@@ -93,10 +94,11 @@ class Economy(commands.Cog):
 		guild = ctx.guild
 		await _check_values_guild(guild)
 		user = await getUser(author.id)
-		if user[10] == None:
+		print(user)
+		if user["inventory"] == None or user["inventory"]["inventory"] == None:
 			await ctx.reply("Is None")
 		else:
-			await ctx.reply(user[10])
+			await ctx.reply(user["inventory"]["inventory"])
 
 	@commands.command()
 	async def add(self, ctx, member: guilded.Member=None, *, amount: int=None):
@@ -113,7 +115,7 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				cursor = conn.cursor()
-				total_amount = user[3] + amount
+				total_amount = user["bank"] + amount
 				cursor.execute(f"UPDATE users SET bank = {total_amount} WHERE ID = '{member.id}'")
 				conn.commit()
 				connection.close()
@@ -163,10 +165,10 @@ class Economy(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				server = await getServer(guild.id)
-				if server[4] == "False":
+				if server["partner_status"] == "False":
 					cursor = conn.cursor()
 					add_value = 0.25
-					add_data = float(server[5]) + add_value
+					add_data = float(server["economy_multiplier"]) + add_value
 					cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{guild.id}'")
 					cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
 					conn.commit()
@@ -175,10 +177,10 @@ class Economy(commands.Cog):
 					em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
 					await ctx.reply(embed=em)
 					connection.close()
-				elif server[4] == "True":
+				elif server["partner_status"] == "True":
 					cursor = conn.cursor()
 					neg_value = 0.25
-					add_data = float(server[5]) - neg_value
+					add_data = float(server["economy_multiplier"]) - neg_value
 					cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{guild.id}'")
 					cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
 					conn.commit()
@@ -211,7 +213,7 @@ class Economy(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				user = await getUser(author.id)
-				info = user[10]
+				info = user["inventory"]
 				cursor = conn.cursor()
 				current_item_list = []
 				for i in info["inventory"]["items"]:
@@ -257,7 +259,7 @@ class Economy(commands.Cog):
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				user = await getUser(author.id)
-				info = user[10]
+				info = user["inventory"]
 				cursor = conn.cursor()
 				accepted_responses = []
 				for key, i in prices["items"].items():
@@ -280,7 +282,7 @@ class Economy(commands.Cog):
 							else:
 								price_amount = prices["items"][key]["price"]
 								total_amount = price_amount * int(answer1.message.content)
-								pocket_before = user[6]
+								pocket_before = user["pocket"]
 								pocket_after = pocket_before + total_amount
 								loss_amount = info["inventory"]["items"][key]["amount"] - int(answer1.message.content)
 								info["inventory"]["items"][key]["amount"] = loss_amount
@@ -344,7 +346,7 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				member1 = await getUser(member.id)
-				info = user[10]
+				info = user["inventory"]
 				accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
 				cursor = conn.cursor()
 				if item.lower() in accepted_responses:
@@ -352,7 +354,7 @@ class Economy(commands.Cog):
 						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 						await ctx.reply(embed=em)
 					else:
-						info_member = member1[10]
+						info_member = member1["inventory"]
 						#Take from info
 						info_amount = info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]
 						new_info_amount = info_amount - amount
@@ -419,8 +421,8 @@ class Economy(commands.Cog):
 				user = await getUser(author.id)
 				member1 = await getUser(member.id)
 				server = await getServer(guild.id)
-				prefix = server[3]
-				if amount > user[6]:
+				prefix = server["server_prefix"]
+				if amount > user["pocket"]:
 					em = guilded.Embed(title="Uh oh!", description="`You don't have {:,} in your pocket.".format(amount), color=0x363942)
 					await ctx.reply(embed=em)
 					return
@@ -428,8 +430,8 @@ class Economy(commands.Cog):
 					if member1 == None:
 						await _check_values_member(member)
 					cursor = conn.cursor()
-					reducted_amount = user[6] - amount
-					new_amount = member1[6] + amount
+					reducted_amount = user["pocket"] - amount
+					new_amount = member1["pocket"] + amount
 					cursor.execute(f"UPDATE users SET pocket = {reducted_amount} WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {new_amount} WHERE ID = '{member.id}'")
 					conn.commit()
@@ -469,13 +471,13 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				if amount.lower() == "all":
-					if user[3] <= 0:
+					if user["bank"] <= 0:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					bank_bal = user[3]
+					bank_bal = user["bank"]
 					bank_bal = bank_bal
-					pocket_val = user[6]
+					pocket_val = user["pocket"]
 					pocket_val = pocket_val
 					new_pocket_val = pocket_val + bank_bal
 					cursor = conn.cursor()
@@ -490,15 +492,15 @@ class Economy(commands.Cog):
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					if int(amount) > user[3]:
+					if int(amount) > user["bank"]:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have {:,} {} in your bank to withdraw.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 						await ctx.reply(embed=em)
 						return
 					bank_bal = int(amount)
-					pocket_val = user[6]
+					pocket_val = user["pocket"]
 					pocket_val = pocket_val
 					new_pocket_val = pocket_val + bank_bal
-					new_bank_bal = user[3] - int(amount)
+					new_bank_bal = user["bank"] - int(amount)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = {new_bank_bal} WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
@@ -537,12 +539,12 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				if amount.lower() == "all":
-					if user[6] <= 0:
+					if user["pocket"] <= 0:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, your pocket balance is 0.".format(author.id), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					bank_bal = user[6]
-					bank_new_bal = user[3] + user[6]
+					bank_bal = user["pocket"]
+					bank_new_bal = user["bank"] + user["pocket"]
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = '{bank_new_bal}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = 0 WHERE ID = '{author.id}'")
@@ -551,16 +553,16 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 				else:
-					if user[6] <= 0:
+					if user["pocket"] <= 0:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, your pocket balance is 0.".format(author.id), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					if int(amount) > user[6]:
+					if int(amount) > user["pocket"]:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, you don't have {:,} {} in your pocket into deposit.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					bank_bal = user[3] + int(amount)
-					pocket_val = user[6] - int(amount)
+					bank_bal = user["bank"] + int(amount)
+					pocket_val = user["pocket"] - int(amount)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = '{bank_bal}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {pocket_val} WHERE ID = '{author.id}'")
@@ -667,7 +669,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					connection.close()
 					return
-				prefix = server[3]
+				prefix = server["server_prefix"]
 				if author == member:
 					em = guilded.Embed(title="Uh oh!", description="You cannot rob yourself. Smhhhhhhh", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -680,9 +682,9 @@ class Economy(commands.Cog):
 				if user == None:
 					await _check_values(author)
 				curr_time = time.time()
-				delta = float(curr_time) - float(user[8])
+				delta = float(curr_time) - float(user["rob_timeout"])
 				if delta >= 900.0 and delta>0:
-					if user[6] >= 250:
+					if user["pocket"] >= 250:
 						if member1[6] < 250:
 							em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, economy_settings["currency_name"]), color=0x363942)
 							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -692,9 +694,9 @@ class Economy(commands.Cog):
 							num = num
 							random_rob = random.randint(1, 250)
 							random_rob = random_rob
-							new_member_calc = member1[6] - random_rob
-							new_user_calc = user[6] + random_rob
-							new_user_calc_caught = user[6] - random_rob
+							new_member_calc = member1["pocket"] - random_rob
+							new_user_calc = user["pocket"] + random_rob
+							new_user_calc_caught = user["pocket"] - random_rob
 							if num > 6:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET pocket = '{new_member_calc}' WHERE ID = '{member.id}'")
@@ -754,7 +756,7 @@ class Economy(commands.Cog):
 				if user == None:
 					await _check_values(author)
 				gen_amount = random.randint(5000, 12000)
-				multiplier_amount = float(server[5])
+				multiplier_amount = float(server["economy_multiplier"])
 				edit_message = None
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
@@ -785,10 +787,10 @@ class Economy(commands.Cog):
 							em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 					else:
 						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
-					if server[5] > 1:
-						em.set_footer(text="The multiplier in this server boosted you by x{}".format(server[5]))
+					if server["economy_multiplier"] > 1:
+						em.set_footer(text="The multiplier in this server boosted you by x{}".format(server["economy_multiplier"]))
 					await ctx.reply(embed=em)
-					gen_amount = user[6] + gen_amount
+					gen_amount = user["pocket"] + gen_amount
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET pocket = '{gen_amount}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET weekly_timeout = '{curr_time}' WHERE ID = '{author.id}'")
@@ -833,7 +835,7 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				server = await getServer(guild.id)
-				prefix = server[3]
+				prefix = server["server_prefix"]
 
 				slots_bet_min = economy_settings["slots_bet_min"]
 				slots_bet_max = economy_settings["slots_bet_max"]
@@ -853,7 +855,7 @@ class Economy(commands.Cog):
 					curr_cooldown = 5
 				else:
 					curr_cooldown = 10
-				delta = float(curr_time) - float(user[11])
+				delta = float(curr_time) - float(user["slots_timeout"])
 				if delta >= curr_cooldown and delta>0:
 					if amount == None:
 						em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x{} bonus.\nJACKPOT `-` x{} bonus\n\nUse `{}slots <amount>` to place a bet.".format(slots_win_multiplier, slots_jackpot_multiplier, prefix), color=0x363942)
@@ -863,7 +865,7 @@ class Economy(commands.Cog):
 						em = guilded.Embed(title="Uh oh!", description="Your bet was out of range. Acceptable range is `{:,}-{:,}`".format(slots_bet_min, slots_bet_max), color=0x363942)
 						await ctx.reply(embed=em)
 						return
-					if amount > user[6]:
+					if amount > user["pocket"]:
 						em = guilded.Embed(title="Uh oh!", description="You don't have {:,} in your pocket.".format(amount), color=0x363942)
 						await ctx.reply(embed=em)
 						return
@@ -954,14 +956,14 @@ class Economy(commands.Cog):
 						display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 						em = guilded.Embed(title="WIN!", description="{}\n\n<@{}> WON {}".format(" \n".join(display_output), author.id, win_amount), color=0x363942)
 						await ctx.reply(embed=em)
-						pocket_amount = user[6] + win_amount
+						pocket_amount = user["pocket"] + win_amount
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 						conn.commit()
 					elif win_bool == False:
 						display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 						em = guilded.Embed(title="Lose", description="{}\n\n<@{}> lost a bet of {}".format(" \n".join(display_output), author.id, amount), color=0x363942)
 						await ctx.reply(embed=em)
-						pocket_amount = user[6] - amount
+						pocket_amount = user["pocket"] - amount
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 						cursor.execute(f"UPDATE users SET slots_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 						conn.commit()
@@ -1038,9 +1040,9 @@ class Economy(commands.Cog):
 				curr_time = time.time()
 				curr_cooldown = 30
 
-				info = user[10]
+				info = user["inventory"]
 
-				delta = float(curr_time) - float(user[13])
+				delta = float(curr_time) - float(user["dig_timeout"])
 				if delta >= curr_cooldown and delta>0:
 					if "shovel" in info["inventory"]["items"]:
 						if info["inventory"]["items"]["shovel"]["amount"] > 0:
@@ -1273,11 +1275,11 @@ class Economy(commands.Cog):
 				if user == None:
 					await _check_values(author)
 				curr_time = time.time()
-				if server[4] == "True":
+				if server["partner_status"] == "True":
 					curr_cooldown = 20
 				else:
 					curr_cooldown = 60
-				delta = float(curr_time) - float(user[9])
+				delta = float(curr_time) - float(user["work_timeout"])
 				if delta >= curr_cooldown and delta>0:
 					message_list = []
 					booster_amount = 0
@@ -1314,11 +1316,11 @@ class Economy(commands.Cog):
 					while drop_slots_fail == False:
 						calculatedropslots()
 
-					multiplier_amount = float(server[5]) + booster_amount
+					multiplier_amount = float(server["economy_multiplier"]) + booster_amount
 					gen_amount = random.randint(15, 150) * int(multiplier_amount)
 					gen_amount = math.ceil(gen_amount)
 					message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
-					info = user[10]
+					info = user["inventory"]
 					thanksgiving_drop_lines_list = []
 					if economy_settings["thanksgiving_event"] == "True":
 						common_chance_gen = roll_chance(common_min, common_max, common_chance)
@@ -1485,13 +1487,13 @@ class Economy(commands.Cog):
 						elif tier_1_sub_role_id in roles_list:
 							edit_message = ":Copper_tier: Supporter boosted you by `x{}`".format(tier_1_sub_boost_amount)
 							message_list.append(edit_message)
-					if server[4] == "True":
-						edit_message = ":handshake: Server partner boosted you by `x{}`".format(float(server[5]))
+					if server["partner_status"] == "True":
+						edit_message = ":handshake: Server partner boosted you by `x{}`".format(float(server["economy_multiplier"]))
 						message_list.append(edit_message)
 					em = guilded.Embed(title="{} has worked.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
 					em.set_footer(text="You were boosted by x{}".format(multiplier_amount))
 					await ctx.reply(embed=em)
-					pocket_amount = user[6] + gen_amount
+					pocket_amount = user["pocket"] + gen_amount
 					infoJson = json.dumps(info)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
@@ -1537,8 +1539,8 @@ class Economy(commands.Cog):
 				user = await getUser(author.id)
 				if user == None:
 					await _check_values(author)
-				bank_code = user[4]
-				em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user[6], economy_settings["currency_name"], user[3], economy_settings["currency_name"], user[5], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
+				bank_code = user["bank_access_code"]
+				em = guilded.Embed(title="{}'s bank information".format(author.name), description="__**Currency**__\n`Pocket:` x{:,} {}\n`Bank:` x{:,} {}\n`Bank secure:` {}\n`Bank access code:` {}{}{}{}{}xxxxxxxxxxxxxxxxxxxxxxxxxxx".format(user["pocket"], economy_settings["currency_name"], user["bank"], economy_settings["currency_name"], user["bank_secure"], bank_code[0], bank_code[1], bank_code[2], bank_code[3], bank_code[4]), color=0x363942)
 				await ctx.reply(embed=em)
 				conn.close()
 		except psycopg.DatabaseError as e:
@@ -1570,11 +1572,10 @@ class Economy(commands.Cog):
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				server = await getServer(guild.id)
-				prefix = server[3]
+				prefix = server["server_prefix"]
 				if user == None:
 					await _check_values(author)
-				info = user[10]
-				bank_code = user[4]
+				info = user["inventory"]
 				default_print_list = []
 				for key, i in info["inventory"]["items"].items():
 					if i["amount"] > 0:
@@ -1599,7 +1600,7 @@ class Economy(commands.Cog):
 		await _check_values_guild(guild)
 		await command_processed(message, author)
 		server = await getServer(guild.id)
-		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server[4], server[5]), color=0x363942)
+		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server["partner_status"], server["economy_multiplier"]), color=0x363942)
 		await ctx.reply(embed=em)
 
 def setup(bot):

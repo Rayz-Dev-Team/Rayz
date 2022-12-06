@@ -13,6 +13,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from psycopg.rows import dict_row
 from tools.dataIO import fileIO
 
 class Help(commands.Cog):
@@ -36,19 +37,19 @@ class Help(commands.Cog):
 
 		server = await getServer(guild.id)
 		last_update = "{}".format(config["last_updated"])
-		prefix = server[3]
+		prefix = server["server_prefix"]
 
-		if server[7] == "Enabled":
+		if server["fun_module"] == "Enabled":
 			fun_status = "Enabled"
-		elif server[7] == "Disabled":
+		elif server["fun_module"] == "Disabled":
 			fun_status = "Disabled"
-		if server[6] == "Enabled":
+		if server["moderation_module"] == "Enabled":
 			mod_status = "Enabled"
-		elif server[6] == "Disabled":
+		elif server["moderation_module"] == "Disabled":
 			mod_status = ":Disabled"
-		if server[8] == "Enabled":
+		if server["economy_module"] == "Enabled":
 			economy_status = "Enabled"
-		elif server[8] == "Disabled":
+		elif server["economy_module"] == "Disabled":
 			economy_status = "Disabled"
 
 		display_list = ["`1` • General `-` Enabled", "`2` • Fun `-` {}".format(fun_status), "`3` • Moderation `-` {}".format(mod_status), "`4` • Economy module `-` {}".format(economy_status)]
