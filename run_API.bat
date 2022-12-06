@@ -7,7 +7,7 @@ REM Anti-Crash system.
 :Start
 
 REM Start the bot
-waitress-serve --port=5000 API:app
+python API.py
 echo Press Ctrl-C
 ping -n 1 localhost
 

@@ -851,7 +851,7 @@ class Economy(commands.Cog):
 				slots_jackpot_max = economy_settings["slots_jackpot_max"]
 				slots_jackpot_chance = economy_settings["slots_jackpot_chance"]
 				curr_time = time.time()
-				if server[4] == "True":
+				if server["partner_status"] == "True":
 					curr_cooldown = 5
 				else:
 					curr_cooldown = 10
