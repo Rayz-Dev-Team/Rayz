@@ -776,7 +776,7 @@ class Economy(commands.Cog):
 				gen_amount = math.ceil(gen_amount)
 				curr_time = time.time()
 				curr_cooldown = 604800
-				delta = float(curr_time) - float(user[7])
+				delta = float(curr_time) - float(user["weekly_timeout"])
 				if delta >= curr_cooldown and delta>0:
 					if author in members_support_guild:
 						author_support_guild = await support_guild.fetch_member(author.id)
