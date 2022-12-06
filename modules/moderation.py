@@ -377,6 +377,7 @@ class Moderation(commands.Cog):
 		guild = ctx.guild
 		author = ctx.author
 		channel = ctx.message.channel
+		message = ctx.message
 		await command_processed(message, author)
 		moderator_or_not = False
 		for i in author.roles:
