@@ -70,7 +70,7 @@ class Generator(commands.Cog):
 			pass
 		else:
 			try:
-				channel = await guild.fetch_channel(server[13])
+				channel = await guild.fetch_channel(server["welcome_channel"])
 				if server["welcome_message"] == None:
 					welcome_message = f"Welcome <@{author.id}> to {guild.name}!"
 				else:
@@ -94,7 +94,7 @@ class Generator(commands.Cog):
 			if server["log_traffic"] == None:
 				pass
 			else:
-				channel = await guild.fetch_channel(server[14])
+				channel = await guild.fetch_channel(server["log_traffic"])
 				em = guilded.Embed(title="A member has joined:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 				await channel.send(embed=em)
 
