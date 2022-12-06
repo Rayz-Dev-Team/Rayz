@@ -400,10 +400,10 @@ class Moderation(commands.Cog):
 					else:
 						cursor = conn.cursor()
 						cursor.execute(f"UPDATE servers SET logs_channel_id = '{ctx.channel.id}' WHERE ID = '{guild.id}'")
-						connection.commit()
+						conn.commit()
 						em = guilded.Embed(title="Logs channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-					conn.close()
+					connection.close()
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
