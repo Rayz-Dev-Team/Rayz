@@ -488,7 +488,7 @@ class Economy(commands.Cog):
 					em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 					await ctx.reply(embed=em)
 				else:
-					if user[3] <= 0:
+					if user["bank"] <= 0:
 						em = guilded.Embed(title="Uh oh!", description="<@{}>, your bank balance is 0.".format(author.id), color=0x363942)
 						await ctx.reply(embed=em)
 						return
