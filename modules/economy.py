@@ -70,6 +70,44 @@ class Economy(commands.Cog):
 	#		await ctx.reply(embed=em)
 
 	@commands.command()
+	async def purge_partners(self, ctx):
+		author = ctx.author
+		guild = ctx.guild
+		await _check_values_guild(guild)
+
+		economy_settings = fileIO("config/economy_settings.json", "load")
+		config = fileIO("config/config.json", "load")
+
+		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_guild = await support_guild.fetch_members()
+
+		if author in members_support_guild:
+			author_support_guild = await support_guild.fetch_member(author.id)
+			roles_list = await author_support_guild.fetch_role_ids()
+			if config["developer_role_id"] in roles_list or config["managermanager_role_id"] in roles_list:
+				try:
+					connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+					with connection.connection() as conn:
+						async def getServers():
+							cursor = conn.cursor()
+							cursor.execute("SELECT * FROM servers")
+							content = cursor.fetchall()
+							return content
+						servers = await getServers()
+						for i in servers:
+							if i[4] == "False":
+								pass
+							else:
+								cursor = conn.cursor()
+								add_data = 1.0
+								cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{i[0]}'")
+								cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{i[0]}'")
+				except psycopg.DatabaseError as e:
+					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+					await ctx.reply(embed=em)
+			
+
+	@commands.command()
 	async def test2(self, ctx):
 		author = ctx.author
 		await _check_inventory(author)
@@ -111,7 +149,7 @@ class Economy(commands.Cog):
 		if not author.id in DEV["Developer"]:
 			return
 		try:
-			connection = asyncConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
 				user = await getUser(author.id)
 				cursor = conn.cursor()
@@ -153,44 +191,65 @@ class Economy(commands.Cog):
 	async def toggle_partner(self, ctx):
 		author = ctx.author
 		guild = ctx.guild
+		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
-		DEV = fileIO("config/config.json", "load")
-		if not author.id in DEV["Developer"]:
-			return
-		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
-				server = await getServer(guild.id)
-				if server["partner_status"] == "False":
-					cursor = conn.cursor()
-					add_value = 0.25
-					add_data = float(server["economy_multiplier"]) + add_value
-					cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{guild.id}'")
-					cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
-					conn.commit()
-					em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(guild.name), color=0x363942)
-					em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
-					em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
+
+		economy_settings = fileIO("config/economy_settings.json", "load")
+		config = fileIO("config/config.json", "load")
+
+		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_guild = await support_guild.fetch_members()
+
+		if author in members_support_guild:
+			author_support_guild = await support_guild.fetch_member(author.id)
+			roles_list = await author_support_guild.fetch_role_ids()
+			if config["developer_role_id"] in roles_list or config["managermanager_role_id"] in roles_list:
+				try:
+					connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+					with connection.connection() as conn:
+						cursor = conn.cursor()
+						server = await getServer(guild.id)
+						int_check = 0
+						if server["partner_status"].lower() == "false":
+							em = guilded.Embed(title="Partner management", description="How much would you like to increase the economy boost by?", color=0x363942)
+							em.set_footer(text="Congrats to {} for becoming a partner!".format(guild.name))
+							await ctx.reply(embed=em)
+							def pred(m):
+								return m.message.author == message.author
+							answer1 = await self.bot.wait_for("message", check=pred)
+							try:
+								int_check += int(answer1.message.content)
+							except:
+								em = guilded.Embed(title="Uh oh!", description="Something went wrong. Try again.", color=0x363942)
+								em.set_footer(text="I only accept an int.")
+								await ctx.reply(embed=em)
+								return
+							add_value = int(answer1.message.content)
+							add_data = float(server["economy_multiplier"]) + add_value
+							cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{guild.id}'")
+							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
+							conn.commit()
+							em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(guild.name), color=0x363942)
+							em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
+							em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
+							await ctx.reply(embed=em)
+							connection.close()
+						elif server["partner_status"].lower() == "true":
+							add_data = 1.0
+							cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{guild.id}'")
+							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
+							conn.commit()
+							em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked.".format(guild.name), color=0x363942)
+							em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
+							await ctx.reply(embed=em)
+							connection.close()
+				except psycopg.DatabaseError as e:
+					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 					await ctx.reply(embed=em)
-					connection.close()
-				elif server["partner_status"] == "True":
-					cursor = conn.cursor()
-					neg_value = 0.25
-					add_data = float(server["economy_multiplier"]) - neg_value
-					cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{guild.id}'")
-					cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
-					conn.commit()
-					em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked!".format(guild.name), color=0x363942)
-					em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
-					await ctx.reply(embed=em)
-					connection.close()
-		except psycopg.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-			await ctx.reply(embed=em)
 
 	@commands.command()
 	async def prices(self, ctx):
