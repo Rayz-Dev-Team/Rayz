@@ -89,22 +89,52 @@ class Economy(commands.Cog):
 					connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 					with connection.connection() as conn:
 						async def getServers():
-							cursor = conn.cursor()
+							cursor = conn.cursor(row_factory=dict_row)
 							cursor.execute("SELECT * FROM servers")
 							content = cursor.fetchall()
 							return content
 						servers = await getServers()
 						for i in servers:
-							if i[4] == "False":
+							if i["partner_status"] == "False":
 								pass
 							else:
 								cursor = conn.cursor()
 								add_data = 1.0
-								cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{i[0]}'")
-								cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{i[0]}'")
+								e = i["id"]
+								cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{e}'")
+								cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{e}'")
 				except psycopg.DatabaseError as e:
 					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 					await ctx.reply(embed=em)
+
+	@commands.command()
+	async def partners(self, ctx):
+		author = ctx.author
+		guild = ctx.guild
+		await _check_values_guild(guild)
+		try:
+			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+			with connection.connection() as conn:
+				async def getServers():
+					cursor = conn.cursor(row_factory=dict_row)
+					cursor.execute("SELECT * FROM servers")
+					content = cursor.fetchall()
+					return content
+				servers = await getServers()
+				partners_list = []
+				for i in servers:
+					if i["partner_status"].lower() == "true":
+						try:
+							get_guild = await self.bot.fetch_server(i["id"])
+							vanity_url = get_guild.vanity_url
+							partners_list.append("[{}]({}) `-` **x{}**".format(get_guild.name, vanity_url, i["economy_multiplier"]))
+						except:
+							pass
+				em = guilded.Embed(title="Rayz Partners", description="Server `-` Econonmy boost\n{}".format("\n ".join(partners_list)), color=0x363942)
+				await ctx.reply(embed=em)
+		except psycopg.DatabaseError as e:
+			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+			await ctx.reply(embed=em)
 			
 
 	@commands.command()
