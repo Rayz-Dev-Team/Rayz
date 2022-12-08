@@ -64,7 +64,7 @@ class Help(commands.Cog):
 				display_list.append("`7` • Developer `-` Enabled")
 
 		if num == None:
-			em = guilded.Embed(title="Rayz - Help menu | Command modules", description="[optional] • <required>\n• Filter a page using `{}help 1`\n\n__**Help pages**__\n{}\n\n__**Other**__\n• `{}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)".format(prefix, " \n".join(display_list), prefix), color=0x363942)
+			em = guilded.Embed(title="Rayz - Help menu | Command modules", description="[optional] • <required>\n\n• Filter a page using `{}help 1`\n• Use `{}partners` to view a list of Rayz Partners.\n\n__**Help pages**__\n{}\n\n__**Other**__\n• `{}tos` to view our TOS.\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)".format(prefix, prefix, " \n".join(display_list), prefix), color=0x363942)
 			em.set_footer(text=f"{last_update}")
 			await ctx.send(embed=em)
 		elif num == "1" or num.lower() == "general" or num.lower() == "general module":
