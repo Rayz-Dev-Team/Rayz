@@ -774,7 +774,7 @@ class Economy(commands.Cog):
 				delta = float(curr_time) - float(user["rob_timeout"])
 				if delta >= 900.0 and delta>0:
 					if user["pocket"] >= 250:
-						if member1[6] < 250:
+						if member1["pocket"] < 250:
 							em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, economy_settings["currency_name"]), color=0x363942)
 							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 							await ctx.reply(embed=em)
@@ -1637,7 +1637,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 
 	@commands.command(aliases=["inventory"])
-	async def inv(self, ctx):
+	async def inv(self, ctx, page:int=1):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
@@ -1659,6 +1659,12 @@ class Economy(commands.Cog):
 		try:
 			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 			with connection.connection() as conn:
+
+				items_per_page = 15
+				maxpage = math.ceil(len(info["inventory"]["items"])/items_per_page)
+				prange = [items_per_page*(page-1)+1, items_per_page*page]
+				c = 0
+
 				user = await getUser(author.id)
 				server = await getServer(guild.id)
 				prefix = server["server_prefix"]
@@ -1666,12 +1672,19 @@ class Economy(commands.Cog):
 					await _check_values(author)
 				info = user["inventory"]
 				default_print_list = []
+
 				for key, i in info["inventory"]["items"].items():
-					if i["amount"] > 0:
-						default_print_list.append("[{}] `{}:` {:,}".format(item_list["items"][key]["rarity"], item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
+					if i["amount"] != 0:
+						c += 1
+						if c >= prange[0] and c <= prange[1]:
+							default_print_list.append(f'[{item_list["items"][key]["rarity"]}] `{item_list["items"][key]["display_name"]}:` {int(i["amount"]):,}') #item_list["items"][key]["description"]
+						elif c > prange[1]:
+							break
+				
 				if default_print_list == []:
 					default_print_list.append("None")
 				em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
+				em.set_footer(text=f'Page {page}/{maxpage}')
 				await ctx.reply(embed=em)
 				connection.close()
 		except psycopg.DatabaseError as e:
