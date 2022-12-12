@@ -69,6 +69,28 @@ async def unload(ctx, *, cog_name: str):
         em = guilded.Embed(description="That module isn't loaded.", color=0x363942)
         await ctx.reply(embed=em)
 
+@bot.command(name='eval', aliases=['exec'])
+@checks.is_dev()
+async def asyncexecute(ctx:commands.Context):
+    # At the moment, only works with the server prefix and not mention.
+    async def aexec(code, message):
+        exec(f'async def __ex(message):\n    '+(''.join(f'\n    {l}'for l in code.split('\n'))).strip())
+        return (await locals()['__ex'](message))
+    pre = (await prefix.prefix(bot, ctx.message))[0]
+    cmd = ((ctx.message.content)[len(pre) + 4:]).strip()
+    try:
+        await aexec(cmd, ctx.message)
+    except Warning as w:
+        result = ("".join(traceback.format_exception(w, w, w.__traceback__))).replace('`', '\`')
+        await ctx.reply(f'**Eval ran with an warning:**\n\n`\n{result}\n`')
+        await ctx.message.add_reaction(90002078)
+    except Exception as e:
+        result = ("".join(traceback.format_exception(e, e, e.__traceback__))).replace('`', '\`')
+        await ctx.message.reply(f'**Eval failed with Exception:**\n\n`\n{result}\n`')
+        await ctx.message.add_reaction(90002175)
+    else:
+        await ctx.message.add_reaction(90002171)
+
 @bot.command()
 @checks.is_dev()
 async def reload(ctx, *, cog_name: str = None):
@@ -89,6 +111,13 @@ async def reload(ctx, *, cog_name: str = None):
         else:
             em = guilded.Embed(description="**Module reloaded.** :)", color=0x363942)
             await ctx.reply(embed=em)
+
+@bot.event
+async def on_message(messageevent:guilded.MessageEvent):
+    message:guilded.Message = messageevent.message
+    await bot.process_commands(message)
+
+    # you can now do you banned words thing
 
 
 if __name__ == '__main__':
