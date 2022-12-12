@@ -190,9 +190,9 @@ class Moderation(commands.Cog):
 			with connection.connection() as conn:
 				cursor = conn.cursor()
 				server = await getServer(guild.id)
-				prefix = server[3]
+				prefix = server["server_prefix"]
 				channel = ctx.message.channel
-				if server[6] == "Disabled":
+				if server["moderation_module"] == "Disabled":
 					em = guilded.Embed(description="The moderation module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
 					await message.delete()
@@ -208,14 +208,14 @@ class Moderation(commands.Cog):
 				if author == guild.owner:
 					moderator_or_not = True
 				if moderator_or_not == True:
-					if server[1] == None:
+					if server["custom_blocked_words"] == None:
 						em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
 						await ctx.reply(embed=em)
 						connection.close()
 						return
 					else:
 						list_server = []
-						for i in server[1]:
+						for i in server["custom_blocked_words"]:
 							list_server.append(i)
 						if str(word).lower() in list_server:
 							list_server.remove(str(word).lower())
@@ -246,9 +246,9 @@ class Moderation(commands.Cog):
 			with connection.connection() as conn:
 				cursor = conn.cursor()
 				server = await getServer(guild.id)
-				prefix = server[3]
+				prefix = server["server_prefix"]
 				channel = ctx.message.channel
-				if server[6] == "Disabled":
+				if server["moderation_module"] == "Disabled":
 					em = guilded.Embed(description="The moderation module is disabled in this server.", color=0x363942)
 					await message.reply(private=True, embed=em)
 					await message.delete()
@@ -266,16 +266,16 @@ class Moderation(commands.Cog):
 				if moderator_or_not == True:
 					wordlist = []
 					if wordlist is not None:
-						if server[1] == None:
+						if server["custom_blocked_words"] == None:
 							pass
 						else:
-							for i in server[1]:
+							for i in server["custom_blocked_words"]:
 								wordlist.append(i)
 					if str(word).lower() in wordlist:
 						em = guilded.Embed(title="Wew!", description="The word argument is already banned.", color=0x363942)
 						await ctx.reply(embed=em)
 					else:
-						if server[1] == None:
+						if server["custom_blocked_words"] == None:
 							new_value = ["{}".format(word.lower())]
 							stmt = f"UPDATE servers SET custom_blocked_words=%s WHERE ID = '{guild.id}'"
 							cursor.execute(stmt, (new_value,))
@@ -285,7 +285,7 @@ class Moderation(commands.Cog):
 							await ctx.reply(embed=em)
 						else:
 							list_server = []
-							for i in server[1]:
+							for i in server["custom_blocked_words"]:
 								list_server.append(i)
 							list_server.append(word.lower())
 							stmt = f"UPDATE servers SET custom_blocked_words=%s WHERE ID = '{guild.id}'"
