@@ -1638,6 +1638,7 @@ class Economy(commands.Cog):
 
 	@commands.command(aliases=["inventory"])
 	async def inv(self, ctx, page:int=1):
+                page = page if page > 0 else 1
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
@@ -1664,6 +1665,11 @@ class Economy(commands.Cog):
 				maxpage = math.ceil(len(info["inventory"]["items"])/items_per_page)
 				prange = [items_per_page*(page-1)+1, items_per_page*page]
 				c = 0
+                                if page > maxpage:
+					em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
+					await ctx.reply(embed=em)
+					connection.close()
+					return
 
 				user = await getUser(author.id)
 				server = await getServer(guild.id)
