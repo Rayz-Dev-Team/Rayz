@@ -84,7 +84,7 @@ class Economy(commands.Cog):
 		if author in members_support_guild:
 			author_support_guild = await support_guild.fetch_member(author.id)
 			roles_list = await author_support_guild.fetch_role_ids()
-			if config["developer_role_id"] in roles_list or config["managermanager_role_id"] in roles_list:
+			if config["developer_role_id"] in roles_list or config["manager_role_id"] in roles_list:
 				try:
 					connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
 					with connection.connection() as conn:
@@ -130,6 +130,7 @@ class Economy(commands.Cog):
 							partners_list.append("[{}]({}) `-` **x{}**".format(get_guild.name, vanity_url, i["economy_multiplier"]))
 						except:
 							pass
+				random.shuffle(partners_list)
 				em = guilded.Embed(title="Rayz Partners", description="Server `-` Econonmy boost\n{}".format("\n ".join(partners_list)), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
