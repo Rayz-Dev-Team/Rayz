@@ -18,6 +18,7 @@ guilded.log
 modules/core/*
 modules/inspire.py
 modules/demo.py
+economy/bans.py
 
 # Ignoring extra packages installed in venv
 env
