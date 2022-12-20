@@ -158,6 +158,26 @@
         "golden_turkey": {
             "display_name": "Golden Turkey",
             "description": "A very valuable, golden Turkey",
+            "rarity": "LEGENDARY"
+        },
+        "marshmellows": {
+            "display_name": "Marshmellows",
+            "description": "A sugary soft squishable thingy",
+            "rarity": "Common"
+        },
+        "candycane": {
+            "display_name": "Candycane",
+            "description": "A hard minty candy resembling all of Christmas",
+            "rarity": "Rare"
+        },
+        "santa_hat": {
+            "display_name": "Santa hat",
+            "descrption": "A Santa hat, what is there to describe?",
+            "rarity": "Epic"
+        },
+        "2022_christmas_event_chest": {
+            "display_name": "2022 Christmas Event Chest",
+            "description": "A loot chest from the 2022 Christmas event",
             "rarity":  "LEGENDARY"
         }
     }

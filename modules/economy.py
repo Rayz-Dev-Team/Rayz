@@ -24,14 +24,11 @@ from psycopg.rows import dict_row
 from tools.functions import paginate
 from tools.functions import roll_chance
 
+
+
 class Economy(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
-
-	@commands.command()
-	async def tos(self, ctx:commands.Context):
-		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above 2 lines, 'data' is refered to Rayz's economy system, and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's economy, you agree for your username, and data to be displayed in other servers.\n`b.3` `-` Alt accounts to farm 'coins' is **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot is **not** allowed unless you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
-		await ctx.reply(embed=em)
 
 	#@commands.command()
 	#async def test_values(self, ctx):
@@ -68,6 +65,11 @@ class Economy(commands.Cog):
 	#	except psycopg2.DatabaseError as e:
 	#		em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 	#		await ctx.reply(embed=em)
+
+	@commands.command()
+	async def tos(self, ctx:commands.Context):
+		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above 2 lines, 'data' is refered to Rayz's economy system, and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's economy, you agree for your username, and data to be displayed in other servers.\n`b.3` `-` Alt accounts to farm 'coins' is **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot is **not** allowed unless you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
+		await ctx.reply(embed=em)
 
 	@commands.command()
 	async def purge_partners(self, ctx):
@@ -775,7 +777,7 @@ class Economy(commands.Cog):
 				delta = float(curr_time) - float(user["rob_timeout"])
 				if delta >= 900.0 and delta>0:
 					if user["pocket"] >= 250:
-						if member1[6] < 250:
+						if member1["pocket"] < 250:
 							em = guilded.Embed(title="Uh oh!", description="<@{}> doesn't have x250 or more {} in their pocket.".format(member.id, economy_settings["currency_name"]), color=0x363942)
 							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 							await ctx.reply(embed=em)
@@ -1412,6 +1414,61 @@ class Economy(commands.Cog):
 					message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
 					info = user["inventory"]
 					thanksgiving_drop_lines_list = []
+					christmas_drop_lines_list = []
+					if economy_settings["christmas_event"] == "True":
+						common_chance_gen = roll_chance(common_min, common_max, common_chance)
+						rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+						epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+						legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+						unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
+						chest_gen_amount = random.randint(1, 2)
+						santa_hat_gen_amount = random.randint(1, 10)
+						candycane_gen_amount = random.randint(10, 20)
+						marshmellows_gen_amount = random.randint(10, 50)
+						if legendary_chance_gen:
+							if not "2022_christmas_event_chest" in info["inventory"]["items"]:
+								info["inventory"]["items"]["2022_christmas_event_chest"] = {
+									"amount": chest_gen_amount
+								}
+								new_amount = chest_gen_amount
+								christmas_drop_lines_list.append("`-` [LEGENDARY] + {} {}".format(new_amount))
+							else:
+								new_amount = info["inventory"]["items"]["2022_christmas_event_chest"]["amount"] + chest_gen_amount
+								info["inventory"]["items"]["2022_christmas_event_chest"]["amount"] += new_amount
+								christmas_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(chest_gen_amount, item_list["items"]["2022_christmas_event_chest"]["display_name"]))
+						elif epic_chance_gen:
+							if not "santa_hat" in info["inventory"]["items"]:
+								info["inventory"]["items"]["santa_hat"] = {
+									"amount": santa_hat_gen_amount
+								}
+								new_amount = santa_hat_gen_amount
+								christmas_drop_lines_list.append("`-` [Epic] + {} {}".format(new_amount))
+							else:
+								new_amount = info["inventory"]["items"]["santa_hat"]["amount"] + santa_hat_gen_amount
+								info["inventory"]["items"]["santa_hat"]["amount"] += new_amount
+								christmas_drop_lines_list.append("`-` [Epic] +{} {}".format(santa_hat_gen_amount, item_list["items"]["santa_hat"]["display_name"]))
+						elif rare_chance_gen:
+							if not "candycane" in info["inventory"]["items"]:
+								info["inventory"]["items"]["candycane"] = {
+									"amount": candycane_gen_amount
+								}
+								new_amount = candycane_gen_amount
+								christmas_drop_lines_list.append("`-` [Rare] + {} {}".format(new_amount))
+							else:
+								new_amount = info["inventory"]["items"]["candycane"]["amount"] + candycane_gen_amount
+								info["inventory"]["items"]["candycane"]["amount"] += new_amount
+								christmas_drop_lines_list.append("`-` [Rare] +{} {}".format(candycane_gen_amount, item_list["items"]["candycane"]["display_name"]))
+						elif common_chance_gen:
+							if not "marshmellows" in info["inventory"]["items"]:
+								info["inventory"]["items"]["marshmellows"] = {
+									"amount": marshmellows_gen_amount
+								}
+								new_amount = marshmellows_gen_amount
+								christmas_drop_lines_list.append("`-` [Common] + {} {}".format(new_amount))
+							else:
+								new_amount = info["inventory"]["items"]["marshmellows"]["amount"] + marshmellows_gen_amount
+								info["inventory"]["items"]["marshmellows"]["amount"] += new_amount
+								christmas_drop_lines_list.append("`-` [Common] +{} {}".format(marshmellows_gen_amount, item_list["items"]["marshmellows"]["display_name"]))
 					if economy_settings["thanksgiving_event"] == "True":
 						common_chance_gen = roll_chance(common_min, common_max, common_chance)
 						rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
@@ -1425,11 +1482,11 @@ class Economy(commands.Cog):
 									"amount": turkey_gen_amount
 								}
 								new_amount = turkey_gen_amount
-								thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(amount, item_list["items"]["golden_turkey"]["display_name"]))
+								thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(new_amount, item_list["items"]["golden_turkey"]["display_name"]))
 							else:
-								new_amount = info["inventory"]["items"]["golden_turkey"]["amount"] + amount
-								info["inventory"]["items"]["golden_turkey"]["amount"] += amount
-								thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(amount, item_list["items"]["golden_turkey"]["display_name"]))
+								new_amount = info["inventory"]["items"]["golden_turkey"]["amount"] + turkey_gen_amount
+								info["inventory"]["items"]["golden_turkey"]["amount"] += new_amount
+								thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(new_amount, item_list["items"]["golden_turkey"]["display_name"]))
 						else:
 							thanksgiving_drop_lines_list.append("Nothing found.")
 
@@ -1559,8 +1616,11 @@ class Economy(commands.Cog):
 							drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
 							drop_counter += 1
 
+					if not christmas_drop_lines_list == []:
+						message_list.append("__**Christmas event drop:**__\n{}\n".format(" \n".join(christmas_drop_lines_list)))
+
 					if not thanksgiving_drop_lines_list == []:
-						message_list.append("__**Thanksgiving event drop:**__\n`-` {}\n".format(" \n".join(thanksgiving_drop_lines_list)))
+						message_list.append("__**Thanksgiving event drop:**__\n{}\n".format(" \n".join(thanksgiving_drop_lines_list)))
 
 					if not drops_lines_list == []:
 						message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
