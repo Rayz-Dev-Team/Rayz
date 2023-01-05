@@ -24,8 +24,6 @@ from psycopg.rows import dict_row
 from tools.functions import paginate
 from tools.functions import roll_chance
 
-
-
 class Economy(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
