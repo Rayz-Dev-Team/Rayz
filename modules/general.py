@@ -24,30 +24,30 @@ class General(commands.Cog):
 		await command_processed(message, author)
 		await _check_values_guild(guild)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
-				server = await getServer(guild.id)
-				if author == guild.owner:
-					if pref == None:
-						em = guilded.Embed(title="Uh oh!", description="You didn't define a prefix.\n\n`Ex: ?changeprefix ;`", color=0x363942)
-						em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-						await ctx.reply(embed=em)
-					else:
-						try:
+			server = await getServer(guild.id)
+			if author == guild.owner:
+				if pref == None:
+					em = guilded.Embed(title="Uh oh!", description="You didn't define a prefix.\n\n`Ex: ?changeprefix ;`", color=0x363942)
+					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
+					await ctx.reply(embed=em)
+				else:
+					try:
+						connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
+						with connection  as conn:
 							cursor = conn.cursor()
 							cursor.execute(f"UPDATE servers SET server_prefix = '{pref}' WHERE ID = '{guild.id}'")
 							conn.commit()
 							connection.close()
-							em = guilded.Embed(title="Success!", description="My prefix in this guild was changed to `{}`".format(str(pref)), color=0x363942)
-							await ctx.reply(embed=em)
-						except:
-							em = guilded.Embed(title="Uh oh!", description="Unknown error, please contact the Developer.", color=0x363942)
-							em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-							await ctx.reply(embed=em)
-				else:
-					em = guilded.Embed(title="Uh oh!", description="You're not the server owner. Only the server owner can use this command.", color=0x363942)
-					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
-					await ctx.reply(embed=em)
+						em = guilded.Embed(title="Success!", description="My prefix in this guild was changed to `{}`".format(str(pref)), color=0x363942)
+						await ctx.reply(embed=em)
+					except:
+						em = guilded.Embed(title="Uh oh!", description="Unknown error, please contact the Developer.", color=0x363942)
+						em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
+						await ctx.reply(embed=em)
+			else:
+				em = guilded.Embed(title="Uh oh!", description="You're not the server owner. Only the server owner can use this command.", color=0x363942)
+				em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
+				await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
 			await ctx.reply(f'Error {e}')
 
