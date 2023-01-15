@@ -2,7 +2,6 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from core.database import *
 from psycopg.rows import dict_row
-import asyncpg
 import asyncio
 import datetime
 

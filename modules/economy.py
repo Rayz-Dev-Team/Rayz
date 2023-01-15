@@ -23,7 +23,6 @@ from tools.db_funcs import getServer
 from psycopg.rows import dict_row
 from tools.functions import paginate
 from tools.functions import roll_chance
-import asyncpg
 import asyncio
 import datetime
 
