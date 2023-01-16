@@ -35,7 +35,7 @@ async def on_command_error(ctx, error):
         return
     else:
         try:
-            em = guilded.Embed(title="An error occured while trying to process your command.", description="`-` Screenshot this, and [send it to the developer](https://www.guilded.gg/i/E0LaMb4E)\n\n{}".format(error), color=0x363942)
+            em = guilded.Embed(title="An error occurred while trying to process your command.", description="`-` Screenshot this, and [send it to the developer](https://www.guilded.gg/i/E0LaMb4E)\n\n{}".format(error), color=0x363942)
             await ctx.reply(private=True, embed=em)
         except:
             print(error)
