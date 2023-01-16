@@ -201,8 +201,7 @@ async def _check_inventory(author):
 	try:
 		item_list = fileIO("economy/items.json", "load")
 		user = await getUser(author.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			cursor = conn.cursor()
 			if user["inventory"] == None or user["inventory"] == {}:
 				new_account = {
@@ -215,7 +214,6 @@ async def _check_inventory(author):
 				cursor = conn.cursor()
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 				conn.commit()
-				connection.close()
 			else:
 				info = user["inventory"]
 				for i in item_list["items"]:
@@ -226,7 +224,6 @@ async def _check_inventory(author):
 				infoJson = json.dumps(info)
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 				conn.commit()
-				connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
@@ -234,8 +231,7 @@ async def _check_inventory_member(member):
 	try:
 		item_list = fileIO("economy/items.json", "load")
 		user = await getUser(member.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			cursor = conn.cursor()
 			if user["inventory"] == None:
 				new_account = {
@@ -247,7 +243,6 @@ async def _check_inventory_member(member):
 				infoJson = json.dumps(new_account)
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJson])
 				conn.commit()
-				connection.close()
 			else:
 				info = user["inventory"]
 				for i in item_list["items"]:
@@ -258,43 +253,37 @@ async def _check_inventory_member(member):
 				infoJson = json.dumps(info)
 				cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJson])
 				conn.commit()
-				connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
 async def _check_values_member(member):
 	try:
 		user = await getUser(member.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
 				cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
 				conn.commit()
 			await _check_inventory_member(member)
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
 async def check_leaderboard(author):
 	try:
 		user = await getUser(author.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
 				cursor.execute(f"INSERT INTO leaderboard(id, name, currency) VALUES('{author.id}', 'None', 0)")
 				conn.commit()
 			await _check_inventory(author)
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
 async def command_processed(message, author):
 	try:
 		user = await getUser(author.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			cursor = conn.cursor()
 			total_amount = user["commands_used"] + 1
 			cursor.execute(f"UPDATE users SET commands_used = {total_amount} WHERE ID = '{author.id}'")
@@ -303,7 +292,6 @@ async def command_processed(message, author):
 				em = guilded.Embed(title="Hello {}!".format(author.name), description="I see that you like using me! Here are some links that may be useful to you!\n\n**Links**\n[Support server](https://guilded.gg/Rayz) • [Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)", color=0x363942)
 				em.set_footer(text="This message will only appear once for you.")
 				await message.reply(embed=em, private=True)
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
@@ -311,41 +299,35 @@ async def command_processed(message, author):
 async def check_leaderboard_author(author):
 	try:
 		user = await getUser(author.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			cursor = conn.cursor()
 			new_LB_bal = user["bank"] + user["pocket"]
 			cursor.execute(f"UPDATE leaderboard SET currency = {new_LB_bal} WHERE ID = '{author.id}'")
 			cursor.execute(f"UPDATE leaderboard SET name = '{author.name}' WHERE ID = '{author.id}'")
 			conn.commit()
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
 async def _check_values(author):
 	try:
 		user = await getUser(author.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
 				cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
 				conn.commit()
 			await _check_inventory(author)
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
 async def _check_values_guild(guild):
 	try:
 		server = await getServer(guild.id)
-		connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-		with connection.connection() as conn:
+		with db_connection.connection() as conn:
 			if server == None:
 				cursor = conn.cursor()
 				cursor.execute(f"INSERT INTO servers(id, logs_channel_id, server_prefix, partner_status, economy_multiplier, moderation_module, fun_module, economy_module) VALUES('{guild.id}', 'None', '?', 'False', 1, 'Enabled', 'Enabled', 'Enabled')")
 				conn.commit()
-			connection.close()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
