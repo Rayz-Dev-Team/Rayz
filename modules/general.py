@@ -32,12 +32,10 @@ class General(commands.Cog):
 					await ctx.reply(embed=em)
 				else:
 					try:
-						connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-						with connection  as conn:
+						with db_connection.connection() as conn:
 							cursor = conn.cursor()
 							cursor.execute(f"UPDATE servers SET server_prefix = '{pref}' WHERE ID = '{guild.id}'")
 							conn.commit()
-							connection.close()
 						em = guilded.Embed(title="Success!", description="My prefix in this guild was changed to `{}`".format(str(pref)), color=0x363942)
 						await ctx.reply(embed=em)
 					except:
@@ -61,8 +59,7 @@ class General(commands.Cog):
 		await _check_values_guild(guild)
 		await command_processed(message, author)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
+			with db_connection.connection() as conn:
 				server = await getServer(guild.id)
 				cursor = conn.cursor()
 				if author == guild.owner:

@@ -88,8 +88,7 @@ class Economy(commands.Cog):
 			roles_list = await author_support_guild.fetch_role_ids()
 			if config["developer_role_id"] in roles_list or config["manager_role_id"] in roles_list:
 				try:
-					connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-					with connection.connection() as conn:
+					with db_connection.connection() as conn:
 						async def getServers():
 							cursor = conn.cursor(row_factory=dict_row)
 							cursor.execute("SELECT * FROM servers")
@@ -115,8 +114,7 @@ class Economy(commands.Cog):
 		guild = ctx.guild
 		await _check_values_guild(guild)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
+			with db_connection.connection() as conn:
 				async def getServers():
 					cursor = conn.cursor(row_factory=dict_row)
 					cursor.execute("SELECT * FROM servers")
@@ -184,12 +182,10 @@ class Economy(commands.Cog):
 		try:
 			user = await getUser(author.id)
 			total_amount = user["bank"] + amount
-			connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection as conn:
+			with db_connection.connection() as conn:
 				cursor = conn.cursor()
 				cursor.execute(f"UPDATE users SET bank = {total_amount} WHERE ID = '{member.id}'")
 				conn.commit()
-				connection.close()
 			em = guilded.Embed(title="Woo hoo!".format(author.name), description="<@{}> has been given {:,} coins".format(member.id, amount), color=0x363942)
 			await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
@@ -260,26 +256,22 @@ class Economy(commands.Cog):
 							return
 						add_value = int(answer1.message.content)
 						add_data = float(server["economy_multiplier"]) + add_value
-						connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-						with connection as conn:
+						with db_connection.connection() as conn:
 							cursor = conn.cursor()
 							cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{guild.id}'")
 							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
 							conn.commit()
-							connection.close()
 						em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(guild.name), color=0x363942)
 						em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 						em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
 						await ctx.reply(embed=em)
 					elif server["partner_status"].lower() == "true":
 						add_data = 1.0
-						connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-						with connection as conn:
+						with db_connection.connection() as conn:
 							cursor = conn.cursor()
 							cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{guild.id}'")
 							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
 							conn.commit()
-							connection.close()
 						em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked.".format(guild.name), color=0x363942)
 						em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 						await ctx.reply(embed=em)
@@ -376,13 +368,11 @@ class Economy(commands.Cog):
 							loss_amount = info["inventory"]["items"][key]["amount"] - int(answer1.message.content)
 							info["inventory"]["items"][key]["amount"] = loss_amount
 							infoJson = json.dumps(info)
-							connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-							with connection as conn:
+							with db_connection.connection() as conn:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 								cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 								conn.commit()
-								connection.close()
 							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 					except Exception as e:
@@ -454,13 +444,11 @@ class Economy(commands.Cog):
 					new_info_member_amount = info_member_amount + amount
 					info_member["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"] = new_info_member_amount
 					infoJsonMember= json.dumps(info_member)
-					connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-					with connection as conn:
+					with db_connection.connection() as conn:
 						cursor = conn.cursor()
 						cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 						cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
 						conn.commit()
-						connection.close()
 					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
 					em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 					await ctx.reply(embed=em)
@@ -521,13 +509,11 @@ class Economy(commands.Cog):
 					await _check_values_member(member)
 				reducted_amount = user["pocket"] - amount
 				new_amount = member1["pocket"] + amount
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET pocket = {reducted_amount} WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {new_amount} WHERE ID = '{member.id}'")
 					conn.commit()
-					connection.close()
 				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, economy_settings["currency_name"], author.id, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 				em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 				await ctx.reply(embed=em)
@@ -570,13 +556,11 @@ class Economy(commands.Cog):
 				pocket_val = user["pocket"]
 				pocket_val = pocket_val
 				new_pocket_val = pocket_val + bank_bal
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = 0 WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 					conn.commit()
-					connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
@@ -593,13 +577,11 @@ class Economy(commands.Cog):
 				pocket_val = pocket_val
 				new_pocket_val = pocket_val + bank_bal
 				new_bank_bal = user["bank"] - int(amount)
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = {new_bank_bal} WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {new_pocket_val} WHERE ID = '{author.id}'")
 					conn.commit()
-					connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you withdrew {:,} {} from your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
@@ -637,13 +619,11 @@ class Economy(commands.Cog):
 					return
 				bank_bal = user["pocket"]
 				bank_new_bal = user["bank"] + user["pocket"]
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = '{bank_new_bal}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = 0 WHERE ID = '{author.id}'")
 					conn.commit()
-					connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, bank_bal, LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 			else:
@@ -657,13 +637,11 @@ class Economy(commands.Cog):
 					return
 				bank_bal = user["bank"] + int(amount)
 				pocket_val = user["pocket"] - int(amount)
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET bank = '{bank_bal}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET pocket = {pocket_val} WHERE ID = '{author.id}'")
 					conn.commit()
-					connection.close()
 				em = guilded.Embed(title="Bank:", description="<@{}>, you deposited {:,} {} into your bank.".format(author.id, int(amount), LB["currency_name"]), color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
@@ -698,8 +676,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 			return
 		try:
-			connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection as conn:
+			with db_connection.connection() as conn:
 
 				async def getUserLB():
 					with connection:
@@ -719,7 +696,6 @@ class Economy(commands.Cog):
 				if page > numOfPages:
 					em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
 					await ctx.reply(embed=em)
-					connection.close()
 					return
 
 				# We're now importing this function
@@ -729,7 +705,6 @@ class Economy(commands.Cog):
 				# Add our footer with the page we're on out of the total
 				em.set_footer(text=f"Page {page}/{numOfPages}")
 				await ctx.reply(embed=em)
-				connection.close()
 		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
@@ -791,24 +766,20 @@ class Economy(commands.Cog):
 						new_user_calc = user["pocket"] + random_rob
 						new_user_calc_caught = user["pocket"] - random_rob
 						if num > 6:
-							connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-							with connection as conn:
+							with db_connection.connection() as conn:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET pocket = '{new_member_calc}' WHERE ID = '{member.id}'")
 								cursor.execute(f"UPDATE users SET pocket = '{new_user_calc}' WHERE ID = '{author.id}'")
 								cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 								conn.commit()
-								connection.close()
 							em = guilded.Embed(title="Nice!", description="<@{}> successfully robbed <@{}> for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 						else:
-							connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-							with connection as conn:
+							with db_connection.connection() as conn:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 								cursor.execute(f"UPDATE users SET pocket = '{new_user_calc_caught}' WHERE ID = '{author.id}'")
 								conn.commit()
-								connection.close()
 							em = guilded.Embed(title="Oh no :(", description="<@{}> got caught robbing <@{}> and got fined for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 				else:
@@ -886,8 +857,7 @@ class Economy(commands.Cog):
 					em.set_footer(text="The multiplier in this server boosted you by x{}".format(server["economy_multiplier"]))
 				await ctx.reply(embed=em)
 				gen_amount = user["pocket"] + gen_amount
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET pocket = '{gen_amount}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET weekly_timeout = '{curr_time}' WHERE ID = '{author.id}'")
@@ -1051,25 +1021,21 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 					pocket_amount = user["pocket"] + win_amount
 
-					connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-					with connection as conn:
+					with db_connection.connection() as conn:
 						cursor = conn.cursor()
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 						conn.commit()
-						connection.close()
 				elif win_bool == False:
 					display_output.append(f"**Slots:**\n{row_1[0]}{row_1[1]}{row_1[2]}\n{row_2[0]}{row_2[1]}{row_2[2]}\n{row_3[0]}{row_3[1]}{row_3[2]}")
 					em = guilded.Embed(title="Lose", description="{}\n\n<@{}> lost a bet of {}".format(" \n".join(display_output), author.id, amount), color=0x363942)
 					await ctx.reply(embed=em)
 					pocket_amount = user["pocket"] - amount
 
-					connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-					with connection as conn:
+					with db_connection.connection() as conn:
 						cursor = conn.cursor()
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 						cursor.execute(f"UPDATE users SET slots_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 						conn.commit()
-						connection.close()
 			else:
 				seconds = curr_cooldown - delta
 				m, s = divmod(seconds, 60)
@@ -1278,13 +1244,11 @@ class Economy(commands.Cog):
 						await ctx.reply(embed=em)
 						info["inventory"]["items"]["shovel"]["amount"] = info["inventory"]["items"]["shovel"]["amount"] - 1
 						infoJson = json.dumps(info)
-						connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-						with connection as conn:
+						with db_connection.connection() as conn:
 							cursor = conn.cursor()
 							cursor.execute(f"UPDATE users SET dig_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 							conn.commit()
-							connection.close()
 						await check_leaderboard_author(author)
 					else:
 						em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
@@ -1653,14 +1617,12 @@ class Economy(commands.Cog):
 				await ctx.reply(embed=em)
 				pocket_amount = user["pocket"] + gen_amount
 				infoJson = json.dumps(info)
-				connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 					conn.commit()
-					connection.close()
 				await check_leaderboard_author(author)
 			else:
 				seconds = curr_cooldown - delta

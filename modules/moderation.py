@@ -26,15 +26,13 @@ class Moderation(commands.Cog):
 				await ctx.reply(embed=em)
 				return
 			try:
-				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					server = await getServer(guild.id)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE servers SET welcome_message = '{arg}' WHERE ID = '{guild.id}'")
 					conn.commit()
 					em = guilded.Embed(title="New welcome message set", description="{}".format(arg), color=0x363942)
 					await ctx.reply(embed=em)
-					connection.close()
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
@@ -50,8 +48,7 @@ class Moderation(commands.Cog):
 		await command_processed(message, author)
 		if author == guild.owner:
 			try:
-				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					server = await getServer(guild.id)
 					if not arg == None:
@@ -65,7 +62,6 @@ class Moderation(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="Traffic channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-					connection.close()
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
@@ -81,8 +77,7 @@ class Moderation(commands.Cog):
 		await command_processed(message, author)
 		if author == guild.owner:
 			try:
-				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					server = await getServer(guild.id)
 					if not arg == None:
@@ -96,7 +91,6 @@ class Moderation(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="Action channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-					connection.close()
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
@@ -112,8 +106,7 @@ class Moderation(commands.Cog):
 		await command_processed(message, author)
 		if author == guild.owner:
 			try:
-				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					cursor = conn.cursor()
 					server = await getServer(guild.id)
 					if not arg == None:
@@ -127,8 +120,7 @@ class Moderation(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="Welcome channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-					connection.close()
-			except psycopg2.DatabaseError as e:
+			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
 			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
@@ -146,8 +138,7 @@ class Moderation(commands.Cog):
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
+			with db_connection.connection() as conn:
 				cursor = conn.cursor()
 				server = await getServer(guild.id)
 				list_people = []
@@ -174,7 +165,6 @@ class Moderation(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="New owner added:", description="<@{}>\n\n__**Current owners:**__\n{}\n<@{}>".format(member.id, " \n".join(list_people_display), member.id), color=0x363942)
 						await ctx.reply(embed=em)
-				connection.close()
 		except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 
@@ -186,8 +176,7 @@ class Moderation(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
+			with db_connection.connection() as conn:
 				cursor = conn.cursor()
 				server = await getServer(guild.id)
 				prefix = server["server_prefix"]
@@ -227,7 +216,6 @@ class Moderation(commands.Cog):
 						else:
 							em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
 							await ctx.reply(embed=em)
-					connection.close()
 				else:
 					em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -242,8 +230,7 @@ class Moderation(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		try:
-			connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-			with connection.connection() as conn:
+			with db_connection.connection() as conn:
 				cursor = conn.cursor()
 				server = await getServer(guild.id)
 				prefix = server["server_prefix"]
@@ -280,7 +267,6 @@ class Moderation(commands.Cog):
 							stmt = f"UPDATE servers SET custom_blocked_words=%s WHERE ID = '{guild.id}'"
 							cursor.execute(stmt, (new_value,))
 							conn.commit()
-							connection.close()
 							em = guilded.Embed(title="Nice!", description="The word argument has been banned.", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
@@ -291,7 +277,6 @@ class Moderation(commands.Cog):
 							stmt = f"UPDATE servers SET custom_blocked_words=%s WHERE ID = '{guild.id}'"
 							cursor.execute(stmt, (list_server,))
 							conn.commit()
-							connection.close()
 							em = guilded.Embed(title="Nice!", description="The word argument has been banned.", color=0x363942)
 							await ctx.reply(embed=em)
 				else:
@@ -387,8 +372,7 @@ class Moderation(commands.Cog):
 			moderator_or_not = True
 		if moderator_or_not == True:
 			try:
-				connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-				with connection.connection() as conn:
+				with db_connection.connection() as conn:
 					server = await getServer(guild.id)
 					if not arg == None:
 						if arg.lower() == "none" or arg.lower() == "reset":
@@ -403,7 +387,6 @@ class Moderation(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="Logs channel set", description="{}".format(ctx.channel.id), color=0x363942)
 						await ctx.reply(embed=em)
-					connection.close()
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
