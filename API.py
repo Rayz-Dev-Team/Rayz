@@ -15,8 +15,7 @@ def index():
 
 @app.route("/usercount", methods=["GET"])
 def GetUserCount():
-    connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-    with connection.connection() as conn:
+    with db_connection.connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users")
         rows = cursor.fetchall()
@@ -33,8 +32,7 @@ def GetUserCount():
 
 @app.route("/servercount", methods=["GET"])
 def GetServerCount():
-    connection = ConnectionPool("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-    with connection.connection() as conn:
+    with db_connection.connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM servers")
         rows = cursor.fetchall()

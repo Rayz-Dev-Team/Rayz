@@ -2,7 +2,7 @@
     "Developer": [],
     "Prefix": "?",
     "Token": "yes",
-    "database_ip":  "localhost",
+    "database_ip": "localhost",
     "database_name": "Rayz",
     "database_password": "Your password",
     "database_port": "5433",
@@ -10,5 +10,6 @@
     "last_updated": "Last updated on 01/01/2022 at 12:00AM PST.",
     "staff_role_id": 0,
     "manager_role_id": 0,
-    "developer_role_id": 0
+    "developer_role_id": 0,
+    "api_token": "Get your API key from https://fluxpoint.dev/api"
 }
