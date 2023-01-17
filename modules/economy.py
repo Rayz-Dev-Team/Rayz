@@ -679,15 +679,14 @@ class Economy(commands.Cog):
 			with db_connection.connection() as conn:
 
 				async def getUserLB():
-					with connection:
-						cursor = conn.cursor()
-						# We don't use all the data so we're not going to bother to fetch all the values.
-						cursor.execute(f"SELECT name, currency FROM leaderboard ORDER BY currency DESC LIMIT 10 OFFSET {offset}")
-						result = cursor.fetchall()
-						# We want the total of all users in the leaderboard
-						cursor.execute('SELECT COUNT(*) from leaderboard')
-						total = cursor.fetchone()
-						# We return both in an array for ease of use
+					cursor = conn.cursor()
+					# We don't use all the data so we're not going to bother to fetch all the values.
+					cursor.execute(f"SELECT name, currency FROM leaderboard ORDER BY currency DESC LIMIT 10 OFFSET {offset}")
+					result = cursor.fetchall()
+					# We want the total of all users in the leaderboard
+					cursor.execute('SELECT COUNT(*) from leaderboard')
+					total = cursor.fetchone()
+					# We return both in an array for ease of use
 					return [result,total]
 
 				[LB,total] = await getUserLB()
