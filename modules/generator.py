@@ -168,7 +168,7 @@ class Generator(commands.Cog):
 		server = await getServer(guild.id)
 		if server["logs_channel_id"] is not None:
 			try:
-				channel = await guild.fetch_channel(server[2])
+				channel = await guild.fetch_channel(server["logs_channel_id"])
 				em = guilded.Embed(title="Message edit event.", description="**User:** {}\n**ID:** {}\n\n__**EDIT EVENT**__\n`Before:`\n{}\n\n`After:`\n{}".format(author.name, author.id, before.content, after.content), color=0x363942)
 				await channel.send(embed=em)
 			except:
