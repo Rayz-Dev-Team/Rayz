@@ -256,7 +256,7 @@ class Moderation(commands.Cog):
 						if server["custom_blocked_words"] == None:
 							pass
 						else:
-							for i in server[1]:
+							for i in server["custom_blocked_words"]:
 								wordlist.append(i)
 					if str(word).lower() in wordlist:
 						em = guilded.Embed(title="Wew!", description="The word argument is already banned.", color=0x363942)
