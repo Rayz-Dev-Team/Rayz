@@ -5,7 +5,7 @@ from psycopg.rows import dict_row
 import asyncio
 import datetime
 
-## Get User
+## Get User :)
 ## id = user id
 async def getUser(id):
     with db_connection.connection() as conn:
@@ -15,7 +15,7 @@ async def getUser(id):
     return user
 
 # Get Server
-# id = Server ID
+# id = Server ID :)
 async def getServer(id):
      with db_connection.connection() as conn:
         cursor = conn.cursor(row_factory=dict_row)
