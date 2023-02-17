@@ -17,7 +17,7 @@ async def getUser(id):
 # Get Server
 # id = Server ID :)
 async def getServer(id):
-     with db_connection.connection() as conn:
+    with db_connection.connection() as conn:
         cursor = conn.cursor(row_factory=dict_row)
         cursor.execute(f"SELECT * from servers where id = '{id}'")
         server = cursor.fetchone()
