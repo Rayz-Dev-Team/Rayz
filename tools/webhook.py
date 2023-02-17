@@ -41,9 +41,6 @@ EXAMPLEjsondata={
 
 
 async def async_send(webhook:str, jsondata:str|dict):
-    '''
-    Send data to a webhook, guilded or discord.
-    '''
     try:
         if type(jsondata) == str:
             jsondata = json.loads(jsondata)

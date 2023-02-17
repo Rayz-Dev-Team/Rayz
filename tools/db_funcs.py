@@ -17,8 +17,7 @@ async def getUser(id):
 # Get Server
 # id = Server ID
 async def getServer(id):
-    connection = psycopg.connect("postgresql://{}:{}@{}:{}/{}".format(database_username, database_password, database_ip, database_port, database_name))
-    with connection as conn:
+     with db_connection.connection() as conn:
         cursor = conn.cursor(row_factory=dict_row)
         cursor.execute(f"SELECT * from servers where id = '{id}'")
         server = cursor.fetchone()
