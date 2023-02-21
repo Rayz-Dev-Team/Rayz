@@ -429,20 +429,20 @@ class Economy(commands.Cog):
 			info = user["inventory"]
 			accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
 			if item.lower() in accepted_responses:
-				if amount > info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]:
+				if amount > info["inventory"]["items"][item.lower()]["amount"]:
 					em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
 					info_member = member1["inventory"]
 					#Take from info
-					info_amount = info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]
+					info_amount = info["inventory"]["items"][item.lower()]["amount"]
 					new_info_amount = info_amount - amount
-					info["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"] = new_info_amount
+					info["inventory"]["items"][item.lower()]["amount"] = new_info_amount
 					infoJson = json.dumps(info)
 					#Give to info_member
-					info_member_amount = info_member["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"]
+					info_member_amount = info_member["inventory"]["items"][item.lower()]["amount"]
 					new_info_member_amount = info_member_amount + amount
-					info_member["inventory"]["seasonal_items"]["halloween"][item.lower()]["amount"] = new_info_member_amount
+					info_member["inventory"]["items"][item.lower()]["amount"] = new_info_member_amount
 					infoJsonMember= json.dumps(info_member)
 					with db_connection.connection() as conn:
 						cursor = conn.cursor()
