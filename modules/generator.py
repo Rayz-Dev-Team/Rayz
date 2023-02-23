@@ -290,7 +290,7 @@ async def _check_values_member(member):
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, {infoJson})")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
 				conn.commit()
 			await _check_inventory_member(member)
 	except psycopg.DatabaseError as e:
@@ -350,9 +350,10 @@ async def _check_values(author):
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, '{infoJson}')")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
 				conn.commit()
 			await _check_inventory(author)
+			await _check_cooldowns_author(author)
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
