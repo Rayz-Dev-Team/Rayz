@@ -1,7 +1,6 @@
 import guilded
 from guilded.ext import commands
 import typing
-import json
 import random
 import math
 import traceback
@@ -20,15 +19,45 @@ from psycopg_pool import ConnectionPool
 from core.database import *
 from tools.db_funcs import getUser
 from tools.db_funcs import getServer
+from tools.db_funcs import getAllUsers
 from psycopg.rows import dict_row
 from tools.functions import paginate
 from tools.functions import roll_chance
 import asyncio
 import datetime
+import simplejson
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
 		self.bot = bot
+
+	@commands.command()
+	async def test_values(self, ctx):
+		author = ctx.author
+		guild = ctx.guild
+		await _check_values_guild(guild)
+		try:
+			users = await getAllUsers()
+			with db_connection.connection() as conn:
+				for i in users:
+					if i["cooldowns"] == None:
+						print("Moved values for {}".format(i["id"]))
+						new_account = {
+							"dig_timeout": i["dig_timeout"],
+							"weekly_timeout": i["weekly_timeout"],
+							"rob_timeout": i["rob_timeout"],
+							"work_timeout": i["work_timeout"],
+							"slots_timeout": i["slots_timeout"]
+						}
+						cursor = conn.cursor()
+						infoJson = simplejson.dumps(new_account)
+						cursor.execute(f"UPDATE users SET cooldowns = %s WHERE ID = '{i['id']}'",  [infoJson])
+						conn.commit()
+		except psycopg.DatabaseError as e:
+			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+			await ctx.reply(embed=em)
+
+
 
 	#@commands.command()
 	#async def test_values(self, ctx):
@@ -749,7 +778,7 @@ class Economy(commands.Cog):
 			if user == None:
 				await _check_values(author)
 			curr_time = time.time()
-			delta = float(curr_time) - float(user["rob_timeout"])
+			delta = float(curr_time) - float(user["cooldowns"]["rob_timeout"])
 			if delta >= 900.0 and delta>0:
 				if user["pocket"] >= 250:
 					if member1["pocket"] < 250:
@@ -764,19 +793,25 @@ class Economy(commands.Cog):
 						new_member_calc = member1["pocket"] - random_rob
 						new_user_calc = user["pocket"] + random_rob
 						new_user_calc_caught = user["pocket"] - random_rob
+						updated_cooldown = user["cooldowns"] 
+						updated_cooldown["rob_timeout"] = curr_time
+						infoJson = simplejson.dumps(updated_cooldown)
 						if num > 6:
 							with db_connection.connection() as conn:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET pocket = '{new_member_calc}' WHERE ID = '{member.id}'")
 								cursor.execute(f"UPDATE users SET pocket = '{new_user_calc}' WHERE ID = '{author.id}'")
-								cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+								cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 								conn.commit()
 							em = guilded.Embed(title="Nice!", description="<@{}> successfully robbed <@{}> for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
 							await ctx.reply(embed=em)
 						else:
 							with db_connection.connection() as conn:
+								updated_cooldown = user["cooldowns"]
+								updated_cooldown["rob_timeout"] = curr_time
+								infoJson = simplejson.dumps(updated_cooldown)
 								cursor = conn.cursor()
-								cursor.execute(f"UPDATE users SET rob_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+								cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 								cursor.execute(f"UPDATE users SET pocket = '{new_user_calc_caught}' WHERE ID = '{author.id}'")
 								conn.commit()
 							em = guilded.Embed(title="Oh no :(", description="<@{}> got caught robbing <@{}> and got fined for x{} {}.".format(author.id, member.id, random_rob, economy_settings["currency_name"]), color=0x363942)
@@ -841,7 +876,7 @@ class Economy(commands.Cog):
 			gen_amount = math.ceil(gen_amount)
 			curr_time = time.time()
 			curr_cooldown = 604800
-			delta = float(curr_time) - float(user["weekly_timeout"])
+			delta = float(curr_time) - float(user["cooldowns"]["weekly_timeout"])
 			if delta >= curr_cooldown and delta>0:
 				if author in members_support_guild:
 					author_support_guild = await support_guild.fetch_member(author.id)
@@ -857,9 +892,12 @@ class Economy(commands.Cog):
 				await ctx.reply(embed=em)
 				gen_amount = user["pocket"] + gen_amount
 				with db_connection.connection() as conn:
+					updated_cooldown = user["cooldowns"] 
+					updated_cooldown["weekly_timeout"] = curr_time
+					infoJson = simplejson.dumps(updated_cooldown)
 					cursor = conn.cursor()
 					cursor.execute(f"UPDATE users SET pocket = '{gen_amount}' WHERE ID = '{author.id}'")
-					cursor.execute(f"UPDATE users SET weekly_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+					cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 					conn.commit()
 				await check_leaderboard_author(author)
 			else:
@@ -918,7 +956,7 @@ class Economy(commands.Cog):
 				curr_cooldown = 5
 			else:
 				curr_cooldown = 10
-			delta = float(curr_time) - float(user["slots_timeout"])
+			delta = float(curr_time) - float(user["cooldowns"]["slots_timeout"])
 			if delta >= curr_cooldown and delta>0:
 				if amount == None:
 					em = guilded.Embed(title="Welcome to slots", description="**__Goal__**\n`-` Get `x3💰` to win.\n`-` Get `x3💎` to win a JACKPOT.\n\n**__Payouts__**\nWin `-` x{} bonus.\nJACKPOT `-` x{} bonus\n\nUse `{}slots <amount>` to place a bet.".format(slots_win_multiplier, slots_jackpot_multiplier, prefix), color=0x363942)
@@ -1031,9 +1069,12 @@ class Economy(commands.Cog):
 					pocket_amount = user["pocket"] - amount
 
 					with db_connection.connection() as conn:
+						updated_cooldown = user["cooldowns"] 
+						updated_cooldown["slots_timeout"] = curr_time
+						infoJson = simplejson.dumps(updated_cooldown)
 						cursor = conn.cursor()
 						cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
-						cursor.execute(f"UPDATE users SET slots_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+						cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 						conn.commit()
 			else:
 				seconds = curr_cooldown - delta
@@ -1107,7 +1148,7 @@ class Economy(commands.Cog):
 
 			info = user["inventory"]
 
-			delta = float(curr_time) - float(user["dig_timeout"])
+			delta = float(curr_time) - float(user["cooldowns"]["dig_timeout"])
 			if delta >= curr_cooldown and delta>0:
 				if "shovel" in info["inventory"]["items"]:
 					if info["inventory"]["items"]["shovel"]["amount"] > 0:
@@ -1244,8 +1285,11 @@ class Economy(commands.Cog):
 						info["inventory"]["items"]["shovel"]["amount"] = info["inventory"]["items"]["shovel"]["amount"] - 1
 						infoJson = json.dumps(info)
 						with db_connection.connection() as conn:
+							updated_cooldown = user["cooldowns"] 
+							updated_cooldown["dig_timeout"] = curr_time
+							infoJson = simplejson.dumps(updated_cooldown)
 							cursor = conn.cursor()
-							cursor.execute(f"UPDATE users SET dig_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+							cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 							conn.commit()
 						await check_leaderboard_author(author)
@@ -1342,7 +1386,7 @@ class Economy(commands.Cog):
 				curr_cooldown = 20
 			else:
 				curr_cooldown = 60
-			delta = float(curr_time) - float(user["work_timeout"])
+			delta = float(curr_time) - float(user["cooldowns"]["work_timeout"])
 			if delta >= curr_cooldown and delta>0:
 				message_list = []
 				booster_amount = 0
@@ -1617,8 +1661,11 @@ class Economy(commands.Cog):
 				pocket_amount = user["pocket"] + gen_amount
 				infoJson = json.dumps(info)
 				with db_connection.connection() as conn:
+					updated_cooldown = user["cooldowns"] 
+					updated_cooldown["work_timeout"] = curr_time
+					infoJson = simplejson.dumps(updated_cooldown)
 					cursor = conn.cursor()
-					cursor.execute(f"UPDATE users SET work_timeout = '{curr_time}' WHERE ID = '{author.id}'")
+					cursor.execute(f"UPDATE users SET cooldowns = '{infoJson}' WHERE ID = '{author.id}'")
 					cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 					cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
 					conn.commit()

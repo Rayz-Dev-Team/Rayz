@@ -22,3 +22,11 @@ async def getServer(id):
         cursor.execute(f"SELECT * from servers where id = '{id}'")
         server = cursor.fetchone()
     return server
+
+# Get all users
+async def getAllUsers():
+    with db_connection.connection() as conn:
+        cursor = conn.cursor(row_factory=dict_row)
+        cursor.execute(f"SELECT * FROM users")
+        users = cursor.fetchall()
+    return users

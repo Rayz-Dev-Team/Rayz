@@ -227,6 +227,26 @@ async def _check_inventory(author):
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
+async def _check_cooldowns_author(author):
+	try:
+		user = await getUser(author.id)
+		with db_connection.connection() as conn:
+			cursor = conn.cursor()
+			if user["cooldowns"] == None:
+				new_account = {
+					"dig_timeout": 0,
+					"weekly_timeout": 0,
+					"rob_timeout": 0,
+					"work_timeout": 0,
+					"slots_timeout": 0
+				}
+				infoJson = json.dumps(new_account)
+				cursor.execute(f"UPDATE users SET cooldowns = %s WHERE ID = '{author.id}'",  [infoJson])
+				conn.commit()
+	except psycopg.DatabaseError as e:
+		print(f'Error {e}')
+		
+
 async def _check_inventory_member(member):
 	try:
 		item_list = fileIO("economy/items.json", "load")
@@ -258,11 +278,19 @@ async def _check_inventory_member(member):
 
 async def _check_values_member(member):
 	try:
+		new_account = {
+			"dig_timeout": 0,
+			"weekly_timeout": 0,
+			"rob_timeout": 0,
+			"work_timeout": 0,
+			"slots_timeout": 0
+		}
+		infoJson = json.dumps(new_account)
 		user = await getUser(member.id)
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{member.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, {infoJson})")
 				conn.commit()
 			await _check_inventory_member(member)
 	except psycopg.DatabaseError as e:
@@ -310,11 +338,19 @@ async def check_leaderboard_author(author):
 
 async def _check_values(author):
 	try:
+		new_account = {
+			"dig_timeout": 0,
+			"weekly_timeout": 0,
+			"rob_timeout": 0,
+			"work_timeout": 0,
+			"slots_timeout": 0
+		}
+		infoJson = json.dumps(new_account)
 		user = await getUser(author.id)
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, daily_timeout, daily_tokens, bank, bank_access_code, bank_secure, pocket, weekly_timeout, rob_timeout, work_timeout, commands_used, dig_timeout) VALUES('{author.id}', '0', 0, 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, 0, 0, 0, 0)")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, {infoJson})")
 				conn.commit()
 			await _check_inventory(author)
 	except psycopg.DatabaseError as e:
