@@ -9,6 +9,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from tools.db_funcs import getAllUsers
 from psycopg.rows import dict_row
 
 class Generator(commands.Cog):
@@ -346,7 +347,7 @@ async def _check_values(author):
 			"slots_timeout": 0
 		}
 		infoJson = json.dumps(new_account)
-		user = await getUser(author.id)
+		user = await getAllUsers(author.id)
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
