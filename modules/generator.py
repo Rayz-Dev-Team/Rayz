@@ -9,7 +9,6 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
-from tools.db_funcs import getAllUsers
 from psycopg.rows import dict_row
 
 class Generator(commands.Cog):
@@ -347,11 +346,11 @@ async def _check_values(author):
 			"slots_timeout": 0
 		}
 		infoJson = json.dumps(new_account)
-		user = await getAllUsers(author.id)
+		user = await getUser(author.id)
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, {infoJson})")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used, cooldowns) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0, '{infoJson}')")
 				conn.commit()
 			await _check_inventory(author)
 	except psycopg.DatabaseError as e:
