@@ -68,10 +68,13 @@ async def GetStaffMembers(server_id):
                     if i["id"] not in staff_member_id_list:
                         if "profilePicture" not in i:
                             i["profilePicture"] = "https://imgur.com/RGYNw2v"
+                        if "profileBannerBlur" not in i:
+                            i["profileBannerBlur"] = 404
                         staff_member_id_list[i["id"]] = {
                             "avatar": '{}'.format(i["profilePicture"]),
                             "name": '{}'.format(i["name"]),
-                            "id": '{}'.format(i["id"])
+                            "id": '{}'.format(i["id"]),
+                            "banner": '{}'.format(i["profileBannerBlur"])
                         }
     j = json.dumps(staff_member_id_list)
     return quart.Response(j, mimetype="application/json")
