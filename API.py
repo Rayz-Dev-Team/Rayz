@@ -9,6 +9,7 @@ from tools.db_funcs import getAllUsers
 from psycopg.rows import dict_row
 from core.database import *
 from functools import wraps
+import requests
 
 app = Quart(__name__)
 
@@ -42,6 +43,38 @@ def token_required(f):
 @app.route('/')
 async def index():
     return 'Turn back while you still can.'
+
+@app.route("/<server_id>/staff", methods=["GET"])
+async def GetStaffMembers(server_id):
+    staff_member_id_list = {}
+    req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_roles = req_roles.json()
+    mod_role_id_list = []
+    for key, i in resp_roles["team"]["rolesById"].items():
+        kick_ban_hex = 32
+        if "general" in i["permissions"]:
+            num_to_convert = i["permissions"]["general"]
+            converted_num = num_to_convert & 32
+            if converted_num == kick_ban_hex:
+                mod_role_id_list.append(i["id"])
+
+    req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
+    resp_server = req_server.json()
+    for i in resp_server["members"]:
+        if "roleIds" in i:
+            roles = i["roleIds"]
+            for a in mod_role_id_list:
+                if a in roles:
+                    if i["id"] not in staff_member_id_list:
+                        if "profilePicture" not in i:
+                            i["profilePicture"] = "https://imgur.com/RGYNw2v"
+                        staff_member_id_list[i["id"]] = {
+                            "avatar": '{}'.format(i["profilePicture"]),
+                            "name": '{}'.format(i["name"]),
+                            "id": '{}'.format(i["id"])
+                        }
+    j = json.dumps(staff_member_id_list)
+    return quart.Response(j, mimetype="application/json")
 
 
 @app.route("/usercount", methods=["GET"])
