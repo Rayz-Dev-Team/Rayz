@@ -126,8 +126,10 @@ async def GetBots(server_id):
     for i in resp_server["members"]:
         if "profilePicture" not in i:
             i["profilePicture"] = "https://imgur.com/RGYNw2v"
+
         if "profileBannerBlur" not in i:
-            i["profileBannerBlur"] = 404
+            i["profileBannerBlur"] = "https://theme.zdassets.com/theme_assets/9580103/a66d540c984b3fd96c37e2fb8b327607cc1e836c.png"
+
         if "type" in i:
            bots_list[i["id"]] = {
                 "avatar": '{}'.format(i["profilePicture"]),
@@ -140,6 +142,31 @@ async def GetBots(server_id):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
+@app.route("/gilgang", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GetGGMembers():
+    gg_members_list = []
+    profiles_list = {}
+    req_server = requests.get("https://www.guilded.gg/api/teams/VRzvL9bR/members")
+    resp_server = req_server.json()
+    for i in resp_server["members"]:
+
+        if not "profilePicture" in i:
+            i["profilePicture"] = "https://imgur.com/RGYNw2v"
+
+        if "profileBannerBlur" not in i:
+            i["profileBannerBlur"] = "https://theme.zdassets.com/theme_assets/9580103/a66d540c984b3fd96c37e2fb8b327607cc1e836c.png"
+
+        if "type" not in i:
+            profiles_list[i["id"]] = {
+                "id": "{}".format(i["id"]),
+                "avatar": "{}".format(i["profilePicture"]),
+                "name": "{}".format(i["name"])
+            }
+    j = json.dumps(profiles_list)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/usercount", methods=["GET"])
 @token_required
