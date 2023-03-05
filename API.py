@@ -51,7 +51,7 @@ async def index():
 @app.route("/capoo")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
 async def Capoo():
-    with open("C:/Users/SgtZo/Desktop/Capoo/Capoo_squish.gif", "rb") as f:
+    with open("packs/capoo/Capoo_squish.gif", "rb") as f:
         image_data = f.read()
     response = quart.Response(image_data, mimetype="image/gif")
     response.headers.add("Access-Control-Allow-Origin", "*")
