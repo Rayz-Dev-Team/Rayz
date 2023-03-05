@@ -117,6 +117,29 @@ async def GetStaffMembers(server_id):
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
+@app.route("/<server_id>/bots", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GetBots(server_id):
+    bots_list = {}
+    req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
+    resp_server = req_server.json()
+    for i in resp_server["members"]:
+        if "profilePicture" not in i:
+            i["profilePicture"] = "https://imgur.com/RGYNw2v"
+        if "profileBannerBlur" not in i:
+            i["profileBannerBlur"] = 404
+        if "type" in i:
+           bots_list[i["id"]] = {
+                "avatar": '{}'.format(i["profilePicture"]),
+                "name": '{}'.format(i["name"]),
+                "id": '{}'.format(i["id"]),
+                "banner": '{}'.format(i["profileBannerBlur"])
+            }
+    j = json.dumps(bots_list)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 @app.route("/usercount", methods=["GET"])
 @token_required
