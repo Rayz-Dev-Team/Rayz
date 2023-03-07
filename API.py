@@ -1,4 +1,4 @@
-from quart import Quart, request, send_file, Response, jsonify, url_for
+from quart import Quart, request, send_file, Response, jsonify, url_for, redirect
 import quart
 import os
 import psycopg
@@ -43,9 +43,11 @@ def token_required(f):
                 return {'message': 'UserID does not exist.'}, 401
     return decorated
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 @route_cors(allow_origin="*")
 async def index():
+    if request.scheme != 'https':
+        return redirect(request.url.replace('http', 'https'))
     return 'Turn back while you still can.'
 
 @app.route("/capoo")
@@ -61,7 +63,6 @@ async def Capoo():
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetPack(pack_name):
     if pack_name == "capoo":
-        image_path = 'C:/Users/SgtZo/Desktop/Capoo/Capoo_squish.gif'
         image_url = url_for('Capoo', _external=True)
 
         capoo_pack = {
@@ -77,6 +78,16 @@ async def GetPack(pack_name):
         response = quart.Response(json.dumps(capoo_pack), mimetype='application/json')
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+
+@app.route("/<server_id>/info", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GetServerInfo(server_id):
+    output_server_json = {}
+    output_rayz_settings_json = {}
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_serverinfo = req_serverinfo.json()
+
+
 
 @app.route("/<server_id>/staff", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
@@ -186,23 +197,20 @@ async def GetUserCount():
         j = json.dumps(j)
         return quart.Response(j, mimetype="application/json")
 
-@app.route("/servercount", methods=["GET"])
-@token_required
+@app.route("/stats", methods=["GET"])
+#@token_required
 async def GetServerCount():
-    with db_connection.connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM servers")
-        rows = cursor.fetchall()
+    req_server = requests.get("https://www.guilded.gg/api/users/m6oLkqLA/teams")
+    resp_server = req_server.json()
+    user_count = 0
+    server_count = len(resp_server["teams"])
+    
+    for i in resp_server["teams"]:
+        user_count += i["memberCount"]
 
-        rowarray_list = []
-        for row in rows:
-            t = (row[0])
-            rowarray_list.append(t)
-
-        count = len(rowarray_list)
-        j = {"servercount" : count}
-        j = json.dumps(j)
-        return quart.Response(j, mimetype="application/json")
+    j = {"servers" : server_count, "users" : user_count}
+    j = json.dumps(j)
+    return quart.Response(j, mimetype="application/json")
 
 @app.route("/inventory/<user_id>", methods=["GET"])
 @token_required
@@ -217,5 +225,5 @@ async def GetInventory(user_id):
 
 if __name__ == '__main__':
     host = os.environ['QUART_APP'] = '0.0.0.0'
-    port = os.environ.get('QUART_RUN_PORT', '7777')
-    app.run(host, port=int(port))
+    port = os.environ.get('QUART_RUN_PORT', '8080')
+    app.run(host, port=int(port), ssl={"cert": "C:/Users/Administrator/Desktop/cert.pem", "key": "C:/Users/Administrator/Desktop/key.pem"})
