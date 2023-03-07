@@ -54,7 +54,7 @@ async def not_found(error):
 @app.route('/', methods=['GET'])
 @route_cors(allow_origin="*")
 async def index():
-    return 'Turn back while you still can.'
+    return 'Example public endpoints are /stats, /server_id/staff, /server_id/bots'
 
 @app.route("/capoo")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
