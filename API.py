@@ -123,26 +123,25 @@ async def GetStaffMembers(server_id):
 
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()
-    else:
-        for i in resp_server["members"]:
-            if i["id"] == "m6oLkqLA":
-                rayz_in_server = True
-            if "roleIds" in i:
-                roles = i["roleIds"]
-                for a in mod_role_id_list:
-                    if a in roles:
-                        if i["id"] not in staff_member_id_list:
-                            if "profilePicture" not in i:
-                                i["profilePicture"] = "https://imgur.com/RGYNw2v"
-                            if "profileBannerBlur" not in i:
-                                i["profileBannerBlur"] = 404
-                            if "type" not in i:
-                                staff_member_id_list[i["id"]] = {
-                                    "avatar": '{}'.format(i["profilePicture"]),
-                                    "name": '{}'.format(i["name"]),
-                                    "id": '{}'.format(i["id"]),
-                                    "banner": '{}'.format(i["profileBannerBlur"])
-                                }
+    for i in resp_server["members"]:
+        if i["id"] == "m6oLkqLA":
+            rayz_in_server = True
+        if "roleIds" in i:
+            roles = i["roleIds"]
+            for a in mod_role_id_list:
+                if a in roles:
+                    if i["id"] not in staff_member_id_list:
+                        if "profilePicture" not in i:
+                            i["profilePicture"] = "https://imgur.com/RGYNw2v"
+                        if "profileBannerBlur" not in i:
+                            i["profileBannerBlur"] = 404
+                        if "type" not in i:
+                            staff_member_id_list[i["id"]] = {
+                                "avatar": '{}'.format(i["profilePicture"]),
+                                "name": '{}'.format(i["name"]),
+                                "id": '{}'.format(i["id"]),
+                                "banner": '{}'.format(i["profileBannerBlur"])
+                            }
     if rayz_in_server == False:
         staff_member_id_list = {
             "error" : {
