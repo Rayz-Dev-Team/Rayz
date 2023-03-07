@@ -49,6 +49,7 @@ def token_required(f):
 
 @app.errorhandler(404)
 async def not_found(error):
+    page_url = request.path
     return {'message': f'Page {page_url} does not exist.'}, 401
 
 @app.route('/', methods=['GET'])
