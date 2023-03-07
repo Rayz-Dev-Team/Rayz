@@ -123,12 +123,6 @@ async def GetStaffMembers(server_id):
 
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()
-    if not "m6oLkqLA" in resp_server["members"]:
-        staff_member_id_list = {
-            "error" : {
-                "message" : "Rayz is not in that server."
-            }
-        }
     else:
         for i in resp_server["members"]:
             if i["id"] == "m6oLkqLA":
