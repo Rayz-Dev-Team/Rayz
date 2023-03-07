@@ -109,6 +109,7 @@ async def GetServerInfo(server_id):
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetStaffMembers(server_id):
     staff_member_id_list = {}
+    rayz_in_server = False
     req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
     resp_roles = req_roles.json()
     mod_role_id_list = []
@@ -122,7 +123,7 @@ async def GetStaffMembers(server_id):
 
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()
-    if "m6oLkqLA" in resp_server["members"]:
+    if not "m6oLkqLA" in resp_server["members"]:
         staff_member_id_list = {
             "error" : {
                 "message" : "Rayz is not in that server."
@@ -130,6 +131,8 @@ async def GetStaffMembers(server_id):
         }
     else:
         for i in resp_server["members"]:
+            if i["id"] == "m6oLkqLA":
+                rayz_in_server = True
             if "roleIds" in i:
                 roles = i["roleIds"]
                 for a in mod_role_id_list:
@@ -146,6 +149,12 @@ async def GetStaffMembers(server_id):
                                     "id": '{}'.format(i["id"]),
                                     "banner": '{}'.format(i["profileBannerBlur"])
                                 }
+    if rayz_in_server == False:
+        staff_member_id_list = {
+            "error" : {
+                "message" : "Rayz is not in that server."
+            }
+        }
     j = json.dumps(staff_member_id_list)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
