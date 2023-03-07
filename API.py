@@ -110,16 +110,27 @@ async def GetServerInfo(server_id):
 async def GetStaffMembers(server_id):
     staff_member_id_list = {}
     rayz_in_server = False
-    req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
-    resp_roles = req_roles.json()
-    mod_role_id_list = []
-    for key, i in resp_roles["team"]["rolesById"].items():
-        kick_ban_hex = 32
-        if "general" in i["permissions"]:
-            num_to_convert = i["permissions"]["general"]
-            converted_num = num_to_convert & 32
-            if converted_num == kick_ban_hex:
-                mod_role_id_list.append(i["id"])
+    try:
+        req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+        resp_roles = req_roles.json()
+        mod_role_id_list = []
+        for key, i in resp_roles["team"]["rolesById"].items():
+            kick_ban_hex = 32
+            if "general" in i["permissions"]:
+                num_to_convert = i["permissions"]["general"]
+                converted_num = num_to_convert & 32
+                if converted_num == kick_ban_hex:
+                    mod_role_id_list.append(i["id"])
+    except:
+        error_response = {
+            "error" : {
+                "message" : "Server is either private, or invalid."
+            }
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
 
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()
