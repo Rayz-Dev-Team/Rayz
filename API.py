@@ -1,7 +1,8 @@
-from quart import Quart, request, send_file, Response, jsonify, url_for, redirect
+from quart import Quart, request, send_file, Response, jsonify, url_for, redirect, abort, render_template_string
 import quart
 import os
 import psycopg
+import asyncio
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
@@ -10,6 +11,9 @@ from psycopg.rows import dict_row
 from core.database import *
 from functools import wraps
 import requests
+import ssl
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 from quart_cors import cors, route_cors
 
 
@@ -43,11 +47,13 @@ def token_required(f):
                 return {'message': 'UserID does not exist.'}, 401
     return decorated
 
+@app.errorhandler(404)
+async def not_found(error):
+    return {'message': f'Page {page_url} does not exist.'}, 401
+
 @app.route('/', methods=['GET'])
 @route_cors(allow_origin="*")
 async def index():
-    if request.scheme != 'https':
-        return redirect(request.url.replace('http', 'https'))
     return 'Turn back while you still can.'
 
 @app.route("/capoo")
@@ -56,6 +62,15 @@ async def Capoo():
     with open("packs/capoo/Capoo_squish.gif", "rb") as f:
         image_data = f.read()
     response = quart.Response(image_data, mimetype="image/gif")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/404")
+@route_cors(allow_headers=["content-type"], allow_origin="*")
+async def NotFound():
+    with open("images/404.png", "rb") as f:
+        image_data = f.read()
+    response = quart.Response(image_data, mimetype="image/png")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
@@ -71,7 +86,7 @@ async def GetPack(pack_name):
             "emotes": [
                 {
                     "name": "capoo_cry",
-                    "url": image_url
+                    "url": "https://api.rayzbot.xyz/capoo"
                 }
             ]
         }
@@ -224,11 +239,9 @@ async def GetInventory(user_id):
         return quart.Response(json.dumps(resp), mimetype="application/json")
 
 if __name__ == '__main__':
-    host = os.environ['QUART_APP'] = '0.0.0.0'
-<<<<<<< HEAD
-    port = os.environ.get('QUART_RUN_PORT', '7777')
-    app.run(host, port=int(port))
-=======
-    port = os.environ.get('QUART_RUN_PORT', '8080')
-    app.run(host, port=int(port), ssl={"cert": "C:/Users/Administrator/Desktop/cert.pem", "key": "C:/Users/Administrator/Desktop/key.pem"})
->>>>>>> 0921ff1db1106d7399ef8505802a10b5b7e11397
+    context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    context.load_cert_chain('C:/Users/Administrator/Desktop/cert.pem', 'C:/Users/Administrator/Desktop/key.pem')
+    config = Config()
+    config.bind = ['localhost:7777']
+    config.ssl = context
+    asyncio.run(serve(app, config))
