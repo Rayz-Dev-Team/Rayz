@@ -52,7 +52,7 @@ def token_required(f):
     return decorated
 
 async def CheckServerValid_FromAPI(id):
-    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
     resp_serverinfo = req_serverinfo.json()
     valid = True
     if "code" in resp_serverinfo and "message" in resp_serverinfo:
