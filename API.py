@@ -109,7 +109,7 @@ async def GetServerInfo(server_id):
             output_server_json[i] = resp_serverinfo[i]
     except:
         pass
-    j = json.dumps(error_response)
+    j = json.dumps(output_server_json)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
