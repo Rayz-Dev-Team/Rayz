@@ -64,7 +64,7 @@ async def CheckServerValid_FromAPI(id):
         return valid
 
 async def CheckServerValid_FromDB(id):
-    req_servers = awaitGetAllServers()
+    req_servers = await GetAllServers()
     valid = False
     for i in req_servers:
         if id == i["id"]:
