@@ -72,12 +72,14 @@ async def CheckServerValid_FromDB(id):
     return valid
 
 async def CheckBotInServer(id):
-    req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(id))
-    resp_server = req_server.json()
     bot_in_server = False
-    for i in resp_server["members"]:
-        if i["id"] == "m6oLkqLA":
-            bot_in_server = True
+    await CheckServerValid_FromAPI(id)
+    if valid == True:
+        req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(id))
+        resp_server = req_server.json()
+        for i in resp_server["members"]:
+            if i["id"] == "m6oLkqLA":
+                bot_in_server = True
     return bot_in_server
 
 @app.errorhandler(404)
