@@ -104,8 +104,19 @@ async def GetServerInfo(server_id):
     main_output = {}
     output_server_json = {}
     output_rayz_settings_json = {}
-    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
-    resp_serverinfo = req_serverinfo.json()
+    try:
+        req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+        resp_serverinfo = req_serverinfo.json()
+    except:
+        error_response = {
+            "error" : {
+                "message" : "Server is either private, or invalid."
+            }
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     for i in accepted_pull_tags_from_team:
         try:
             output_server_json[i] = resp_serverinfo["team"][i]
@@ -113,12 +124,23 @@ async def GetServerInfo(server_id):
             pass
 
     main_output["server_data"] = output_server_json
-    main_output["rayz_settings"] = await getServer(server_id)
+    try:
+        main_output["rayz_settings"] = await getServer(server_id)
 
-    j = simplejson.dumps(main_output)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+        j = simplejson.dumps(main_output)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    except:
+        error_response = {
+            "error" : {
+                "message" : "Server is invalid."
+            }
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
 
 @app.route("/<server_id>/staff", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
