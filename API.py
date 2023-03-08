@@ -106,7 +106,7 @@ async def GetServerInfo(server_id):
     resp_serverinfo = req_serverinfo.json()
     try:
         for i in accepted_pull_tags_from_team_obj:
-            output_server_json[i] = resp_serverinfo[i]
+            output_server_json[i] = resp_serverinfo["team"][i]
     except:
         pass
     j = json.dumps(output_server_json)
