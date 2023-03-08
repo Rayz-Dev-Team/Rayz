@@ -51,7 +51,7 @@ def token_required(f):
                 return {'message': 'UserID does not exist.'}, 401
     return decorated
 
-async def CheckServerValid_FromAPI(id)
+async def CheckServerValid_FromAPI(id):
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
     resp_serverinfo = req_serverinfo.json()
     valid = True
@@ -63,7 +63,7 @@ async def CheckServerValid_FromAPI(id)
     else:
         return valid
 
-async def CheckServerValid_FromDB(id)
+async def CheckServerValid_FromDB(id):
     req_servers = awaitGetAllServers()
     valid = False
     for i in req_servers:
@@ -71,7 +71,7 @@ async def CheckServerValid_FromDB(id)
             valid = True
     return valid
 
-async def CheckBotInServer(id)
+async def CheckBotInServer(id):
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(id))
     resp_server = req_server.json()
     bot_in_server = False
