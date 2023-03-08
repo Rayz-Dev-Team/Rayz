@@ -15,6 +15,7 @@ import ssl
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from quart_cors import cors, route_cors
+import simplejson
 
 
 app = Quart(__name__)
@@ -114,7 +115,7 @@ async def GetServerInfo(server_id):
     main_output["server_data"] = output_server_json
     main_output["rayz_settings"] = await getServer(server_id)
 
-    j = json.dumps(main_output)
+    j = simplejson.dumps(main_output)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
