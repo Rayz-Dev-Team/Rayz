@@ -18,6 +18,12 @@ from hypercorn.config import Config
 from quart_cors import cors, route_cors
 import simplejson
 
+with open('config/config.json') as f:
+    config = json.load(f)
+
+cert = config["ssl_certificate"]
+key = config["ssl_key"]
+
 
 app = Quart(__name__)
 app = cors(app, allow_origin=["*"], allow_headers="*")
@@ -366,7 +372,7 @@ async def GetInventory(user_id):
 
 if __name__ == '__main__':
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    context.load_cert_chain('C:/Users/Administrator/Desktop/cert.pem', 'C:/Users/Administrator/Desktop/key.pem')
+    context.load_cert_chain(cert, key)
     config = Config()
     config.bind = ['localhost:7777']
     config.ssl = context

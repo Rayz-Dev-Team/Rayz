@@ -11,5 +11,7 @@
     "staff_role_id": 0,
     "manager_role_id": 0,
     "developer_role_id": 0,
-    "api_token": "Get your API key from https://fluxpoint.dev/api"
+    "api_token": "Get your API key from https://fluxpoint.dev/api",
+    "ssl_certificate": "Path to your SSL certificate.file",
+    "ssl_key":  "Path to your SSL key.file"
 }
