@@ -20,7 +20,7 @@ from quart_cors import cors, route_cors
 app = Quart(__name__)
 app = cors(app, allow_origin=["*"], allow_headers="*")
 
-accepted_pull_tags_from_team_obj = ["id", "name", "ownerID", "profilePicture", "memberCount", "rolesById", "socialInfo", "homeBannerImageLg"]
+accepted_pull_tags_from_team_obj = ["id", "name", "ownerId", "profilePicture", "memberCount", "rolesById", "socialInfo", "homeBannerImageLg"]
 
 
 def token_required(f):
@@ -104,11 +104,11 @@ async def GetServerInfo(server_id):
     output_rayz_settings_json = {}
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
     resp_serverinfo = req_serverinfo.json()
-    try:
-        for i in accepted_pull_tags_from_team_obj:
+    for i in accepted_pull_tags_from_team_obj:
+        try:
             output_server_json[i] = resp_serverinfo["team"][i]
-    except:
-        pass
+        except:
+            pass
     j = json.dumps(output_server_json)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
