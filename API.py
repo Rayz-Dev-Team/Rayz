@@ -20,7 +20,7 @@ from quart_cors import cors, route_cors
 app = Quart(__name__)
 app = cors(app, allow_origin=["*"], allow_headers="*")
 
-accepted_pull_tags_from_team_obj = ["id", "name", "ownerId", "profilePicture", "memberCount", "rolesById", "socialInfo", "homeBannerImageLg"]
+accepted_pull_tags_from_team = ["id", "name", "ownerId", "profilePicture", "memberCount", "socialInfo", "homeBannerImageLg"]
 
 
 def token_required(f):
@@ -100,16 +100,21 @@ async def GetPack(pack_name):
 @app.route("/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetServerInfo(server_id):
+    main_output = {}
     output_server_json = {}
     output_rayz_settings_json = {}
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
     resp_serverinfo = req_serverinfo.json()
-    for i in accepted_pull_tags_from_team_obj:
+    for i in accepted_pull_tags_from_team:
         try:
             output_server_json[i] = resp_serverinfo["team"][i]
         except:
             pass
-    j = json.dumps(output_server_json)
+
+    main_output["server_data"] = output_server_json
+    main_output["rayz_settings"] = await getServer(server_id)
+
+    j = json.dumps(main_output)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
