@@ -7,6 +7,7 @@ from psycopg_pool import ConnectionPool
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
 from tools.db_funcs import getAllUsers
+from tools.db_funcs import getAllServers
 from psycopg.rows import dict_row
 from core.database import *
 from functools import wraps
@@ -49,6 +50,35 @@ def token_required(f):
             else:
                 return {'message': 'UserID does not exist.'}, 401
     return decorated
+
+async def CheckServerValid_FromAPI(id)
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_serverinfo = req_serverinfo.json()
+    valid = True
+    if "code" in resp_serverinfo and "message" in resp_serverinfo:
+        valid = {
+            "code" : 404,
+            "message" : "Server is private, or doesn't exist."
+        }
+    else:
+        return valid
+
+async def CheckServerValid_FromDB(id)
+    req_servers = awaitGetAllServers()
+    valid = False
+    for i in req_servers:
+        if id == i["id"]:
+            valid = True
+    return valid
+
+async def CheckBotInServer(id)
+    req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(id))
+    resp_server = req_server.json()
+    bot_in_server = False
+    for i in resp_server["members"]:
+        if i["id"] == "m6oLkqLA":
+            bot_in_server = True
+    return bot_in_server
 
 @app.errorhandler(404)
 async def not_found(error):
@@ -101,22 +131,36 @@ async def GetPack(pack_name):
 @app.route("/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetServerInfo(server_id):
-    main_output = {}
-    output_server_json = {}
-    output_rayz_settings_json = {}
-    try:
-        req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
-        resp_serverinfo = req_serverinfo.json()
-    except:
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    if DB_check == False:
         error_response = {
-            "error" : {
-                "message" : "Server is either private, or invalid."
-            }
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
         }
         j = json.dumps(error_response)
         response = quart.Response(j, mimetype="application/json")
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    main_output = {}
+    output_server_json = {}
+    output_rayz_settings_json = {}
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_serverinfo = req_serverinfo.json()
     for i in accepted_pull_tags_from_team:
         try:
             output_server_json[i] = resp_serverinfo["team"][i]
@@ -124,56 +168,57 @@ async def GetServerInfo(server_id):
             pass
 
     main_output["server_data"] = output_server_json
-    try:
-        main_output["rayz_settings"] = await getServer(server_id)
+    main_output["rayz_settings"] = await getServer(server_id)
 
-        j = simplejson.dumps(main_output)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-    except:
-        error_response = {
-            "error" : {
-                "message" : "Server is invalid."
-            }
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+    j = simplejson.dumps(main_output)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/<server_id>/staff", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetStaffMembers(server_id):
-    staff_member_id_list = {}
-    rayz_in_server = False
-    try:
-        req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
-        resp_roles = req_roles.json()
-        mod_role_id_list = []
-        for key, i in resp_roles["team"]["rolesById"].items():
-            kick_ban_hex = 32
-            if "general" in i["permissions"]:
-                num_to_convert = i["permissions"]["general"]
-                converted_num = num_to_convert & 32
-                if converted_num == kick_ban_hex:
-                    mod_role_id_list.append(i["id"])
-    except:
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
         error_response = {
-            "error" : {
-                "message" : "Server is either private, or invalid."
-            }
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
         }
         j = json.dumps(error_response)
         response = quart.Response(j, mimetype="application/json")
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    staff_member_id_list = {}
+    req_roles = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_roles = req_roles.json()
+    mod_role_id_list = []
+    for key, i in resp_roles["team"]["rolesById"].items():
+        kick_ban_hex = 32
+        if "general" in i["permissions"]:
+            num_to_convert = i["permissions"]["general"]
+            converted_num = num_to_convert & 32
+            if converted_num == kick_ban_hex:
+                mod_role_id_list.append(i["id"])
 
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()
     for i in resp_server["members"]:
-        if i["id"] == "m6oLkqLA":
-            rayz_in_server = True
         if "roleIds" in i:
             roles = i["roleIds"]
             for a in mod_role_id_list:
@@ -190,12 +235,6 @@ async def GetStaffMembers(server_id):
                                 "id": '{}'.format(i["id"]),
                                 "banner": '{}'.format(i["profileBannerBlur"])
                             }
-    if rayz_in_server == False:
-        staff_member_id_list = {
-            "error" : {
-                "message" : "Rayz is not in that server."
-            }
-        }
     j = json.dumps(staff_member_id_list)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -204,6 +243,32 @@ async def GetStaffMembers(server_id):
 @app.route("/<server_id>/bots", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetBots(server_id):
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
+        error_response = {
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     bots_list = {}
     req_server = requests.get("https://www.guilded.gg/api/teams/{}/members".format(server_id))
     resp_server = req_server.json()

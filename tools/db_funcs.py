@@ -30,3 +30,10 @@ async def getAllUsers():
         cursor.execute(f"SELECT * FROM users")
         users = cursor.fetchall()
     return users
+
+async def getAllServers():
+    with db_connection.connection() as conn:
+    cursor = conn.cursor(row_factory=dict_row)
+        cursor.execute(f"SELECT * FROM servers")
+        servers = cursor.fetchall()
+    return servers
