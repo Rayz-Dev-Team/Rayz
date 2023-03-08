@@ -133,6 +133,7 @@ async def GetPack(pack_name):
 async def GetServerInfo(server_id):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
     if DB_check == False:
         error_response = {
             "code" : 404,
