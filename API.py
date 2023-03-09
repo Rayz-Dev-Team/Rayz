@@ -30,7 +30,7 @@ app = cors(app, allow_origin=["*"], allow_headers="*")
 
 accepted_pull_tags_from_team = ["id", "name", "ownerId", "profilePicture", "memberCount", "socialInfo", "homeBannerImageLg"]
 accepted_pull_tags_from_serverDB = ["id", "custom_blocked_words", "logs_channel_id", "server_prefix", "partner_status", "economy_multiplier", "moderation_module", "fun_module", "economy_module", "welcome_message", "welcome_channel", "log_traffic", "log_actions"]
-
+accepted_pull_tags_from_userDB = ["id", "bank", "bank_secure", "pocket", "inventory", "commands_used", "cooldowns"]
 
 def token_required(f):
     @wraps(f)
@@ -59,6 +59,18 @@ def token_required(f):
     return decorated
 
 async def CheckServerValid_FromAPI(id):
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
+    resp_serverinfo = req_serverinfo.json()
+    valid = True
+    if "code" in resp_serverinfo and "message" in resp_serverinfo:
+        valid = {
+            "code" : 404,
+            "message" : "Server is private, or doesn't exist."
+        }
+    else:
+        return valid
+
+async def CheckUserValid_FromDB(id):
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
     resp_serverinfo = req_serverinfo.json()
     valid = True
@@ -137,7 +149,7 @@ async def GetPack(pack_name):
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
 
-@app.route("/<server_id>/info", methods=["GET"])
+@app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GetServerInfo(server_id):
     DB_check = await CheckServerValid_FromDB(server_id)
@@ -246,6 +258,27 @@ async def GetServerInfo(server_id):
     main_output["bots_list"] = bots_list
 
     j = simplejson.dumps(main_output)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/user/<user_id>/info", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GetUserInfo(user_id):
+    user_data_output = {}
+    user_data = await getUser(user_id)
+    if user_data == None:
+        user_data_output = {
+            "code": 404,
+            "message": "User doesn't exist in the database."
+        }
+    else:
+        for i in accepted_pull_tags_from_userDB:
+            try:
+                user_data_output[i] = user_data[i]
+            except:
+                pass
+    j = simplejson.dumps(user_data_output)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
