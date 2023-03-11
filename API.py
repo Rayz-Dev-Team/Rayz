@@ -66,7 +66,7 @@ async def CheckServerValid_FromAPI(id: str):
         valid = {
             "code" : 404,
             "message" : "Server is private, or doesn't exist."
-        }, 404
+        }
     else:
         return valid
 
@@ -78,7 +78,7 @@ async def CheckUserValid_FromDB(id: str):
         valid = {
             "code" : 404,
             "message" : "Server is private, or doesn't exist."
-        }, 404
+        }
     else:
         return valid
 
@@ -159,7 +159,7 @@ async def GetServerInfo(server_id: str):
         error_response = {
             "code" : 404,
             "message" : "Server doesn't exist in the database."
-        }, 404
+        }
         j = json.dumps(error_response)
         response = quart.Response(j, mimetype="application/json")
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -173,7 +173,7 @@ async def GetServerInfo(server_id: str):
         error_response = {
             "code" : 404,
             "message" : "The bot is not in the server."
-        }, 404
+        }
         j = json.dumps(error_response)
         response = quart.Response(j, mimetype="application/json")
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -271,7 +271,7 @@ async def GetUserInfo(user_id: str):
         user_data_output = {
             "code": 404,
             "message": "User doesn't exist in the database."
-        }, 404
+        }
     else:
         for i in accepted_pull_tags_from_userDB:
             try:
