@@ -50,7 +50,7 @@ def token_required(f):
             user_list.append(i["id"])
         with db_connection.connection() as conn:
             if userID in user_list:
-                if token == "1233":
+                if token == "1233":  # FIXME: Change to actual base64 token
                     return await f(*args, **kwargs)
                 else:
                     return {'message': 'Token is invalid.'}, 401
@@ -58,7 +58,7 @@ def token_required(f):
                 return {'message': 'UserID does not exist.'}, 401
     return decorated
 
-async def CheckServerValid_FromAPI(id):
+async def CheckServerValid_FromAPI(id: str):
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
     resp_serverinfo = req_serverinfo.json()
     valid = True
@@ -66,11 +66,11 @@ async def CheckServerValid_FromAPI(id):
         valid = {
             "code" : 404,
             "message" : "Server is private, or doesn't exist."
-        }
+        }, 404
     else:
         return valid
 
-async def CheckUserValid_FromDB(id):
+async def CheckUserValid_FromDB(id: str):
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
     resp_serverinfo = req_serverinfo.json()
     valid = True
@@ -78,11 +78,11 @@ async def CheckUserValid_FromDB(id):
         valid = {
             "code" : 404,
             "message" : "Server is private, or doesn't exist."
-        }
+        }, 404
     else:
         return valid
 
-async def CheckServerValid_FromDB(id):
+async def CheckServerValid_FromDB(id: str):
     req_servers = await getAllServers()
     valid = False
     for i in req_servers:
@@ -90,7 +90,7 @@ async def CheckServerValid_FromDB(id):
             valid = True
     return valid
 
-async def CheckBotInServer(id):
+async def CheckBotInServer(id: str):
     bot_in_server = False
     valid = await CheckServerValid_FromAPI(id)
     if valid == True:
@@ -102,7 +102,7 @@ async def CheckBotInServer(id):
     return bot_in_server
 
 @app.errorhandler(404)
-async def not_found(error):
+async def not_found(_):
     page_url = request.path
     return {'message': f'Page {page_url} does not exist.'}, 401
 
@@ -131,7 +131,7 @@ async def NotFound():
 
 @app.route("/pack/<pack_name>", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetPack(pack_name):
+async def GetPack(pack_name: str):
     if pack_name == "capoo":
         image_url = url_for('Capoo', _external=True)
 
@@ -151,7 +151,7 @@ async def GetPack(pack_name):
 
 @app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetServerInfo(server_id):
+async def GetServerInfo(server_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
@@ -264,21 +264,21 @@ async def GetServerInfo(server_id):
 
 @app.route("/user/<user_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetUserInfo(user_id):
+async def GetUserInfo(user_id: str):
     user_data_output = {}
     user_data = await getUser(user_id)
     if user_data == None:
         user_data_output = {
             "code": 404,
             "message": "User doesn't exist in the database."
-        }
+        }, 404
     else:
         for i in accepted_pull_tags_from_userDB:
             try:
                 user_data_output[i] = user_data[i]
             except:
                 pass
-    j = simplejson.dumps(user_data_output)
+    j = simplejson.dumps(user_data_output, indent=4)
     response = quart.Response(j, mimetype="application/json")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
@@ -344,7 +344,7 @@ async def GetServerCount():
 
 @app.route("/inventory/<user_id>", methods=["GET"])
 @token_required
-async def GetInventory(user_id):
+async def GetInventory(user_id: str):
     try:
         user = await getUser(user_id)
         resp = {"status": 200, "statusText": "success", "inventory": user["inventory"]["inventory"]}
