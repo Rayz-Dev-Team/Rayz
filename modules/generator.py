@@ -196,6 +196,21 @@ class Generator(commands.Cog):
 		else:
 			pass
 
+async def _check_tokens(author):
+	try:
+		user = await getUser(author.id)
+		with db_connection.connection() as conn:
+			cursor = conn.cursor()
+			if user["tokens"] == None or user["tokens"] == {}:
+				new_account = {
+					"tokens": {}
+				}
+				infoJson = json.dumps(new_account)
+				cursor = conn.cursor()
+				cursor.execute(f"UPDATE users SET tokens = %s WHERE ID = '{author.id}'",  [infoJson])
+				conn.commit()
+	except psycopg.DatabaseError as e:
+		print(f'Error {e}')
 
 async def _check_inventory(author):
 	try:
@@ -293,6 +308,7 @@ async def _check_values_member(member):
 				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
 				conn.commit()
 			await _check_inventory_member(member)
+
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
@@ -352,6 +368,7 @@ async def _check_values(author):
 				cursor = conn.cursor()
 				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
 				conn.commit()
+			await _check_tokens(author)
 			await _check_inventory(author)
 			await _check_cooldowns_author(author)
 	except psycopg.DatabaseError as e:

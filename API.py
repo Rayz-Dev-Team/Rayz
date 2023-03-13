@@ -17,6 +17,9 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from quart_cors import cors, route_cors
 import simplejson
+import secrets
+import string
+import time
 
 with open('config/config.json') as f:
     config = json.load(f)
@@ -31,6 +34,17 @@ app = cors(app, allow_origin=["*"], allow_headers="*")
 accepted_pull_tags_from_team = ["id", "name", "ownerId", "profilePicture", "memberCount", "socialInfo", "homeBannerImageLg"]
 accepted_pull_tags_from_serverDB = ["id", "custom_blocked_words", "logs_channel_id", "server_prefix", "partner_status", "economy_multiplier", "moderation_module", "fun_module", "economy_module", "welcome_message", "welcome_channel", "log_traffic", "log_actions"]
 accepted_pull_tags_from_userDB = ["id", "bank", "bank_secure", "pocket", "inventory", "commands_used", "cooldowns"]
+
+async def check_token(id, token):
+    user = await getUser(id)
+    if user == None:
+        return False
+    for i in user["tokens"]["tokens"]:
+        if i == token:
+            if user["tokens"]["tokens"][i]["token_active"] == True:
+                return True
+            else:
+                return False
 
 def token_required(f):
     @wraps(f)
@@ -50,7 +64,8 @@ def token_required(f):
             user_list.append(i["id"])
         with db_connection.connection() as conn:
             if userID in user_list:
-                if token == "1233":  # FIXME: Change to actual base64 token
+                check = await check_token(userID, token)
+                if check == True:
                     return await f(*args, **kwargs)
                 else:
                     return {'message': 'Token is invalid.'}, 401
@@ -71,16 +86,15 @@ async def CheckServerValid_FromAPI(id: str):
         return valid
 
 async def CheckUserValid_FromDB(id: str):
-    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(id))
-    resp_serverinfo = req_serverinfo.json()
-    valid = True
-    if "code" in resp_serverinfo and "message" in resp_serverinfo:
-        valid = {
-            "code" : 404,
-            "message" : "Server is private, or doesn't exist."
-        }
+    users = await getAllUsers()
+    user_list = []
+    for i in users:
+        user_list.append(i["id"])
+    if id in user_list:
+        valid = True
     else:
-        return valid
+        valid = False
+    return valid
 
 async def CheckServerValid_FromDB(id: str):
     req_servers = await getAllServers()
@@ -148,6 +162,35 @@ async def GetPack(pack_name: str):
         response = quart.Response(json.dumps(capoo_pack), mimetype='application/json')
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+
+@app.route("/token/<user_id>/generate", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GenerateToken(user_id: str):
+    DB_check = await CheckUserValid_FromDB(user_id)
+    if DB_check == True:
+        curr_time = time.time()
+        user = await getUser(user_id)
+        token = str(secrets.token_hex(32))
+        alphabet = string.ascii_letters + string.digits
+        password = "".join(secrets.choice(alphabet) for i in range(8))
+        with db_connection.connection() as conn:
+            user["tokens"]["tokens"][token] = {
+                "token_active": False,
+                "password": "{}".format(password),
+                "last_use": 0
+            }
+            updated_tokens = user["tokens"]
+            infoJson = simplejson.dumps(updated_tokens)
+            cursor = conn.cursor()
+            cursor.execute(f"UPDATE users SET tokens = %s WHERE ID = '{user_id}'",  [infoJson])
+            conn.commit()
+            response = {
+                "token": "{}".format(token),
+                "password": "{}".format(password)
+            }
+            response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            return response
 
 @app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
