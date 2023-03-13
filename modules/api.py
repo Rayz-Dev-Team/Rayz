@@ -40,6 +40,7 @@ class API(commands.Cog):
 		await _check_values(author)
 		user = await getUser(author.id)
 		try:
+			takeaway = False
 			with db_connection.connection() as conn:
 				cursor = conn.cursor()
 				for i in user["tokens"]["tokens"]:
@@ -52,22 +53,17 @@ class API(commands.Cog):
 						conn.commit()
 						em = guilded.Embed(title="Dashboard: [<@{}>]".format(author.id), description="Token activated. Your token will expire 1 hour after it's latest use.", color=0x363942)
 						await ctx.reply(embed=em)
-						return
+						takeaway = True
 					elif user["tokens"]["tokens"][i]["password"] == password and user["tokens"]["tokens"][i]["token_active"] == True:
 						em = guilded.Embed(title="Dashboard: [<@{}>]".format(author.id), description="The token you're trying to activate is already activated.", color=0x363942)
 						await ctx.reply(embed=em)
-						return
-					else:
-						em = guilded.Embed(title="Dashboard: [<@{}>]".format(author.id), description="Invalid password given.", color=0x363942)
-						await ctx.reply(embed=em)
-						return
+						takeaway = True
+				if takeaway == False:
+					em = guilded.Embed(title="Dashboard: [<@{}>]".format(author.id), description="Invalid password given.", color=0x363942)
+					await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
-
-
-
-		
 
 def setup(bot):
 	bot.add_cog(API(bot))

@@ -53,14 +53,14 @@ async def _check_tokens(author):
 
 async def check_token(id, token):
     user = await getUser(id)
+    takeaway = False
     if user == None:
         return False
     for i in user["tokens"]["tokens"]:
         if i == token:
             if user["tokens"]["tokens"][i]["token_active"] == True:
-                return True
-            else:
-                return False
+                takeaway = True
+    return takeaway
 
 def token_required(f):
     @wraps(f)
