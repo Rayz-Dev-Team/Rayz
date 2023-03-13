@@ -208,6 +208,15 @@ async def GenerateToken(user_id: str):
             response = quart.Response(simplejson.dumps(response), mimetype='application/json')
             response.headers.add("Access-Control-Allow-Origin", "*")
             return response
+    else:
+        response = {
+            "code": 404,
+            "message": "That user ID doesn't exist."
+        }
+        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+        
 
 @app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
