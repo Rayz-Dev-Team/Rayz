@@ -35,6 +35,22 @@ accepted_pull_tags_from_team = ["id", "name", "ownerId", "profilePicture", "memb
 accepted_pull_tags_from_serverDB = ["id", "custom_blocked_words", "logs_channel_id", "server_prefix", "partner_status", "economy_multiplier", "moderation_module", "fun_module", "economy_module", "welcome_message", "welcome_channel", "log_traffic", "log_actions"]
 accepted_pull_tags_from_userDB = ["id", "bank", "bank_secure", "pocket", "inventory", "commands_used", "cooldowns"]
 
+async def _check_tokens(author):
+	try:
+		user = await getUser(author)
+		with db_connection.connection() as conn:
+			cursor = conn.cursor()
+			if user["tokens"] == None or user["tokens"] == {}:
+				new_account = {
+					"tokens": {}
+				}
+				infoJson = json.dumps(new_account)
+				cursor = conn.cursor()
+				cursor.execute(f"UPDATE users SET tokens = %s WHERE ID = '{author}'",  [infoJson])
+				conn.commit()
+	except psycopg.DatabaseError as e:
+		print(f'Error {e}')
+
 async def check_token(id, token):
     user = await getUser(id)
     if user == None:
@@ -167,6 +183,7 @@ async def GetPack(pack_name: str):
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GenerateToken(user_id: str):
     DB_check = await CheckUserValid_FromDB(user_id)
+    await _check_tokens(user_id)
     if DB_check == True:
         curr_time = time.time()
         user = await getUser(user_id)
