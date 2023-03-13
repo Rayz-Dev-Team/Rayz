@@ -183,8 +183,8 @@ async def GetPack(pack_name: str):
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 async def GenerateToken(user_id: str):
     DB_check = await CheckUserValid_FromDB(user_id)
-    await _check_tokens(user_id)
     if DB_check == True:
+        await _check_tokens(user_id)
         curr_time = time.time()
         user = await getUser(user_id)
         token = str(secrets.token_hex(32))
