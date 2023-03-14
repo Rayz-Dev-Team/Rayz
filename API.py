@@ -1,4 +1,4 @@
-from quart import Quart, request, send_file, Response, jsonify, url_for, redirect, abort, render_template_string
+from quart import Quart, request, send_file, Response, jsonify, url_for, redirect, abort, render_template
 import quart
 import os
 import psycopg
@@ -28,7 +28,7 @@ cert = config["ssl_certificate"]
 key = config["ssl_key"]
 
 
-app = Quart(__name__)
+app = Quart(__name__, template_folder='api')
 app = cors(app, allow_origin=["*"], allow_headers="*")
 
 accepted_pull_tags_from_team = ["id", "name", "ownerId", "profilePicture", "memberCount", "socialInfo", "homeBannerImageLg"]
@@ -136,131 +136,10 @@ async def not_found(_):
     page_url = request.path
     return {'message': f'Page {page_url} does not exist.'}, 401
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=["GET"])
 @route_cors(allow_origin="*")
 async def index():
-    template = """
-    <html>
-    <head>
-        <title>API Documentation</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-                line-height: 1.5;
-                background-color: #1C2841;
-                color: #fff;
-                margin: 15;
-                padding: 0;
-            }
-
-            h1 {
-                font-size: 32px;
-                margin-top: 15;
-                padding: 20px;
-            }
-
-            ul {
-                list-style: none;
-                margin: 10;
-                padding: 0;
-            }
-
-            li {
-                margin: 10px 0;
-            }
-
-            .section {
-                margin-top: 20px;
-                padding: 20px;
-                border: 1px solid #ccc;
-                background-color: #2A3B5F;
-                color: #fff;
-                position: relative;
-            }
-
-            .section h2 {
-                margin-top: 0;
-                padding-bottom: 10px;
-                border-bottom: 1px solid #fff;
-            }
-
-            .section p {
-                margin: 0;
-                padding: 10px 0;
-            }
-
-            .copy-btn {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                padding: 5px 10px;
-                border-radius: 5px;
-                background-color: #fff;
-                color: #333;
-                cursor: pointer;
-            }
-
-            .code-block-stats {
-                display: flex;
-                align-items: center;
-                margin-top: 10px;
-                margin-bottom: 10px;
-                background-color: #424949;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
-                overflow-x: auto;
-            }
-
-            .code-block pre {
-                margin: 0;
-            }
-
-            .code-block-stats code {
-                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-                font-size: 14px;
-                line-height: 1;
-                color: #fff;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>API Documentation</h1>
-        <section id="stats" class="section">
-            <h2>/stats  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>Returns a number of servers Rayz is in, and a number of users Rayz can see.</p>
-            <div class="code-block-stats">
-                <pre>
-<code class="language-http">curl --request GET https://api.rayzbot.xyz/stats </code></pre>
-            </div>
-            <button class="copy-btn" onclick="copyToClipboard('https://api.rayzbot.xyz/stats')">Copy</button>
-        </section>
-        <section id="server-info" class="section">
-            <h2>/server/SERVER_ID/info  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>This returns all the data needed for a website to display. Such as: settings, staff member information, bots, server information.</p>
-            <button class="copy-btn" onclick="copyToClipboard('https://api.rayzbot.xyz/server/SERVER_ID/info')">Copy</button>
-        </section>
-        <section id="generate-token" class="section">
-            <h2>/token/USER_ID/generate  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>Generates a Token and Password for authentication.</p>
-            <button class="copy-btn" onclick="copyToClipboard('https://api.rayzbot.xyz/token/USER_ID/generate)">Copy</button>
-        </section>
-        <script>
-            function copyToClipboard(text) {
-                var textarea = document.createElement("textarea");
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-            }
-        </script>
-    </body>
-    </html>
-
-    """
-    return await render_template_string(template)
+    return await render_template('index.html')
 
 @app.route("/capoo")
 @route_cors(allow_headers=["content-type"], allow_origin="*")

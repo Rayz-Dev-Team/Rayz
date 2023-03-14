@@ -10,6 +10,7 @@ config/economy_settings.json
 # TODO -> PR to list valid reason here 
 # Fonts, I have no idea why they were added in the first place
 fonts/*
+.vs/*
 
 # Local log file
 guilded.log
@@ -22,7 +23,3 @@ economy/bans.py
 
 # Ignoring extra packages installed in venv
 env
-/.vs/slnx.sqlite
-/.vs/ProjectSettings.json
-/.vs/Rayz/v16/.suo
-/.vs/VSWorkspaceState.json
