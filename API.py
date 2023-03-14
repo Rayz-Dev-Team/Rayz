@@ -200,6 +200,29 @@ async def index():
                 color: #333;
                 cursor: pointer;
             }
+
+            .code-block-stats {
+                display: flex;
+                align-items: center;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                background-color: #424949;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                overflow-x: auto;
+            }
+
+            .code-block pre {
+                margin: 0;
+            }
+
+            .code-block-stats code {
+                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                font-size: 14px;
+                line-height: 1;
+                color: #fff;
+            }
         </style>
     </head>
     <body>
@@ -207,6 +230,10 @@ async def index():
         <section id="stats" class="section">
             <h2>/stats  &#183;  [GET]  &#183;  Unprotected</h2>
             <p>Returns a number of servers Rayz is in, and a number of users Rayz can see.</p>
+            <div class="code-block-stats">
+                <pre>
+<code class="language-http">curl --request GET https://api.rayzbot.xyz/stats </code></pre>
+            </div>
             <button class="copy-btn" onclick="copyToClipboard('https://api.rayzbot.xyz/stats')">Copy</button>
         </section>
         <section id="server-info" class="section">
