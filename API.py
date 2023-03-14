@@ -141,6 +141,66 @@ async def not_found(_):
 async def index():
     return await render_template('index.html')
 
+@app.route('/token/<user_id>/validate', methods=['POST'])
+@route_cors(allow_headers=["content-type"], allow_methods=["POST"], allow_origin="*")
+async def ValidateToken(user_id: str):
+    try:
+        data = await request.json
+        if "token" in data:
+            token = data["token"]
+            user_status = await CheckUserValid_FromDB(user_id)
+            if user_status == True:
+                user = await getUser(user_id)
+                if token in user["tokens"]["tokens"]:
+                    if user["tokens"]["tokens"][token]["token_active"] == False:
+                        response = {
+                            "status": False,
+                            "message": "Token is not active."
+                        }
+                        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+                        response.headers.add("Access-Control-Allow-Origin", "*")
+                        return response
+                    else:
+                        response = {
+                            "status": True,
+                            "message": "Token is active!"
+                        }
+                        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+                        response.headers.add("Access-Control-Allow-Origin", "*")
+                        return response
+                else:
+                    response = {
+                        "code": 404,
+                        "message": "Token doesn't exist."
+                    }
+                    response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+                    response.headers.add("Access-Control-Allow-Origin", "*")
+                    return response
+            else:
+                response = {
+                    "code": 404,
+                    "message": "Invalid user ID."
+                }
+                response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+                response.headers.add("Access-Control-Allow-Origin", "*")
+                return response
+        else:
+            response = {
+                "code": 404,
+                "message": "Token param not found."
+            }
+            response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            return response
+    except:
+        response = {
+            "code": 400,
+            "message": "Bad request."
+        }
+        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
 @app.route("/capoo")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
 async def Capoo():

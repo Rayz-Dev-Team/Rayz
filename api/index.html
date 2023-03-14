@@ -128,5 +128,12 @@
         <h2>/token/USER_ID/generate  &#183;  [GET]  &#183;  Unprotected</h2>
         <p>Generates a Token and Password for authentication.</p>
     </section>
+    <section id="validate-token" class="section">
+        <h2>/token/USER_ID/validate  &#183;  [POST]  &#183;  Unprotected</h2>
+        <p>Gets a response if a Token is valid or not. Will return code errors for: Invalid User ID, Token, etc.</p>
+        <div class="code-block-stats">
+            <pre><code class="language-http">curl -X POST -H "Content-Type: application/json" -d "{\"token\": \"TOKEN HERE\"}" https://api.rayzbot.xyz/token/USER_ID/validate </code></pre>
+        </div>
+    </section>
 </body>
 </html>
