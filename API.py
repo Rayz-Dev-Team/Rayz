@@ -139,7 +139,22 @@ async def not_found(_):
 @app.route('/', methods=['GET'])
 @route_cors(allow_origin="*")
 async def index():
-    return 'Example public endpoints are /stats, /server_id/staff, /server_id/bots'
+    template = """
+    <html>
+        <head>
+            <title>API Documentation</title>
+        </head>
+        <body>
+            <h1>API Documentation</h1>
+            <ul>
+                <li><strong>/stats:</strong> Returns a number of servers Rayz is in, and a number of users Rayz can see.</li>
+                <li><strong>/server/SERVER_ID/info</strong> This returns all the data needed for a website to display. Such as: settings, staff member information, bots, server information.</li>
+                <li><strong>/token/USER_ID/generate:</strong> Generates a Token and Password for authentication.</li>
+            </ul>
+        </body>
+    </html>
+    """
+    return await render_template_string(template)
 
 @app.route("/capoo")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
