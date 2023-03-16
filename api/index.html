@@ -27,6 +27,7 @@
             height: 100%;
             overflow: auto;
             padding-top: 20px;
+            transition: all 0.3s;
         }
 
         nav ul {
@@ -35,10 +36,10 @@
             padding: 0;
         }
 
-            nav ul li {
-                margin-bottom: 10px;
-                padding-left: 10px;
-            }
+        nav ul li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
 
         nav a {
             text-decoration: none;
@@ -57,6 +58,7 @@
             margin-left: 220px;
             flex-grow: 1;
             padding: 20px;
+            transition: all 0.3s;
         }
 
         h1 {
@@ -111,6 +113,21 @@
             font-size: 14px;
             line-height: 1;
             color: #f4f4f4;
+        }
+
+        /* Media query for mobile devices */
+        @media (max-width: 768px) {
+            nav {
+                width: 100%;
+                height: auto;
+                position: static;
+                padding-top: 0;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 20px 10px;
+            }
         }
     </style>
 </head>
