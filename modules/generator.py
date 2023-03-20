@@ -128,8 +128,7 @@ class Generator(commands.Cog):
 		if "@rayz" in message.content.lower():
 			ints = predict_class(message.content.lower())
 			res = get_response(ints, intents)
-			em = guilded.Embed(description="{}".format(res), color=0x363942)
-			await message.reply(embed=em)
+			await message.reply(res)
 		for word in swearwords:
 			if re.search(word, message.content.lower()):
 				things_said.append("{}{}-".format(word[0], word[1]))
