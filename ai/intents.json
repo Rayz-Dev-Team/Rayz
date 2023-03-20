@@ -27,28 +27,118 @@
         },
         {
             "tag": "website: website?",
-            "patterns": [ "a website?", "a dashboard?" ],
+            "patterns": [ "website?", "dashboard?" ],
             "responses": [ "Yes, I have a dashboard. https://dash.rayzbot.xyz/" ]
         },
         {
             "tag": "time",
-            "patterns": [ "time is it?", "year is it?" ],
+            "patterns": [ "time", "year" ],
             "responses": [ "I am unable to give a response about what time it is." ]
         },
         {
             "tag": "guilded: support",
-            "patterns": [ "support server?", "can I get help?", "can help me?", "guilded server" ],
+            "patterns": [ "support server?", "get help?", "can help me?", "guilded server" ],
             "responses": [ "You can find support in our Official Guilded support server. https://guilded.gg/Rayz" ]
         },
         {
             "tag": "iq",
-            "patterns": [ "your iq?" ],
+            "patterns": [ "your iq?", "iq" ],
             "responses": [ "My IQ is higher than yours.", "My IQ is 1,000,000. (1 Million)", "I don't have an IQ." ]
         },
         {
             "tag": "discord",
-            "patterns": [ "is discord", "discord is" ],
-            "responses":  [ "Guilded is better than Discord.", "Sorry, I don't talk about other platforms, especially Discord.", "I don't provide support for Discord.", "Guilded will always remain better than Discord." ]
+            "patterns": [ "discord" ],
+            "responses": [ "Guilded is better than Discord.", "Sorry, I don't talk about other platforms, especially Discord.", "I don't provide support for Discord.", "Guilded will always remain better than Discord." ]
+        },
+        {
+            "tag": "about_guilded",
+            "patterns": [ "what is Guilded?", "tell me about Guilded", "what does Guilded do?", "what can I do on Guilded?" ],
+            "responses": [ "Guilded is an all-in-one platform for gaming communities, with features like text and voice chat, calendar, media sharing, and more.", "Guilded is a platform for gamers to connect and organize events, with features such as chat, media sharing, and scheduling.", "Guilded is a comprehensive gaming platform that provides voice and text chat, as well as a variety of features for community management and organization." ]
+        },
+        {
+            "tag": "features",
+            "patterns": [ "features" ],
+            "responses": [ "Guilded offers a variety of features for gaming communities, including voice and text chat, calendars, media sharing, and more.", "On Guilded, you can organize and manage events, chat with other gamers, share media, and more.", "Guilded stands out from other platforms due to its comprehensive set of features, as well as its focus on gaming communities.", "Did you know you can have up to 20,000 emojis in your personal Guilded server? What an amazing feature!" ]
+        },
+        {
+            "tag": "pricing",
+            "patterns": [ "Guilded cost?", "Guilded free?", "cost", "price", "free" ],
+            "responses": [ "Guilded is free to use, with no hidden fees or charges.", "Guilded is completely free, and there are no hidden costs or fees.", "Guilded offers all of its features for free, with no pricing plans or fees." ]
+        },
+        {
+            "tag": "support",
+            "patterns": [ "how do I get support on Guilded?", "where can I find help for Guilded?", "what is the Guilded support process?" ],
+            "responses": [ "There are various different ways for getting support. You can email Guilded's support `support@guilded.gg', use the `Support` channel in the Official Guilded server (https://guilded.gg/Guilded-Official), or find the support button with a wrench icon somewhere on your client." ]
+        },
+        {
+            "tag": "privacy",
+            "patterns": [ "privacy policy?", "protect my data?", "data privacy practices?" ],
+            "responses": [ "Guilded takes privacy and data protection seriously, and has a detailed privacy policy that outlines how user data is collected, used, and protected. https://support.guilded.gg/hc/en-us/articles/360039235054-Privacy", "Guilded implements various measures to protect user data, such as encryption and regular security audits, and the privacy policy provides detailed information about how user data is handled.", "Guilded's data privacy practices are designed to protect user data and ensure that it is not misused or shared without consent." ]
+        },
+        {
+            "tag": "integrations",
+            "patterns": [ "integrate", "connect to Guilded?" ],
+            "responses": [ "Guilded offers integrations with a variety of apps, such as Discord, Twitter, and Twitch, and you can connect them through the 'Integrations' tab.", "On Guilded, you can connect with other tools and apps through integrations, such as Discord, Twitter, and Twitch, and you can manage them through the 'Integrations' tab.", "Integrating Guilded with other tools and apps is easy - simply go to the 'Integrations' tab and connect the desired apps." ]
+        },
+        {
+            "tag": "mobile_app",
+            "patterns": [ "mobile app?", "Guilded on my phone?", "download the Guilded app?", "mobile", "phone" ],
+            "responses": [ "Yes, Guilded has mobile apps for iOS and Android devices, which can be downloaded from the App Store or Google Play.", "You can use Guilded on your phone by downloading the mobile app from the App Store or Google Play.", "To download the Guilded app, simply search for 'Guilded' in the App Store or Google Play and download the app." ]
+        },
+        {
+            "tag": "communities",
+            "patterns": [ "communities", "join or create a community", "community" ],
+            "responses": [ "Communities on Guilded are groups of gamers who share similar interests, and can communicate and collaborate through the platform's features. You can join or create a community by searching for or creating a new one, and then use the features to chat, share media, schedule events, and more.", "To join or create a community on Guilded, you can search for an existing community or create a new one, then invite others to join and begin using the platform's features.", "In a community on Guilded, you can chat with other gamers, share media, schedule events, and more." ]
+        },
+        {
+            "tag": "voice_chat",
+            "patterns": [ "voice chat work", "use voice chat", " features voice chat", "vc" ],
+            "responses": [ "Guilded's voice chat feature allows you to communicate with other gamers using high-quality audio, with features such as mute, deafen, and push-to-talk. You can use voice chat in communities or during events.", "Yes, you can use voice chat on Guilded to communicate with other gamers in communities or during events.", "Guilded's voice chat feature offers high-quality audio and features such as mute, deafen, and push-to-talk." ]
+        },
+        {
+            "tag": "media_sharing",
+            "patterns": [ "media sharing", "share media", "types of media" ],
+            "responses": [ "Guilded's media sharing feature allows you to share images, videos, and other media with other gamers in communities or during events. You can either upload files directly or link to external sources.", "Yes, you can share media on Guilded by uploading files directly or linking to external sources, and then sharing them with other gamers in communities or during events.", "On Guilded, you can share a variety of media types with other gamers in communities or during events, including images, videos, and more." ]
+        },
+        {
+            "tag": "events",
+            "patterns": [ "events work ", "schedule events", "events" ],
+            "responses": [ "Guilded's events feature allows you to schedule and organize events, such as game sessions, meetings, and more. You can invite other gamers, set reminders, and receive RSVPs.", "Yes, you can schedule events on Guilded by using the platform's events feature, which allows you to set reminders, invite others, and receive RSVPs.", "Guilded's events feature offers a variety of features for organizing and managing events, such as setting reminders, inviting others, and receiving RSVPs." ]
+        },
+        {
+            "tag": "moderation",
+            "patterns": [ "moderation features", "moderation work ", "moderate my community" ],
+            "responses": [ "Guilded offers a variety of moderation features for communities, including the ability to mute, kick, or ban users, as well as filters and spam protection. You can moderate your community by assigning roles and permissions, or using the moderation tools.", "Moderation on Guilded involves assigning roles and permissions to community members, as well as using the moderation tools to mute, kick, or ban users. The platform also offers filters and spam protection to help keep your community safe.", "Yes, you can moderate your community on Guilded by assigning roles and permissions to community members, and using the moderation tools such as mute, kick, or ban users." ]
+        },
+        {
+            "tag": "notifications",
+            "patterns": [ "notification features", "notifications work", "customize notifications" ],
+            "responses": [ "Guilded offers a variety of notification features, including push notifications, email notifications, and in-app notifications. Notifications on Guilded work by sending alerts for new messages, events, and more. You can customize your notifications by navigating to the 'Settings' tab.", "Notifications on Guilded work by sending alerts for new messages, events, and more. The platform offers push notifications, email notifications, and in-app notifications. You can customize your notifications by navigating to the 'Settings' tab.", "Yes, you can customize your notifications on Guilded by navigating to the 'Settings' tab and choosing your desired notification settings. Guilded offers push notifications, email notifications, and in-app notifications." ]
+        },
+        {
+            "tag": "roles_and_permissions",
+            "patterns": [ "roles and permissions", "assign roles", "assign permissions", "customize roles" ],
+            "responses": [ "Roles and permissions on Guilded allow you to assign specific privileges to community members, such as the ability to moderate or manage channels. You can assign roles and permissions by navigating to the 'Roles & Permissions' tab and creating or modifying roles.", "To assign roles and permissions on Guilded, navigate to the 'Roles & Permissions' tab and create or modify roles. Roles and permissions allow you to assign specific privileges to community members, such as the ability to moderate or manage channels.", "Yes, you can customize roles and permissions on Guilded by creating or modifying roles in the 'Roles & Permissions' tab. Roles and permissions allow you to assign specific privileges to community members, such as the ability to moderate or manage channels." ]
+        },
+        {
+            "tag": "about_guilded",
+            "patterns": [ "is Guilded?", "Guilded work?", "what makes Guilded different from other gaming platforms?", "can use Guilded?" ],
+            "responses": [ "Guilded is a free, all-in-one platform for gamers that offers features such as voice and text chat, event scheduling, media sharing, and more. The platform is designed to help gamers connect and collaborate with each other more easily.", "Guilded works by providing a variety of features that allow gamers to communicate, share media, schedule events, and more. The platform is designed to be user-friendly and accessible for gamers of all skill levels.", "What sets Guilded apart from other gaming platforms is its all-in-one approach, which offers a variety of features in one place, as well as its focus on creating a positive and supportive gaming community. Guilded also offers a range of integrations with other apps and tools, such as Discord and Twitch, to help gamers manage their gaming experience more easily.", "Anyone can use Guilded, whether you're a casual or competitive gamer, a member of a gaming team, or just looking to connect with other gamers who share your interests." ]
+        },
+        {
+            "tag": "partners",
+            "patterns": [ "Partner Program?", "partner?", "apply partner" ],
+            "responses": [ "The Guilded Partner Program is a program designed to support and recognize content creators and community leaders who are passionate about gaming and building positive communities. Partners gain access to exclusive features and support from Guilded, as well as opportunities for growth and recognition within the community.", "To become a Guilded partner, you can apply through the platform's Partner Program page. You will need to meet certain requirements, such as having an active community and creating content regularly, in order to be considered for the program.", "The benefits of being a Guilded partner include access to exclusive features and support from the platform, such as custom branding and early access to new features. Partners also gain opportunities for growth and recognition within the community, as well as access to resources and tools to help them build and grow their communities." ]
+        },
+        {
+            "tag": "tos",
+            "patterns": [ "tos?", "terms of service" ],
+            "responses": [ "The Guilded terms of service outline the rules and guidelines for using the platform, including community guidelines, privacy policy, and copyright and trademark guidelines. https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use", "The Guilded terms of service include guidelines for using the platform, such as community guidelines, privacy policy, and copyright and trademark guidelines. These guidelines help ensure a safe and positive experience for all users. https://support.guilded.gg/hc/en-us/sections/360006402834-About" ]
+        },
+        {
+            "tag": "nsfw",
+            "patterns": [ "NSFW content", "18+", "over 18", "adult content" ],
+            "responses": [ "You will have to do your own research about this, I cannot give a direct response. https://support.guilded.gg/hc/en-us/sections/360006402834-About", "I am not allowed to answer that directly. You can determine this yourself. https://support.guilded.gg/hc/en-us/sections/360006402834-About" ]
         }
     ]
 }
