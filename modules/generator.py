@@ -10,6 +10,10 @@ from psycopg_pool import ConnectionPool
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
 from psycopg.rows import dict_row
+from ai import chatbot
+from ai.chatbot import get_response, predict_class
+
+intents = json.loads(open('ai/intents.json').read())
 
 class Generator(commands.Cog):
 	def __init__(self,bot):
@@ -121,8 +125,10 @@ class Generator(commands.Cog):
 		message_safe = True
 		things_said = []
 		captures = []
-		if message.content.lower() == "@rayz" or message.content.lower() == "@rayz ":
-			em = guilded.Embed(description="My prefix in this guild is `{}`".format(prefix), color=0x363942)
+		if "@rayz" in message.content.lower():
+			ints = predict_class(message.content.lower())
+			res = get_response(ints, intents)
+			em = guilded.Embed(description="{}".format(res), color=0x363942)
 			await message.reply(embed=em)
 		for word in swearwords:
 			if re.search(word, message.content.lower()):

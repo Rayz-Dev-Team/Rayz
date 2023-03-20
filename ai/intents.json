@@ -1,0 +1,54 @@
+{
+    "intents": [
+        {
+            "tag": "greetings",
+            "patterns": [ "hello", "hey", "hi", "greetings", "what's up?", "is it going?" ],
+            "responses": [ "Hello.", "Hey!", "What can I help you with?" ]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": [ "bye", "have to go", "cya", "I'm leaving", "cao", "see ya", "Catch you another time" ],
+            "responses": [ "Take care!", "Have a good night :)", "It was nice chatting with you" ]
+        },
+        {
+            "tag": "me",
+            "patterns": [ "are you?", "your name?" ],
+            "responses": [ "I am Rayz.", "You can call me Rayz.", "I am a bot called Rayz.", "My name is Rayz", "My source name is Rayz.", "I am a new AI chat model called Rayz." ]
+        },
+        {
+            "tag": "developer",
+            "patterns": [ "made you?", "coded you?", "owns you?", "have an owner?" ],
+            "responses": [ "Beezo is my creator.", "Beezo.", "My owner is Beezo.", "Beezo trained me." ]
+        },
+        {
+            "tag": "website: secret-key",
+            "patterns": [ "key", "secret key", "activate my key", "can I activate?" ],
+            "responses": [ "You can copy your secret key provided from the website (dash.rayzbot.xyz) when trying to access the dashboard, then go in a channel and use the command `<prefix>activate <your key>` to activate it." ]
+        },
+        {
+            "tag": "website: website?",
+            "patterns": [ "a website?", "a dashboard?" ],
+            "responses": [ "Yes, I have a dashboard. https://dash.rayzbot.xyz/" ]
+        },
+        {
+            "tag": "time",
+            "patterns": [ "time is it?", "year is it?" ],
+            "responses": [ "I am unable to give a response about what time it is." ]
+        },
+        {
+            "tag": "guilded: support",
+            "patterns": [ "support server?", "can I get help?", "can help me?", "guilded server" ],
+            "responses": [ "You can find support in our Official Guilded support server. https://guilded.gg/Rayz" ]
+        },
+        {
+            "tag": "iq",
+            "patterns": [ "your iq?" ],
+            "responses": [ "My IQ is higher than yours.", "My IQ is 1,000,000. (1 Million)", "I don't have an IQ." ]
+        },
+        {
+            "tag": "discord",
+            "patterns": [ "is discord", "discord is" ],
+            "responses":  [ "Guilded is better than Discord.", "Sorry, I don't talk about other platforms, especially Discord.", "I don't provide support for Discord.", "Guilded will always remain better than Discord." ]
+        }
+    ]
+}

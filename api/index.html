@@ -61,11 +61,33 @@
             transition: all 0.3s;
         }
 
+        @keyframes background-pan {
+            from {
+                background-position: 0% center;
+            }
+
+            to {
+                background-position: -200% center;
+            }
+        }
+
         h1 {
             font-size: 32px;
             margin-top: 15px;
             padding: 20px;
             text-align: center;
+            animation: background-pan 3s linear infinite;
+            background: linear-gradient( 
+                to right, 
+                red, 
+                green, 
+                blue, 
+                red 
+            );
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
         }
 
         h2 {
