@@ -276,11 +276,57 @@ async def GenerateToken(user_id: str):
         response = quart.Response(simplejson.dumps(response), mimetype='application/json')
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
-        
+
+@app.route("/server/<server_id>/settings", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def GetServerInfo(server_id: str):
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
+        error_response = {
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    
+    main_output = {}
+    output_server_data = {}
+
+    server_data = await getServer(server_id)
+    for i in accepted_pull_tags_from_serverDB:
+        try:
+            output_server_data[i] = server_data[i]
+        except:
+            pass
+
+    main_output["rayz_settings"] = output_server_data
+    j = simplejson.dumps(main_output)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 @app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetServerInfo(server_id: str):
+async def GetServerSettings(server_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
