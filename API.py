@@ -279,7 +279,8 @@ async def GenerateToken(user_id: str):
 
 @app.route("/server/<server_id>/settings", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetServerInfo(server_id: str):
+@token_required
+async def GetServerSettings(server_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
@@ -326,7 +327,7 @@ async def GetServerInfo(server_id: str):
 
 @app.route("/server/<server_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetServerSettings(server_id: str):
+async def GetServerInfo(server_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)

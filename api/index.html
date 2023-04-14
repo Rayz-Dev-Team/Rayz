@@ -161,6 +161,7 @@
             <li><a href="#server-info">/server/SERVER_ID/info</a></li>
             <li><a href="#generate-token">/token/USER_ID/generate</a></li>
             <li><a href="#validate-token">/token/USER_ID/validate</a></li>
+            <li><a href="#server-settings">/token/USER_ID/validate</a></li>
         </ul>
     </nav>
 
@@ -194,6 +195,10 @@
             <div class="code-block-stats">
                 <pre><code class="language-http">curl -X POST -H "Content-Type: application/json" -d "{\"token\": \"TOKEN HERE\"}" https://api.rayzbot.xyz/token/USER_ID/validate </code></pre>
             </div>
+        </section>
+        <section id="server-settings" class="section">
+            <h2>/token/SERVER_ID/settings  &#183;  [POST]  &#183;  Protected</h2>
+            <p>Gets Rayz's settings for the server.</p>
         </section>
     </div>
 </body>
