@@ -278,7 +278,6 @@ async def GenerateToken(user_id: str):
         return response
 
 @app.route("/server/<server_id>/settings", methods=["GET"])
-@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
 @token_required
 async def GetServerSettings(server_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
