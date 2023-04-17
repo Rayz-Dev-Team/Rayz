@@ -456,7 +456,7 @@ async def GetServerInfo(server_id: str):
     
     #GET STAFF MEMBERS ------------------------------------------------------
     for key, i in resp_serverinfo["team"]["rolesById"].items():
-        kick_ban_hex = kick_perms
+        kick_ban_hex = 32
         if "general" in i["permissions"]:
             num_to_convert = i["permissions"]["general"]
             converted_num = num_to_convert & 32
