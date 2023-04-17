@@ -201,15 +201,6 @@ async def ValidateToken(user_id: str):
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
 
-@app.route("/capoo")
-@route_cors(allow_headers=["content-type"], allow_origin="*")
-async def Capoo():
-    with open("packs/capoo/Capoo_squish.gif", "rb") as f:
-        image_data = f.read()
-    response = quart.Response(image_data, mimetype="image/gif")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
-
 @app.route("/404")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
 async def NotFound():
@@ -218,26 +209,6 @@ async def NotFound():
     response = quart.Response(image_data, mimetype="image/png")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
-
-@app.route("/pack/<pack_name>", methods=["GET"])
-@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
-async def GetPack(pack_name: str):
-    if pack_name == "capoo":
-        image_url = url_for('Capoo', _external=True)
-
-        capoo_pack = {
-            "name": "Capoo Emoji Pack",
-            "author": "Rayz API",
-            "emotes": [
-                {
-                    "name": "capoo_cry",
-                    "url": "https://api.rayzbot.xyz/capoo"
-                }
-            ]
-        }
-        response = quart.Response(json.dumps(capoo_pack), mimetype='application/json')
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
 
 @app.route("/token/<user_id>/generate", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
@@ -276,6 +247,90 @@ async def GenerateToken(user_id: str):
         response = quart.Response(simplejson.dumps(response), mimetype='application/json')
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+
+@app.route("/server/<server_id>/bot-permissions", methods=["GET"])
+@token_required
+async def GetBotPermissions(server_id: str):
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
+        error_response = {
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+    req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
+    resp_serverinfo = req_serverinfo.json()
+
+    permissions = {
+        "kick_perms": False,
+        "manage_roles_perms": False,
+        "manage_channels_perms": False,
+        "moderator_view_perms": False,
+        "manage_messages_perms": False,
+        "manage_xp_perms": False
+    }
+    
+    #Get permissions
+    for key, i in resp_serverinfo["team"]["rolesById"].items():
+        kick_ban_hex = 32
+        manage_roles_perms_hex = 16384
+        manage_channels_perms_hex = 1024
+        moderator_view_perms_hex = 32768
+        manage_messages_perms_hex = 4
+        manage_xp_perms_hex = 1
+
+        if "general" in i["permissions"]:
+            num_to_convert = i["permissions"]["general"]
+            kick_perms = num_to_convert & kick_ban_hex
+            manage_roles_perms = num_to_convert & manage_roles_perms_hex
+            manage_channels_perms = num_to_convert & manage_channels_perms_hex
+            moderator_view_perms = num_to_convert & moderator_view_perms_hex
+            if kick_perms == kick_ban_hex:
+                permissions["kick_perms"] = True
+            if manage_roles_perms == manage_roles_perms_hex:
+                permissions["manage_roles_perms"] = True
+            if manage_channels_perms == manage_channels_perms_hex:
+                permissions["manage_channels_perms"] = True
+            if moderator_view_perms == moderator_view_perms_hex:
+                permissions["moderator_view_perms"] = True
+
+        if "chat" in i["permissions"]:
+            num_to_convert = i["permissions"]["chat"]
+            manage_messages_perms = num_to_convert & manage_messages_perms_hex
+            if manage_messages_perms == manage_messages_perms_hex:
+                permissions["manage_messages_perms"] = True
+
+        if "xp" in i["permissions"]:
+            num_to_convert = i["permissions"]["xp"]
+            manage_xp_perms = num_to_convert & manage_xp_perms_hex
+            if manage_xp_perms == manage_xp_perms_hex:
+                permissions["manage_xp_perms"] = True
+
+    j = simplejson.dumps(permissions)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 @app.route("/server/<server_id>/settings", methods=["GET"])
 @token_required
@@ -401,7 +456,7 @@ async def GetServerInfo(server_id: str):
     
     #GET STAFF MEMBERS ------------------------------------------------------
     for key, i in resp_serverinfo["team"]["rolesById"].items():
-        kick_ban_hex = 32
+        kick_ban_hex = kick_perms
         if "general" in i["permissions"]:
             num_to_convert = i["permissions"]["general"]
             converted_num = num_to_convert & 32
