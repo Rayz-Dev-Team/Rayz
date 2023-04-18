@@ -141,6 +141,74 @@ async def not_found(_):
 async def index():
     return await render_template('index.html')
 
+@app.route('/server/<server_id>/channel/<channel_id>', methods=['GET'])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+async def ValidateChannel(server_id: str, channel_id: str):
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
+        error_response = {
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+    get_channel_url = "https://www.guilded.gg/api/v1/channels/{}".format(channel_id)
+    channel_url_headers = {
+        "Authorization": "Bearer gapi_KgzK3MDEkXql++TjfzyWTfBLDPUWvGZseX2RfVJnppgE8rrOdyTtbmhZbh4xNugmeEdJJoO0qSkKaQJPd93QCA=="
+    }
+    response = requests.get(get_channel_url, headers=channel_url_headers)
+    data = response.json()
+
+    if "channel" in data:
+        if not data["channel"]["type"] == "chat":
+            data = {
+                "code" : 404,
+                "message" : "Channel type is not 'chat'"
+            }
+            response = quart.Response(simplejson.dumps(data), mimetype='application/json')
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            return response
+
+        data = {
+            "code": 200,
+            "message" : "Channel is valid",
+            "channel" : {
+                "id": data["channel"]["id"],
+                "name": data["channel"]["name"],
+            }
+        }
+        response = quart.Response(simplejson.dumps(data), mimetype='application/json')
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    else:
+        data = {
+            "code" : 404,
+            "message" : "Channel not found"
+        }
+        response = quart.Response(simplejson.dumps(data), mimetype='application/json')
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+
 @app.route('/token/<user_id>/validate', methods=['POST'])
 @route_cors(allow_headers=["content-type"], allow_methods=["POST"], allow_origin="*")
 async def ValidateToken(user_id: str):
@@ -247,6 +315,56 @@ async def GenerateToken(user_id: str):
         response = quart.Response(simplejson.dumps(response), mimetype='application/json')
         response.headers.add("Access-Control-Allow-Origin", "*")
         return response
+
+
+@app.route("/server/<server_id>/channels", methods=["GET"])
+async def GetChannels(server_id: str):
+    DB_check = await CheckServerValid_FromDB(server_id)
+    valid_check = await CheckServerValid_FromAPI(server_id)
+    bot_in_server = await CheckBotInServer(server_id)
+    if DB_check == False:
+        error_response = {
+            "code" : 404,
+            "message" : "Server doesn't exist in the database."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if not valid_check == True:
+        j = json.dumps(valid_check)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+    if bot_in_server == False:
+        error_response = {
+            "code" : 404,
+            "message" : "The bot is not in the server."
+        }
+        j = json.dumps(error_response)
+        response = quart.Response(j, mimetype="application/json")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
+
+    req_channelsinfo = requests.get("https://www.guilded.gg/api/teams/{}/channels".format(server_id))
+    resp_channelsinfo = req_channelsinfo.json()
+
+    channels = {}
+
+    for i in resp_channelsinfo.values():
+        print(i)
+        #if resp_channelsinfo["channels"][key]["contentType"] == "chat":
+         #   channels[resp_channelsinfo["channels"][key]["id"]] = {
+          #      "id": resp_channelsinfo["channels"][key]["id"],
+           #     "name": resp_channelsinfo["channels"][key]["name"]
+            #}
+    
+    j = simplejson.dumps(resp_channelsinfo)
+    response = quart.Response(j, mimetype="application/json")
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+
 
 @app.route("/server/<server_id>/bot-permissions", methods=["GET"])
 @token_required
