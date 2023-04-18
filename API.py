@@ -181,7 +181,7 @@ async def ValidateChannel(server_id: str, channel_id: str):
     if "channel" in data:
         if not data["channel"]["type"] == "chat":
             data = {
-                "code" : 404,
+                "code" : 406,
                 "message" : "Channel type is not 'chat'"
             }
             response = quart.Response(simplejson.dumps(data), mimetype='application/json')
