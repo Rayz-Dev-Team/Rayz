@@ -142,7 +142,7 @@ async def index():
     return await render_template('index.html')
 
 @app.route('/server/<server_id>/channel/<channel_id>', methods=['GET'])
-@route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
+@token_required
 async def ValidateChannel(server_id: str, channel_id: str):
     DB_check = await CheckServerValid_FromDB(server_id)
     valid_check = await CheckServerValid_FromAPI(server_id)
