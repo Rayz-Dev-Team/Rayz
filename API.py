@@ -24,6 +24,7 @@ import time
 with open('config/config.json') as f:
     config = json.load(f)
 
+token = config["Token"]
 cert = config["ssl_certificate"]
 key = config["ssl_key"]
 
@@ -173,7 +174,7 @@ async def ValidateChannel(server_id: str, channel_id: str):
 
     get_channel_url = "https://www.guilded.gg/api/v1/channels/{}".format(channel_id)
     channel_url_headers = {
-        "Authorization": "Bearer gapi_KgzK3MDEkXql++TjfzyWTfBLDPUWvGZseX2RfVJnppgE8rrOdyTtbmhZbh4xNugmeEdJJoO0qSkKaQJPd93QCA=="
+        "Authorization": "Bearer {}".format(token)
     }
     response = requests.get(get_channel_url, headers=channel_url_headers)
     data = response.json()
