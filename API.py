@@ -70,10 +70,12 @@ def token_required(f):
         token = request.headers.get('Authorization')
 
         if not userID:
-            return {'message': 'UserID is missing'}, 401
+            data = {"code": 401, "message": "UserID is missing."} 
+            return jsonify(data)
 
         if not token:
-            return {'message': 'Token is missing'}, 401
+            data = {"code": 401, "message": "Token is missing."} 
+            return jsonify(data)
         
         users = await getAllUsers()
         user_list = []
@@ -85,9 +87,11 @@ def token_required(f):
                 if check == True:
                     return await f(*args, **kwargs)
                 else:
-                    return {'message': 'Token is invalid.'}, 401
+                    data = {"code": 401, "message": "Token is invalid."} 
+                    return jsonify(data)
             else:
-                return {'message': 'UserID does not exist.'}, 401
+                data = {"code": 401, "message": "UserID does not exist."} 
+                return jsonify(data)
     return decorated
 
 async def CheckServerValid_FromAPI(id: str):
@@ -149,28 +153,13 @@ async def ValidateChannel(server_id: str, channel_id: str):
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
     if DB_check == False:
-        error_response = {
-            "code" : 404,
-            "message" : "Server doesn't exist in the database."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "Server doesn't exist in the database."} 
+        return jsonify(data)
     if not valid_check == True:
-        j = json.dumps(valid_check)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        return jsonify(valid_check)
     if bot_in_server == False:
-        error_response = {
-            "code" : 404,
-            "message" : "The bot is not in the server."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "The bot is not in the server."} 
+        return jsonify(data)
 
     get_channel_url = "https://www.guilded.gg/api/v1/channels/{}".format(channel_id)
     channel_url_headers = {
@@ -181,13 +170,8 @@ async def ValidateChannel(server_id: str, channel_id: str):
 
     if "channel" in data:
         if not data["channel"]["type"] == "chat":
-            data = {
-                "code" : 406,
-                "message" : "Channel type is not 'chat'"
-            }
-            response = quart.Response(simplejson.dumps(data), mimetype='application/json')
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            return response
+            data = {"code": 406, "message": "Channel type is not chat"} 
+            return jsonify(data)
 
         data = {
             "code": 200,
@@ -197,18 +181,10 @@ async def ValidateChannel(server_id: str, channel_id: str):
                 "name": data["channel"]["name"],
             }
         }
-        response = quart.Response(simplejson.dumps(data), mimetype='application/json')
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        return jsonify(data)
     else:
-        data = {
-            "code" : 404,
-            "message" : "Channel not found"
-        }
-        response = quart.Response(simplejson.dumps(data), mimetype='application/json')
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-
+        data = {"code": 404, "message": "Channel not found"}
+        return jsonify(data)
 
 @app.route('/token/<user_id>/validate', methods=['POST'])
 @route_cors(allow_headers=["content-type"], allow_methods=["POST"], allow_origin="*")
@@ -222,53 +198,24 @@ async def ValidateToken(user_id: str):
                 user = await getUser(user_id)
                 if token in user["tokens"]["tokens"]:
                     if user["tokens"]["tokens"][token]["token_active"] == False:
-                        response = {
-                            "status": False,
-                            "message": "Token is not active."
-                        }
-                        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-                        response.headers.add("Access-Control-Allow-Origin", "*")
-                        return response
+                        data = {"code": 401, "message": "Token is not active.", "status": False} 
+                        return jsonify(data)
                     else:
-                        response = {
-                            "status": True,
-                            "message": "Token is active!"
-                        }
-                        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-                        response.headers.add("Access-Control-Allow-Origin", "*")
-                        return response
+                        data = {"code": 200, "message": "Token is active!", "status": True} 
+                        return jsonify(data)
                 else:
-                    response = {
-                        "code": 404,
-                        "message": "Token doesn't exist."
-                    }
-                    response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-                    response.headers.add("Access-Control-Allow-Origin", "*")
-                    return response
+                    data = {"code": 401, "message": "Token doesn't exist.", "status": False} 
+                    return jsonify(data)
             else:
-                response = {
-                    "code": 404,
-                    "message": "Invalid user ID."
-                }
-                response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-                response.headers.add("Access-Control-Allow-Origin", "*")
-                return response
+                data = {"code": 404, "message": "Invalid user ID."} 
+                return jsonify(data)
         else:
-            response = {
-                "code": 404,
-                "message": "Token param not found."
-            }
-            response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            return response
+            data = {"code": 404, "message": "Token param not found."} 
+            return jsonify(data)
     except:
-        response = {
-            "code": 400,
-            "message": "Bad request."
-        }
-        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 500, "message": "Bad request."} 
+        return jsonify(data)
+        
 
 @app.route("/404")
 @route_cors(allow_headers=["content-type"], allow_origin="*")
@@ -294,78 +241,18 @@ async def GenerateToken(user_id: str):
             user["tokens"]["tokens"][token] = {
                 "token_active": False,
                 "password": "{}".format(password),
-                "last_use": 0
+                "last_use": curr_time
             }
             updated_tokens = user["tokens"]
             infoJson = simplejson.dumps(updated_tokens)
             cursor = conn.cursor()
             cursor.execute(f"UPDATE users SET tokens = %s WHERE ID = '{user_id}'",  [infoJson])
             conn.commit()
-            response = {
-                "token": "{}".format(token),
-                "password": "{}".format(password)
-            }
-            response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-            response.headers.add("Access-Control-Allow-Origin", "*")
-            return response
+            data = {"code": 200, "message": "Token generated.", "token": token, "password": password} 
+            return jsonify(data)
     else:
-        response = {
-            "code": 404,
-            "message": "That user ID doesn't exist."
-        }
-        response = quart.Response(simplejson.dumps(response), mimetype='application/json')
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-
-
-@app.route("/server/<server_id>/channels", methods=["GET"])
-async def GetChannels(server_id: str):
-    DB_check = await CheckServerValid_FromDB(server_id)
-    valid_check = await CheckServerValid_FromAPI(server_id)
-    bot_in_server = await CheckBotInServer(server_id)
-    if DB_check == False:
-        error_response = {
-            "code" : 404,
-            "message" : "Server doesn't exist in the database."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-    if not valid_check == True:
-        j = json.dumps(valid_check)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-    if bot_in_server == False:
-        error_response = {
-            "code" : 404,
-            "message" : "The bot is not in the server."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
-
-    req_channelsinfo = requests.get("https://www.guilded.gg/api/teams/{}/channels".format(server_id))
-    resp_channelsinfo = req_channelsinfo.json()
-
-    channels = {}
-
-    for i in resp_channelsinfo.values():
-        print(i)
-        #if resp_channelsinfo["channels"][key]["contentType"] == "chat":
-         #   channels[resp_channelsinfo["channels"][key]["id"]] = {
-          #      "id": resp_channelsinfo["channels"][key]["id"],
-           #     "name": resp_channelsinfo["channels"][key]["name"]
-            #}
-    
-    j = simplejson.dumps(resp_channelsinfo)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
-
-
+        data = {"code": 404, "message": "That user ID doesn't exist."} 
+        return jsonify(data)
 
 @app.route("/server/<server_id>/bot-permissions", methods=["GET"])
 @token_required
@@ -374,28 +261,14 @@ async def GetBotPermissions(server_id: str):
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
     if DB_check == False:
-        error_response = {
-            "code" : 404,
-            "message" : "Server doesn't exist in the database."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "Server doesn't exist in the database."} 
+        return jsonify(data)
     if not valid_check == True:
-        j = json.dumps(valid_check)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = valid_check
+        return jsonify(data)
     if bot_in_server == False:
-        error_response = {
-            "code" : 404,
-            "message" : "The bot is not in the server."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "The bot is not in the server."} 
+        return jsonify(data)
 
     req_serverinfo = requests.get("https://www.guilded.gg/api/teams/{}/info".format(server_id))
     resp_serverinfo = req_serverinfo.json()
@@ -444,12 +317,9 @@ async def GetBotPermissions(server_id: str):
             manage_xp_perms = num_to_convert & manage_xp_perms_hex
             if manage_xp_perms == manage_xp_perms_hex:
                 permissions["manage_xp_perms"] = True
-
-    j = simplejson.dumps(permissions)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
-
+                
+    data = {"code": 200, "message": "Here is Rayz's permissions", "permissions": permissions} 
+    return jsonify(data)
 
 @app.route("/server/<server_id>/settings", methods=["GET"])
 @token_required
@@ -458,28 +328,14 @@ async def GetServerSettings(server_id: str):
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
     if DB_check == False:
-        error_response = {
-            "code" : 404,
-            "message" : "Server doesn't exist in the database."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "Server doesn't exist in the database."} 
+        return jsonify(data)
     if not valid_check == True:
-        j = json.dumps(valid_check)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = valid_check
+        return jsonify(data)
     if bot_in_server == False:
-        error_response = {
-            "code" : 404,
-            "message" : "The bot is not in the server."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "The bot is not in the server."} 
+        return jsonify(data)
     
     main_output = {}
     output_server_data = {}
@@ -491,11 +347,8 @@ async def GetServerSettings(server_id: str):
         except:
             pass
 
-    main_output["rayz_settings"] = output_server_data
-    j = simplejson.dumps(main_output)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    data = {"code": 200, "message": "Here is Rayz's settings for the server.", "rayz_settings": output_server_data} 
+    return jsonify(data)
 
 
 @app.route("/server/<server_id>/info", methods=["GET"])
@@ -505,28 +358,14 @@ async def GetServerInfo(server_id: str):
     valid_check = await CheckServerValid_FromAPI(server_id)
     bot_in_server = await CheckBotInServer(server_id)
     if DB_check == False:
-        error_response = {
-            "code" : 404,
-            "message" : "Server doesn't exist in the database."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "Server doesn't exist in the database."} 
+        return jsonify(data)
     if not valid_check == True:
-        j = json.dumps(valid_check)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = valid_check
+        return jsonify(data)
     if bot_in_server == False:
-        error_response = {
-            "code" : 404,
-            "message" : "The bot is not in the server."
-        }
-        j = json.dumps(error_response)
-        response = quart.Response(j, mimetype="application/json")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        data = {"code": 404, "message": "The bot is not in the server."} 
+        return jsonify(data)
     main_output = {}
     output_server_json = {}
     output_server_data = {}
@@ -606,10 +445,8 @@ async def GetServerInfo(server_id: str):
     main_output["server_staff"] = staff_member_id_list
     main_output["bots_list"] = bots_list
 
-    j = simplejson.dumps(main_output)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    data = {"code": 200, "message": ":D", "server_data": output_server_json, "server_staff": staff_member_id_list}
+    return jsonify(data)
 
 @app.route("/user/<user_id>/info", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
@@ -617,20 +454,17 @@ async def GetUserInfo(user_id: str):
     user_data_output = {}
     user_data = await getUser(user_id)
     if user_data == None:
-        user_data_output = {
-            "code": 404,
-            "message": "User doesn't exist in the database."
-        }
+        data = {"code": 404, "message": "User doesn't exist in the database."}
+        return jsonify(data)
+        
     else:
         for i in accepted_pull_tags_from_userDB:
             try:
                 user_data_output[i] = user_data[i]
             except:
                 pass
-    j = simplejson.dumps(user_data_output, indent=4)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+        data = {"code": 200, "message": "Here is the data for the user.", "user_data": user_data_output}
+        return jsonify(data)
 
 @app.route("/gilgang", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"], allow_origin="*")
@@ -653,28 +487,8 @@ async def GetGGMembers():
                 "avatar": "{}".format(i["profilePicture"]),
                 "name": "{}".format(i["name"])
             }
-    j = json.dumps(profiles_list)
-    response = quart.Response(j, mimetype="application/json")
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
-
-@app.route("/usercount", methods=["GET"])
-@token_required
-async def GetUserCount():
-    with db_connection.connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users")
-        rows = cursor.fetchall()
-
-        rowarray_list = []
-        for row in rows:
-            t = (row[0])
-            rowarray_list.append(t)
-
-        count = len(rowarray_list)
-        j = {"usercount" : count}
-        j = json.dumps(j)
-        return quart.Response(j, mimetype="application/json")
+    data = {"code": 200, "message": "Here is every GG member.", "GG": profiles_list}
+    return jsonify(data)
 
 @app.route("/stats", methods=["GET"])
 #@token_required
@@ -687,20 +501,20 @@ async def GetServerCount():
     for i in resp_server["teams"]:
         user_count += i["memberCount"]
 
-    j = {"servers" : server_count, "users" : user_count}
-    j = json.dumps(j)
-    return quart.Response(j, mimetype="application/json")
+
+    data = {"code": 200, "message": "Stats.", "servers": server_count, "users": user_count}
+    return jsonify(data)
 
 @app.route("/inventory/<user_id>", methods=["GET"])
 @token_required
 async def GetInventory(user_id: str):
     try:
         user = await getUser(user_id)
-        resp = {"status": 200, "statusText": "success", "inventory": user["inventory"]["inventory"]}
-        return quart.Response(json.dumps(resp), mimetype="application/json")
+        data = {"code": 200, "message": "success", "inventory": user["inventory"]["inventory"]}
+        return jsonify(data)
     except:
-        resp = {"status": 404, "statusText": "user does not exist"}
-        return quart.Response(json.dumps(resp), mimetype="application/json")
+        data = {"code": 404, "message": "User does not exist."}
+        return jsonify(data)
 
 if __name__ == '__main__':
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
