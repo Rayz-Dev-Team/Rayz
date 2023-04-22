@@ -171,10 +171,6 @@ class Generator(commands.Cog):
 		message_safe = True
 		things_said = []
 		captures = []
-		if "@rayz" in message.content.lower():
-			ints = predict_class(message.content.lower())
-			res = get_response(ints, intents)
-			await message.reply(res)
 		for word in swearwords:
 			if re.search(word, message.content.lower()):
 				things_said.append("{}{}-".format(word[0], word[1]))
@@ -356,7 +352,7 @@ async def _check_values_member(member):
 		with db_connection.connection() as conn:
 			if user == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{author.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
+				cursor.execute(f"INSERT INTO users(id, bank, bank_access_code, bank_secure, pocket, commands_used) VALUES('{member.id}', 500, '{str(uuid.uuid4().hex)}', 'False', 0, 0)")
 				conn.commit()
 			await _check_inventory_member(member)
 

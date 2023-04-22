@@ -1,32 +1,21 @@
-<p align = "center"> <img src="assets/images/Banner.png" alt = "Banner"> </p>
-
 # Rayz
+
+<p align = "center"> 
+<img src="assets/images/Banner.png" alt = "Banner"> 
+</p>
 
 <p align = "left">
 
-A warm welcome to the **Rayz** development team! <br />
-Please read this document to understand how to contrbute to this project.
+## > Introduction
 
-## > Preface
-
-- Rayz is a multi utility guilded bot built in python upon [Shay's Guilded.py!](https://github.com/shayypy/guilded.py). <br /> 
-
-- Please make sure you understand the API and how the wrapper works before continuing further!
-
-- You are **NOT** allowed to commit to main. Please open a PR and wait for someone else from the Rayz Development Team to review your code and merge it into main.
-
-- You are **NOT** allowed to share the source code of the bot.
+A warm welcome to the **Rayz** Github repo! Rayz is a multi-utility Guilded bot built in Python, using [Shay's Guilded.py!](https://github.com/shayypy/guilded.py) wrapper library. This document provides guidelines on how to contribute to the project and set up the bot on your local machine.
 
 ## > How to use
 
-- Please make sure you have a recent version of python 3 installed.
-
+- Please make sure you have a recent version of python 3 installed. (3.10.6+)
 - Clone this repo.
-
 - Make a test bot via Guilded on your own private server to test your changes on.
-
 - Get its token.
-
 - Paste it into config/config.json make the file if it's not there already.
 
 - Run the bot
@@ -49,8 +38,6 @@ Please read this document to understand how to contrbute to this project.
   - Use `./run.bat` or `python base.py` to get started if on windows.
   - Use `python3 base.py` to get started if on mac/linux.
 
-- Run wild, Happy coding fellow Rayz Dev! ***GODSPEED***
+- Run wild. Happy coding fellow developer! ***GODSPEED***
 
 </p>
-
-<p align = "center"> <img src="assets/images/Icon.png" alt = "Rayz Icon" > </p>

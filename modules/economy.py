@@ -763,7 +763,6 @@ class Economy(commands.Cog):
 			if author.id in LB_bans["bans"]:
 				em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 				await ctx.reply(embed=em)
-				connection.close()
 				return
 			prefix = server["server_prefix"]
 			if author == member:
