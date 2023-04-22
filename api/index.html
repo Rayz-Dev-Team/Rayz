@@ -10,14 +10,38 @@
         }
 
         body {
-            font-family: 'Roboto', Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            background-color: #1c1c1c;
-            color: #f4f4f4;
+            font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffcfd2;
+            color: #ffffff;
+            line-height: 1.7;
             margin: 0;
-            padding: 0;
-            display: flex;
+        }
+
+        naav#naavbar {
+            min-width: 300px;
+            height: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border: 1px solid #282828;
+            background-color: rgba(95, 75, 91, 0.5);
+        }
+
+        naav#naavbar ul li a {
+            padding: 5px;
+            display: block;
+            text-decoration: none;
+            font-weight: 500;
+            color: #b9fbc0;
+            border-radius: 15px;
+            margin: 15px;
+            background-color: rgba(12, 12, 12, 0.5);
+            transition: 0.25s;
+            text-align: center;
+        }
+
+        naav#naavbar li {
+            list-style: none;
         }
 
         nav {
@@ -34,6 +58,12 @@
             list-style: none;
             margin: 0;
             padding: 0;
+        }
+
+        naav#naavbar ul {
+            padding-inline-start: 0;
+            height: 92%;
+            overflow-y: auto;
         }
 
         nav ul li {
@@ -76,18 +106,13 @@
             margin-top: 15px;
             padding: 20px;
             text-align: center;
-            animation: background-pan 3s linear infinite;
-            background: linear-gradient( 
-                to right, 
-                red, 
-                green, 
-                blue, 
-                red 
-            );
             background-size: 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            white-space: nowrap;
+        }
+
+        h10 {
+            font-size: 32px;
+            color: #b9fbc0;
+            font-weight: bold;
         }
 
         h2 {
@@ -154,73 +179,205 @@
                 padding: 20px 10px;
             }
         }
+
+        section.main-section {
+            background-color: rgba(95, 75, 91, 0.5);
+            border: 1px solid #282828;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 2rem 1rem;
+        }
+
+        .note {
+            background-color: #fff3d4;
+            color: #000000;
+            border-left: 8px solid #f6b73c;
+            padding: 0.5rem 1rem;
+            border-radius: 0.4rem;
+        }
+
+        .margin {
+            margin: 0rem 1rem;
+        }
+
+        p {
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #fbf8cc;
+            transition: 0.25s;
+        }
+
+        ::marker {
+            unicode-bidi: isolate;
+            font-variant-numeric: tabular-nums;
+            text-transform: none;
+            text-indent: 0px !important;
+            text-align: start !important;
+            text-align-last: start !important;
+        }
+
+        ul {
+            list-style-type: disc;
+        }
+
+        pre code {
+            margin: 0;
+            border-radius: 5px;
+            background-color: rgb(40, 42, 54);
+            padding: 0.6rem;
+        }
+
+        code {
+            font-size: 1.5em;
+            border: 3px solid #ffffff;
+        }
+
+        .endp {
+            border-radius: 5px;
+            background-color: rgba(12, 12, 12, 0.5);
+            font-size: 1.5em;
+            border: 2px solid #000000;
+        }
+
+        get {
+            color: #a3c4f3;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+        desc {
+            color: #98f5e1;
+        }
+
+        route {
+            padding-right: 10px;
+        }
+
+        div {
+            display: block;
+        }
+
+        main {
+            display: block;
+        }
+
+        #main-doc {
+            margin: 0 1rem 1rem 310px;
+        }
+
+        li {
+            text-align: -webkit-match-parent;
+        }
+
+        h3 {
+            display: block;
+            font-size: 1.17em;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <nav>
+    <naav id="naavbar">
+        <header>
+            <h3>Rayz API Documentation</h3>
+        </header>
         <ul>
-            <li><a href="#stats">GET ROUTES</a></li>
-            <li><a href="#stats">/stats</a></li>
-            <li><a href="#server-info">/server/SERVER_ID/info</a></li>
-            <li><a href="#generate-token">/token/USER_ID/generate</a></li>
-            <li><a href="#server-settings">/server/SERVER_ID/settings</a></li>
-            <li><a href="#server-channel">/server/SERVER_ID/channel/CHANNEL_ID</a></li>
-            <li><a href="#bot-perms">/server/SERVER_ID/bot-permissions</a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
-            <li><a href=""></a></li>
-            <li><a href="#post-routes">POST ROUTES</a></li>
-            <li><a href="#validate-token">/token/USER_ID/validate</a></li>
+            <li><a class="naav-link" href="#apibase">API Base</a></li>
+            <li><a class="naav-link" href="#GET-Endpoints">GET Endpoints</a></li>
+            <li><a class="naav-link" href="#POST-Endpoints">POST Endpoints</a></li>
         </ul>
-    </nav>
+    </naav>
 
-    <div class="content">
-        <h1>Rayz API Documentation!</h1>
-
-        <h2>GET ROUTES</h2>
-        <section id="stats" class="section">
-            <h2>/stats  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>Returns a number of servers Rayz is in, and a number of users Rayz can see.</p>
-            <div class="code-block-stats">
-                <pre><code class="language-http">curl --request GET https://api.rayzbot.xyz/stats </code></pre>
+    <main id="main-doc">
+        <section id="apibase" class="main-section">
+            <h10>API Base</h10>
+            <div class="note margin">
+            <p><strong>Note:</strong> All Endpoints only support GET & POST Requests. No POST, PUT, or DELETE Requets at this time.</p>
             </div>
-        </section>
-        <section id="server-info" class="section">
-            <h2>/server/SERVER_ID/info  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>This returns all the data needed for a website to display. Such as: staff member information, bots, server information.</p>
-            <div class="code-block-stats">
-                <pre><code class="language-http">curl --request GET https://api.rayzbot.xyz/server/SERVER_ID/info </code></pre>
-            </div>
-        </section>
-        <section id="generate-token" class="section">
-            <h2>/token/USER_ID/generate  &#183;  [GET]  &#183;  Unprotected</h2>
-            <p>Generates a Token and Password for authentication.</p>
-            <div class="code-block-stats">
-                <pre><code class="language-http">curl --request GET https://api.rayzbot.xyz/token/USER_ID/generate </code></pre>
-            </div>
-        </section>
-        <section id="server-settings" class="section">
-            <h2>/server/SERVER_ID/settings  &#183;  [GET]  &#183;  Protected</h2>
-            <p>Gets Rayz's settings for the server.</p>
-        </section>
-        <section id="server-channel" class="section">
-            <h2>/server/SERVER_ID/channel/CHANNEL_ID  &#183;  [GET]  &#183;  Protected</h2>
-            <p>Checks if a channel is valid. Also returns channel ID/Name</p>
-        </section>
-        <section id="bot-perms" class="section">
-            <h2>/server/SERVER_ID/bot-permissions  &#183;  [GET]  &#183;  Protected</h2>
-            <p>Returns a dict list of booleans for specific permissions.</p>
+            <p><a href="https://api.rayzbot.xyz">api.rayzbot.xyz</a></p>
         </section>
 
-        <h2><section id="post-routes"></section> POST ROUTES</h2>
-        <section id="validate-token" class="section">
-            <h2>/token/USER_ID/validate  &#183;  [POST]  &#183;  Unprotected</h2>
-            <p>Gets a response if a Token is valid or not. Will return code errors for: Invalid User ID, Token, etc.</p>
-            <div class="code-block-stats">
-                <pre><code class="language-http">curl -X POST -H "Content-Type: application/json" -d "{\"token\": \"TOKEN HERE\"}" https://api.rayzbot.xyz/token/USER_ID/validate </code></pre>
-            </div>
+        <section id="Categories" class="main-section">
+            <header>
+                <h10>Categories</h10>
+            </header>
+            <ul>
+                <li>
+                    <a href="#GET-Endpoints">GET Endpoints</a>
+                </li>
+                <li>
+                    <a href="#POST-Endpoints">POST Endpoints</a>
+                </li>
+            </ul>   
         </section>
-    </div>
+
+        <section id="GET-Endpoints" class="main-section">
+            <header>
+                <h10>GET ENDPOINTS</h10>
+            </header>
+                <pre><code>Admin dashboard:</code></pre>
+                <p></p>
+                <div class="endp">
+                    <get>GET</get>
+                    <route>/stats</route>
+                    <desc>Returns a number of servers Rayz is in, and a number of users Rayz can see.</desc>
+                </div>
+                <p></p>
+                <div class="endp">
+                    <get>GET</get>
+                    <route>/server/SERVER_ID/info</route>
+                    <desc>This returns all the data needed for a website to display. Such as: staff member information, bots, server information.</desc>
+                </div>
+                <p></p>
+                <div class="endp">
+                    <get>GET</get>
+                    <route>/token/USER_ID/generate</route>
+                    <desc>Generates a Token and Password for authentication.</desc>
+                </div>
+                <p></p>
+                <div class="endp">
+                    <get>GET [PROTECTED]</get>
+                    <route>/server/SERVER_ID/settings</route>
+                    <desc>Generates a Token and Password for authentication.</desc>
+                </div>
+                <p></p>
+                <div class="endp">
+                    <get>GET [PROTECTED]</get>
+                    <route>/server/SERVER_ID/channel/CHANNEL_ID</route>
+                    <desc>Checks if a channel is valid. Also returns channel ID/Name.</desc>
+                </div>
+                <p></p>
+                <div class="endp">
+                    <get>GET [PROTECTED]</get>
+                    <route>/server/SERVER_ID/bot-permissions</route>
+                    <desc>Returns a dict list of booleans for specific permissions.</desc>
+                </div>
+        </section>
+        <section id="POST-Endpoints" class="main-section">
+            <header>
+                <h10>POST ENDPOINTS</h10>
+            </header>
+                <pre><code>Admin dashboard:</code></pre>
+                <p></p>
+                <div class="endp">
+                    <get>POST</get>
+                    <route>/token/USER_ID/validate</route>
+                    <desc>Gets a response if a Token is valid or not. Will return code errors for: Invalid User ID, Token, etc.</desc>
+                </div>
+        </section>
+    </main>
 </body>
 </html>
