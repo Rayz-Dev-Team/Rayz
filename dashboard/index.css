@@ -65,6 +65,19 @@ section {
     flex-wrap: wrap;
 }
 
+.HomePageTop p {
+    font-weight: 500;
+}
+
+
+.HomePageTop a button {
+    font-weight: 600;
+}
+
+.HomePageTop button {
+    font-weight: 600;
+}
+
 .HomePageTopDiv {
     position: relative;
     z-index: 20;
@@ -84,6 +97,7 @@ section {
     color: var(--text-default-color);
     padding-top: 10rem;
     text-align: center;
+    font-weight: 500;
 }
 
 .HomePageButtons {
@@ -102,8 +116,10 @@ section {
 
 .HomePageButton {
     background: var(--button-color);
-    border: 2px solid #242424;
+    border: 2px solid var(--guilded-color);
     color: var(--text-default-color);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
     width: 100%;
     max-width: 20rem;
     font-size: 1.9rem;
@@ -143,12 +159,16 @@ a:-webkit-any-link {
 .Badge {
     border-radius: 128px;
     font-size: .75rem;
-    background: var(--text-default-color);
+    font-weight: 500;
+    font: bold;
+    background: linear-gradient(90deg, #6352FD 0%, #FFCE09 100%);
     text-transform: uppercase;
-    padding: 0 0.5rem;
-    color: var(--button-color);
+    padding: 0.2rem 0.7rem;
+    color: var(--text-default-color);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     margin-right: 0rem;
     margin-left: 2rem;
+    border-radius: 6px;
 }
 
 .StatsDisplay {
