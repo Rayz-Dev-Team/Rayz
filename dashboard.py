@@ -42,6 +42,11 @@ async def not_found(_):
 async def index():
     return await render_template('index.html')
 
+@app.route('/gilgang', methods=["GET"])
+@route_cors(allow_origin="*")
+async def gilgang():
+    return await render_template('gilgang.html')
+
 if __name__ == '__main__':
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     context.load_cert_chain(cert, key)
