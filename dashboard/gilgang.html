@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/gilgang.css">
+</head>
+
+<body>
+    <div class="Header" id="Header">
+        <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/">Home</a>
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/dashboard">Dashboard</a>
+    </div>
+
+    <section class="HomePageTop">
+        <div class="HomePageDiv HomePageTopDiv">
+            <div id="container"></div>
+        </div>
+    </section>
+</body>
+
+<script>
+    fetch('https://api.rayzbot.xyz/gilgang')
+        .then(response => response.json())
+        .then(data => {
+
+            const container = document.getElementById('container');
+            Object.keys(data.GG).forEach((key) => {
+                const item = data.GG[key];
+                const gridItem = document.createElement('div');
+                gridItem.classList.add('grid-item');
+                gridItem.innerHTML = `<img src="${item.avatar}" alt="${item.name}"><h3>${item.name}</h3>`;
+                container.appendChild(gridItem);
+            });
+        })
+</script>
+</html>
