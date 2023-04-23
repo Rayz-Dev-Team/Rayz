@@ -146,6 +146,16 @@ async def not_found(_):
 async def index():
     return await render_template('index.html')
 
+@app.route('/dashboard/css/<file_name>.css', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard_css(file_name: str):
+    return await send_file("dashboard/{}.css".format(file_name))
+
+@app.route("/image/logo.png", methods=["GET"])
+@route_cors(allow_headers=["content-type"], allow_methods=["GET"])
+async def logo():
+    return await send_file("assets/images/logo.png", mimetype="image")
+
 @app.route('/server/<server_id>/channel/<channel_id>', methods=['GET'])
 @token_required
 async def ValidateChannel(server_id: str, channel_id: str):

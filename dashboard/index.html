@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/index.css">
+</head>
+<script>
+    fetch('https://api.rayzbot.xyz/stats')
+        .then(response => response.json())
+        .then(data => {
+            const outputDiv = document.getElementById('StatDisplay');
+            const text = `${data.servers} servers, ${data.users} users`;
+            outputDiv.innerText = text;
+    });
+</script>
+
+<body>
+    <div class="Header" id="Header">
+        <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/">Home</a>
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/dashboard">Dashboard</a>
+    </div>
+    <section class="HomePageTop">
+        <div class="HomePageDiv HomePageTopDiv">
+            <div class="HomePageText">
+                <p class="HomePageP">Rayz, the the best Guilded bot out there.</p>
+            </div>
+            <span class="Badge">BETA</span>
+            <div class="HomePageButtons">
+                <button type="button" role="button" class="HomePageButton HomePageButtonRoot">Go to Dashboard</button>
+
+                <a href="https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778">
+                    <button type="button" role="button" class="HomePageButtonInvite HomePageButtonRoot">Invite Rayz</button>
+                </a>
+            </div>
+            <div class="HomePageP">Be part of the hype.</div>
+            <div class="Stats">
+                <p class="StatsDisplay" id="StatDisplay">{} servers, {} users.</p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
