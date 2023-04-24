@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/server.css">
+    <script src="https://api.rayzbot.xyz/dashboard/js/server.js"></script>
+</head>
+
+<body>
+    <div class="Header" id="Header">
+        <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/">Home</a>
+        <a role="button" class="Header_btn" href="https://rayzbot.xyz/dashboard">Dashboard</a>
+    </div>
+
+    <section class="Settings">
+        <sectiontwo>
+            <div class="Settings">
+                <p class="Search">Enter your <span style="color: var(--guilded-color)">Guilded</span> server ID:</p>
+            </div>
+            <div class="Settings">
+                <input type="text" placeholder="Server ID" class="Search" id="Search">
+                <button onclick="checkIDAPI()" class="SearchButton">Submit</button>
+                <div class="notification" id="notification"></div>
+            </div>
+        </sectiontwo>
+    </section>
+</body>
+</html>

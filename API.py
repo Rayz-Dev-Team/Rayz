@@ -146,10 +146,20 @@ async def not_found(_):
 async def index():
     return await render_template('index.html')
 
+@app.route('/dashboard', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard():
+    return await render_template('server.html')
+
 @app.route('/dashboard/css/<file_name>.css', methods=["GET"])
 @route_cors(allow_origin="*")
 async def dashboard_css(file_name: str):
     return await send_file("dashboard/{}.css".format(file_name))
+
+@app.route('/dashboard/js/<file_name>.js', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard_js(file_name: str):
+    return await send_file("dashboard/{}.js".format(file_name))
 
 @app.route("/image/logo.png", methods=["GET"])
 @route_cors(allow_headers=["content-type"], allow_methods=["GET"])

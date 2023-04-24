@@ -1,0 +1,133 @@
+:root {
+    --guilded-color: #F5C400;
+    --guilded-hovor-color: #9b7c00;
+    --body-color: #242424;
+    --text-default-color: #ffffff;
+    --button-color: #535461;
+    --header-color: #181818;
+    --a-hover-color: #6352fd;
+}
+
+body {
+    font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--body-color);
+    color: var(--text-default-color);
+    line-height: 1;
+    margin: 0;
+}
+
+.Header {
+    display: flex;
+    position: static;
+    height: 55px;
+    width: 100%;
+    background: var(--header-color);
+    align-items: center;
+    padding: 0 50px 0 0x;
+    flex-wrap: wrap;
+}
+
+.Header a {
+    float: left;
+    display: block;
+    padding: 14px 16px;
+    border-radius: 0.4rem;
+    text-decoration: none;
+}
+
+.Header_btn {
+    color: var(--text-default-color);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    background-color: #181818;
+}
+
+.Logo {
+    padding: 0 0x 0 50px;
+    width: 50px;
+    height: 50px;
+}
+
+section {
+    padding: 2rem 0;
+}
+
+div {
+    display: block;
+}
+
+.Settings {
+    display: flex;
+    height: 55px;
+    width: 50%;
+    align-items: center;
+    padding: 0 50px 0 0x;
+    flex-wrap: wrap;
+    font-weight: 500;
+}
+
+div.Settings {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    margin: 30;
+    max-width: 700;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+section.Settings {
+    position: fixed;
+    justify-content: center;
+    width: 100%;
+}
+
+section.div.input {
+    align-items: center;
+}
+
+p.Search {
+    text-align: center;
+    width: 100%;
+}
+
+input.Search {
+    align-self: center;
+    width: 75%;
+    padding: 7;
+    font-size: 24;
+}
+
+sectiontwo {
+    font-weight: 500;
+    font-size: 50px;
+    width: 75%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    
+}
+
+.SearchButton {
+    background: var(--button-color);
+    color: var(--text-default-color);
+    margin-top: 20px;
+    width: 50%;
+    max-width: 20rem;
+    border-radius: 5px;
+    outline: none;
+    font-size: 24;
+    border-color: var(--a-hover-color);
+}
+
+option.StatusError{
+    color: red;
+    display: block;
+    text-align: center;
+    border-radius: 10px;
+    text-justify: auto;
+    margin-top: 10px;
+    font-size: 24;
+}
