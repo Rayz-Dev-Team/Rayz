@@ -52,6 +52,11 @@ async def gilgang():
 async def dashboard():
     return await render_template('server.html')
 
+@app.route('/dashboard/<server_id>', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard_staff(server_id):
+    return await render_template('staff.html')
+
 if __name__ == '__main__':
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     context.load_cert_chain(cert, key)
