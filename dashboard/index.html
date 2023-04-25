@@ -5,16 +5,8 @@
     <title>Rayz</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/index.css">
+    <script src="https://api.rayzbot.xyz/dashboard/js/index.js"></script>
 </head>
-<script>
-    fetch('https://api.rayzbot.xyz/stats')
-        .then(response => response.json())
-        .then(data => {
-            const outputDiv = document.getElementById('StatDisplay');
-            const text = `${data.servers} servers, ${data.users} users`;
-            outputDiv.innerText = text;
-    });
-</script>
 
 <body>
     <div class="Header" id="Header">
