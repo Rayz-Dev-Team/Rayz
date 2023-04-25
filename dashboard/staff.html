@@ -221,10 +221,20 @@
                     const item = data.server_staff[key];
                     const gridItem = document.createElement('div');
                     gridItem.classList.add('grid-item');
-                    gridItem.innerHTML = `<img src="${item.avatar}" alt="${item.name}"><h3>${item.name}</h3>`;
+                    const link = document.createElement('a');
+                    link.href = "https://rayzbot.xyz/auth/"+item.id; // Replace this with the actual URL of the staff member's profile
+                    link.target = '_blank'; // Opens the link in a new tab
+                    const image = document.createElement('img');
+                    image.src = item.avatar;
+                    image.alt = item.name;
+                    link.appendChild(image);
+                    const name = document.createElement('h3');
+                    name.textContent = item.name;
+                    link.appendChild(name);
+                    gridItem.appendChild(link);
                     container.appendChild(gridItem);
                 });
-            }
+}
             if (data.code === 404) {
                 const displayContent = document.createElement('option');
                 displayContent.classList.add('StatusError');
