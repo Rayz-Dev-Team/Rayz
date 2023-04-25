@@ -1,3 +1,7 @@
+main {
+    margin: auto;
+}
+
 :root {
     --guilded-color: #F5C400;
     --guilded-hovor-color: #9b7c00;
@@ -27,13 +31,13 @@ body {
     flex-wrap: wrap;
 }
 
-.Header a {
-    float: left;
-    display: block;
-    padding: 14px 16px;
-    border-radius: 0.4rem;
-    text-decoration: none;
-}
+    .Header a {
+        float: left;
+        display: block;
+        padding: 14px 16px;
+        border-radius: 0.4rem;
+        text-decoration: none;
+    }
 
 .Header_btn {
     color: var(--text-default-color);
@@ -59,12 +63,9 @@ div {
 
 .Settings {
     display: flex;
-    height: 55px;
-    width: 50%;
     align-items: center;
-    padding: 0 50px 0 0x;
+    justify-content: center;
     flex-wrap: wrap;
-    font-weight: 500;
 }
 
 div.Settings {
@@ -91,13 +92,15 @@ section.div.input {
 p.Search {
     text-align: center;
     width: 100%;
+    font-size: 48px;
 }
 
 input.Search {
     align-self: center;
+    max-width: 300px;
     width: 75%;
     padding: 7;
-    font-size: 24;
+    font-size: 24px;
 }
 
 sectiontwo {
@@ -108,7 +111,6 @@ sectiontwo {
     flex-wrap: wrap;
     justify-content: center;
     align-items: baseline;
-    
 }
 
 .SearchButton {
@@ -119,8 +121,31 @@ sectiontwo {
     max-width: 20rem;
     border-radius: 5px;
     outline: none;
-    font-size: 24;
+    font-size: 24px;
     border-color: var(--a-hover-color);
+}
+
+sectiontwo.Testing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 20;
+    padding-bottom: 6rem;
+}
+
+.HomePageTop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.HomePageTopDiv {
+    position: relative;
+    z-index: 20;
+    padding-bottom: 6rem;
 }
 
 option.StatusError{
