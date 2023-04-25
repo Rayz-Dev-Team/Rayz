@@ -99,12 +99,12 @@
         }
 
         section {
-            padding: 5rem 0;
+            padding: 2rem 0;
         }
 
         .HomePageTop {
-            min-height: 100vh;
-            margin: 200px;
+            margin-right: 200px;
+            margin-left: 200px;
         }
 
         .HomePageTopDiv {
@@ -209,6 +209,22 @@
         .grid-item:hover {
             transform: scale(1.2);
         }
+
+        p.Txt {
+            text-align: center;
+            width: 100%;
+            font-weight: 500;
+            font-size: 48;
+        }
+
+        div.Settings {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+            margin: 30;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -220,7 +236,8 @@
     </div>
 
     <section class="HomePageTop">
-        <div class="HomePageDiv HomePageTopDiv">
+        <div class="Settings">
+            <p class="Txt">Which <span style="color: var(--guilded-color)">staff member</span> are you?</p>
             <div id="container"></div>
         </div>
     </section>
