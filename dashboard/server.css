@@ -69,11 +69,11 @@ div {
 
 div.Settings {
     display: flex;
-    justify-content: space-evenly;
     width: 100%;
     margin: 30;
     max-width: 700;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    flex-direction: column;
     justify-content: center;
 }
 
