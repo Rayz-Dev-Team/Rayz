@@ -1,0 +1,101 @@
+py-config {
+    display: none;
+}
+/* py-{el} - components not defined */
+py-script:not(:defined) {
+    display: none;
+}
+
+py-repl:not(:defined) {
+    display: none;
+}
+
+py-title:not(:defined) {
+    display: none;
+}
+
+py-inputbox:not(:defined) {
+    display: none;
+}
+
+py-button:not(:defined) {
+    display: none;
+}
+
+py-box:not(:defined) {
+    display: none;
+}
+
+html {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+        Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    line-height: 1.5;
+}
+
+.spinnerr::after {
+    content: '';
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: calc(3%);
+    left: calc(50% - 20px);
+    border-radius: 50%;
+}
+
+.spinnerr.smooth::after {
+    border-top: 4px solid rgba(255, 255, 255, 1);
+    border-left: 4px solid rgba(255, 255, 255, 1);
+    border-right: 4px solid rgba(255, 255, 255, 0);
+    animation: spinner 1.5s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.labell {
+    text-align: center;
+    width: 100%;
+    display: block;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin-top: 6rem;
+}
+
+/* Pop-up second layer begin */
+
+.py-overlayy {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: rgb(16 16 16 / 61%); 
+    transition: opacity 500ms;
+    outline: auto;
+}
+
+.py-overlay {
+    visibility: visible;
+    opacity: 1;
+}
+
+.py-pop-upp {
+    text-align: center;
+    width: 600px;
+}
+
+.py-pop-up pp {
+    margin: 5px;
+}
+
+.py-pop-upp a {
+    position: absolute;
+    color: white;
+    text-decoration: none;
+    font-size: 200%;
+    top: 3.5%;
+    right: 5%;
+}
