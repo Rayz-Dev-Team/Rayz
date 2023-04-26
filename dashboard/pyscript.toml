@@ -1,0 +1,1 @@
+packages = ["requests", "pyodide-http"]

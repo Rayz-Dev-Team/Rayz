@@ -151,6 +151,16 @@ async def index():
 async def dashboard_css(file_name: str):
     return await send_file("dashboard/{}.css".format(file_name))
 
+@app.route('/dashboard/toml/<file_name>.toml', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard_toml(file_name: str):
+    return await send_file("dashboard/{}.toml".format(file_name))
+
+@app.route('/dashboard/script/<file_name>.py', methods=["GET"])
+@route_cors(allow_origin="*")
+async def dashboard_py(file_name: str):
+    return await send_file("dashboard/{}.py".format(file_name))
+
 @app.route('/dashboard/js/<file_name>.js', methods=["GET"])
 @route_cors(allow_origin="*")
 async def dashboard_js(file_name: str):

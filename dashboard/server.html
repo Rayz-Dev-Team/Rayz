@@ -7,6 +7,182 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/server.css">
     <script src="https://api.rayzbot.xyz/dashboard/js/server.js"></script>
+	<style>
+		main {
+    margin: auto;
+}
+
+:root {
+    --guilded-color: #F5C400;
+    --guilded-hovor-color: #9b7c00;
+    --body-color: #242424;
+    --text-default-color: #ffffff;
+    --button-color: #535461;
+    --header-color: #181818;
+    --a-hover-color: #6352fd;
+}
+
+body {
+    font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--body-color);
+    color: var(--text-default-color);
+    line-height: 1;
+    margin: 0;
+}
+
+.Header {
+    display: flex;
+    position: static;
+    height: 55px;
+    width: 100%;
+    background: var(--header-color);
+    align-items: center;
+    padding: 0 50px 0 0x;
+    flex-wrap: wrap;
+}
+
+    .Header a {
+        float: left;
+        display: block;
+        padding: 14px 16px;
+        border-radius: 0.4rem;
+        text-decoration: none;
+    }
+
+.Header_btn {
+    color: var(--text-default-color);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    background-color: #181818;
+}
+
+.Logo {
+    padding: 0 0x 0 50px;
+    width: 50px;
+    height: 50px;
+}
+
+section {
+    padding: 2rem 0;
+}
+
+div {
+    display: block;
+}
+
+.Settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+div.Settings {
+    display: flex;
+    width: 100%;
+    margin: 30;
+    max-width: 700;
+    flex-wrap: nowrap;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 2em;
+}
+
+section.Settings {
+    position: fixed;
+    justify-content: center;
+    width: 100%;
+}
+
+section.div.input {
+    align-items: center;
+}
+
+p.Search {
+    text-align: center;
+    width: 100%;
+    font-size: 48px;
+}
+
+input.Search {
+    align-self: center;
+    max-width: 300px;
+    width: 75%;
+    padding: 7;
+    font-size: 24px;
+}
+
+sectiontwo {
+    font-weight: 500;
+    font-size: 50px;
+    width: 75%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.SearchButton {
+    background: var(--button-color);
+    color: var(--text-default-color);
+    margin-top: 20px;
+    width: 50%;
+    max-width: 20rem;
+    border-radius: 5px;
+    outline: none;
+    font-size: 24px;
+    border-color: var(--a-hover-color);
+}
+
+sectiontwo.Testing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 20;
+    padding-bottom: 6rem;
+}
+
+.HomePageTop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.HomePageTopDiv {
+    position: relative;
+    z-index: 20;
+    padding-bottom: 6rem;
+}
+
+option.StatusError{
+    color: red;
+    display: block;
+    text-align: center;
+    border-radius: 10px;
+    text-justify: auto;
+    margin-top: 10px;
+    font-size: 24;
+}
+
+@media screen and (max-width: 820px) {
+    sectiontwo {
+        font-size: 1.5em; /* decrease header font size for smaller screens */
+    }
+
+    input.Search {
+        font-size: 0.4em;
+        width: 50%;
+    }
+
+    p.Search {
+        font-size: 1em;
+    }
+}
+	</style>
 </head>
 
 <body>
