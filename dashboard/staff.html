@@ -35,14 +35,14 @@
         #container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            grid-gap: 10px;
+            grid-gap: 50px;
             margin: 20px;
         }
 
         .grid-item {
             background-color: #0f0f0f;
             border-radius: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+            box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
             text-align: center;
             background-image: radial-gradient(at 47% 33%, rgb(255, 0, 3) 0px, transparent 59%), radial-gradient(at 82% 65%, rgb(207, 33, 253) 0px, transparent 55%);
         }
@@ -194,7 +194,6 @@
         .staff-button {
             background-color: rgb(0 0 0 / 34%);
             border-radius: 12px;
-            backdrop-filter: blur(12px) saturate(40%);
             border: none;
             color: white;
             padding: 10px 20px;
