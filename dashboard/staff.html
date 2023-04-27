@@ -30,8 +30,10 @@
         }
 
         #container {
-            display: flex;
-            grid-gap: 50px;
+            display: grid;
+            grid-column-gap: 50px;
+            grid-row-gap: 20px;
+            grid-template-columns: repeat(5, 1fr);
             margin: 70px;
             justify-content: center;
         }
@@ -200,6 +202,7 @@
             font-size: 16px;
             cursor: pointer;
             max-width: 200px;
+            height: 100%;
         }
 
         .staff-button:hover {
