@@ -5,231 +5,58 @@
     <title>Rayz</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/staff.css">
+    <script src="https://api.rayzbot.xyz/dashboard/js/staff.js"></script>
     <style>
-        :root {
-            --guilded-color: #F5C400;
-            --guilded-hovor-color: #9b7c00;
-            --body-color: #242424;
-            --text-default-color: #ffffff;
-            --button-color: #535461;
-            --header-color: #181818;
-            --a-hover-color: #6352fd;
+        .loading.hidden {
+            animation: fadeOut 1s;
+            animation-fill-mode: forwards;
         }
 
-        *,:after,:before {
-            box-sizing: border-box;
-            margin: 0
-        }
-
-        body {
-            font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(123.1deg, #661050 0%, #000024 66.8%);
-            color: #ffffff;
-            line-height: 1;
-            margin: 0;
-        }
-
-        #container {
-            display: grid;
-            grid-column-gap: 50px;
-            grid-row-gap: 50px;
-            grid-template-columns: repeat(5, 1fr);
-            margin: 70px;
-            justify-content: center;
-        }
-
-        .grid-item {
-            background-color: #0f0f0f;
-            border-radius: 15px;
-            box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
-            text-align: center;
-            background-image: radial-gradient(at 47% 33%, rgb(255, 0, 3) 0px, transparent 59%), radial-gradient(at 82% 65%, rgb(207, 33, 253) 0px, transparent 55%);
-            transition: 0.75s;
-        }
-
-        .grid-item img {
-            max-width: 100%;
-            height: auto;
-            object-fit: cover;
-            object-position: center;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .grid-item .profile-info {
-            padding: 20px;
-        }
-
-        .grid-item h3 {
-            font-size: 24px;
-            margin-bottom: 5px;
-            margin-top: 10px;
-            text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
-        }
-
-        .grid-item p {
-            font-size: 16px;
-            margin-bottom: 0;
-        }
-
-        .Header {
+        .loading {
             display: flex;
-            position: static;
-            height: 55px;
+            transform: scale(2);
             width: 100%;
-            background: linear-gradient(0deg, #f7000045 0%, #000024 66.8%);
-            align-items: center;
-            flex-wrap: wrap;
-            box-shadow: 1px 1px 5px #ffffff, -1px -1px 100px #f70000b3;
-        }
-
-        .Header a {
-            float: left;
-            display: block;
-            padding: 14px 16px;
-            border-radius: 0.4rem;
-            text-decoration: none;
-            background: transparent;
-        }
-
-        .Header_btn {
-            color: var(--text-default-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 10px 15px;
-            background-color: #181818;
-        }
-
-        div {
-            display: block;
-        }
-
-        section {
-            padding: 2rem 0;
-        }
-
-        .HomePageTop {
-            margin-right: 200px;
-            margin-left: 200px;
-        }
-
-        .HomePageTopDiv {
-            position: relative;
-            z-index: 20;
-            padding-bottom: 6rem;
-        }
-
-        .HomePageText {
-            max-width: 36rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .HomePageP {
-            font-size: 3rem;
-            color: var(--text-default-color);
-            padding-top: 10rem;
-            text-align: center;
-        }
-
-        .HomePageButtons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .HomePageButtonRoot {
-            box-shadow: 0 4px 50px rgba(83,84,97, 0.2);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 0.25rem;
-        }
-
-        .HomePageButton {
-            background: var(--button-color);
-            border: 2px solid #242424;
-            color: var(--text-default-color);
-            width: 100%;
-            max-width: 20rem;
-            font-size: 1.9rem;
-        }
-
-        .HomePageButtonInvite {
-            background: var(--guilded-color);
-            border: 2px solid #242424;
-            color: var(--text-default-color);
-            width: 100%;
-            max-width: 20rem;
-            font-size: 2rem;
-        }
-
-        button.HomePageButton:hover {
-            transition: 0.25s;
-            background: #36363f;
-            cursor: pointer;
-        }
-
-        button.HomePageButtonInvite:hover {
-            transition: 0.25s;
-            background: var(--guilded-hovor-color);
-            cursor: pointer;
-        }
-
-        a:hover {
-            transition: 0.25s;
-            text-decoration: none;
-            color: var(--guilded-color);
-            text-shadow: 1px 1px 10px #ffffff;
-        }
-
-        a:-webkit-any-link {
-            cursor: pointer;
-        }
-
-        .Logo {
-            padding: 0 0x 0 50px;
-            width: 50px;
-            height: 50px;
-        }
-
-        .staff-button {
-            border-radius: 12px;
-            background-color: rgb(0 0 0 / 34%);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;
             height: 100%;
-            width: 100%;
-            transition: 1s ease-out;
+            position: fixed;
+            z-index: 99;
+            top: 0;
+            left: 0;
+            justify-content: center;
+            align-items: center;
+            background: #242424cb;
         }
 
-        .staff-button:hover {
-            background-color: #ffffff08;
-        }
-
-        .grid-item:hover {
-            transition: 0.75s;
-            transform: scale(1.08);
-        }
-
-        p.Txt {
+        .loader {
+            background-image: linear-gradient(rgb(186, 66, 255) 35%,rgb(0, 225, 255));
+            width: 100px;
+            height: 100px;
+            animation: spin 1.7s linear infinite;
             text-align: center;
-            width: 100%;
-            font-weight: 500;
-            font-size: 48;
-            text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+            border-radius: 50px;
+            filter: blur(1px);
+            box-shadow: 0px -5px 20px 0px rgb(186, 66, 255), 0px 5px 20px 0px rgb(0, 225, 255);
         }
 
-        div.Settings {
-            width: 100%;
-            margin: 30;
+        .loader2 {
+            background-color: rgb(36, 36, 36);
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            filter: blur(10px);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeOut {
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
     </style>
 </head>
@@ -248,56 +75,10 @@
         </div>
     </section>
 </body>
-
-<script>
-    var url = window.location.href;
-    var urlParts = url.split('/');
-    var serverId = urlParts[urlParts.length - 1];
-
-
-    $.ajax({
-        url: "https://api.rayzbot.xyz/server/"+ serverId +"/info",
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-            const select = document.getElementById("notification");
-            if (data.code === 200) {
-                const container = document.getElementById('container');
-                Object.keys(data.server_staff).forEach((key) => {
-                    const item = data.server_staff[key];
-                    const gridItem = document.createElement('div');
-                    gridItem.classList.add('grid-item');
-                    const button = document.createElement('button');
-                    button.classList.add('staff-button');
-                    button.addEventListener('click', () => {
-                        window.location.href = "https://rayzbot.xyz/auth/"+item.id; // Replace this with the actual URL of the staff member's profile
-                    });
-                    const image = document.createElement('img');
-                    image.src = item.avatar;
-                    image.alt = item.name;
-                    button.appendChild(image);
-                    const name = document.createElement('h3');
-                    name.textContent = item.name;
-                    button.appendChild(name);
-                    gridItem.appendChild(button);
-                    container.appendChild(gridItem);
-                });
-            } 
-            if (data.code === 404) {
-                const displayContent = document.createElement('option');
-                displayContent.classList.add('StatusError');
-                const optionText = document.createTextNode(data.message);
-                const paragraphElement = document.createElement('p');
-                paragraphElement.classList.add("Search")
-                paragraphElement.appendChild(optionText);
-                displayContent.appendChild(paragraphElement);
-                select.appendChild(displayContent);
-                setTimeout(function() {
-                    select.removeChild(displayContent);
-                }, 4000);
-            } else {
-            }
-        }
+<script type="text/javascript">
+    window.addEventListener("load", function() {
+        const loader = document.querySelector(".loading");
+        loader.className += " hidden";
     });
 </script>
 </html>

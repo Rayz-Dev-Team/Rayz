@@ -362,7 +362,6 @@ async def GetServerSettings(server_id: str):
         data = {"code": 404, "message": "The bot is not in the server."} 
         return jsonify(data)
     
-    main_output = {}
     output_server_data = {}
 
     server_data = await getServer(server_id)

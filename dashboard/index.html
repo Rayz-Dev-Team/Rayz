@@ -3,13 +3,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rayz</title>
+    <style>
+        .loading.hidden {
+            animation: fadeOut 1s;
+            animation-fill-mode: forwards;
+        }
+
+        .loading {
+            display: flex;
+            transform: scale(2);
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            z-index: 99;
+            top: 0;
+            left: 0;
+            justify-content: center;
+            align-items: center;
+            background: #242424cb;
+        }
+
+        .loader {
+            background-image: linear-gradient(rgb(186, 66, 255) 35%,rgb(0, 225, 255));
+            width: 100px;
+            height: 100px;
+            animation: spin 1.7s linear infinite;
+            text-align: center;
+            border-radius: 50px;
+            filter: blur(1px);
+            box-shadow: 0px -5px 20px 0px rgb(186, 66, 255), 0px 5px 20px 0px rgb(0, 225, 255);
+        }
+
+        .loader2 {
+            background-color: rgb(36, 36, 36);
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            filter: blur(10px);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeOut {
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/index.css">
-    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/pyscript.css">
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
 </head>
 
 <body>
+    <div class="loading">
+        <div class="loader">
+            <div class="loader2"></div>
+        </div>
+    </div>
     <py-config src="https://api.rayzbot.xyz/dashboard/toml/pyscript.toml"></py-config>
     <div class="Header" id="Header">
         <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
@@ -44,9 +99,15 @@
             <div class="HomePageP">Be <span style="color: var(--a-hover-color)">part</span> of the <span style="color: var(--guilded-color)">hype</span>.</div>
             <div class="Stats">
                 <p class="StatsDisplay" id="StatDisplay">{} servers, {} users.</p>
-                <py-script src="https://api.rayzbot.xyz/dashboard/script/stats.py"></py-script>
             </div>
         </div>
     </section>
+    <script src="https://api.rayzbot.xyz/dashboard/js/index.js"></script>
+    <script type="text/javascript">
+        window.addEventListener("load", function() {
+            const loader = document.querySelector(".loading");
+            loader.className += " hidden";
+        });
+    </script>
 </body>
 </html>
