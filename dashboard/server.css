@@ -14,8 +14,8 @@ main {
 
 body {
     font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--body-color);
-    color: var(--text-default-color);
+    background: linear-gradient(123.1deg, #661050 0%, #000024 66.8%);
+    color: #ffffff;
     line-height: 1;
     margin: 0;
 }
@@ -25,19 +25,20 @@ body {
     position: static;
     height: 55px;
     width: 100%;
-    background: var(--header-color);
+    background: linear-gradient(0deg, #f7000045 0%, #000024 66.8%);
     align-items: center;
-    padding: 0 50px 0 0x;
     flex-wrap: wrap;
+    box-shadow: 1px 1px 5px #ffffff, -1px -1px 100px #f70000b3;
 }
 
-    .Header a {
-        float: left;
-        display: block;
-        padding: 14px 16px;
-        border-radius: 0.4rem;
-        text-decoration: none;
-    }
+.Header a {
+    float: left;
+    display: block;
+    padding: 14px 16px;
+    border-radius: 0.4rem;
+    text-decoration: none;
+    background: transparent;
+}
 
 .Header_btn {
     color: var(--text-default-color);
@@ -90,9 +91,11 @@ section.div.input {
 }
 
 p.Search {
+    font-weight: 500;
     text-align: center;
     width: 100%;
     font-size: 48px;
+    text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
 }
 
 input.Search {
@@ -101,6 +104,7 @@ input.Search {
     width: 75%;
     padding: 7;
     font-size: 24px;
+    box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
 }
 
 sectiontwo {
@@ -114,15 +118,29 @@ sectiontwo {
 }
 
 .SearchButton {
-    background: var(--button-color);
-    color: var(--text-default-color);
-    margin-top: 20px;
-    width: 50%;
-    max-width: 20rem;
-    border-radius: 5px;
-    outline: none;
+    padding: 1rem 2rem;
     font-size: 24px;
-    border-color: var(--a-hover-color);
+    background: rgb(255, 255, 255);
+    color: #6352fd;
+    border-radius: .5rem;
+    border-bottom: 2px solid #6352fd;
+    border-right: 2px solid #6352fd;
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    transition-duration: 1s;
+    margin-top: 20px;
+    transition-property: border-top, border-left, border-bottom, border-right, box-shadow;
+    width: 50%;
+    box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
+}
+
+.SearchButton:hover {
+    border-top: 2px solid #6352fd;
+    border-left: 2px solid #6352fd;
+    border-bottom: 2px solid rgb(238, 103, 238);
+    border-right: 2px solid rgb(238, 103, 238);
+    box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px;
+    cursor: pointer;
 }
 
 sectiontwo.Testing {

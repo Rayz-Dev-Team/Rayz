@@ -76,9 +76,11 @@
 	<section class="HomePageTop">
 		<div class="HomePageDiv HomePageTopDiv">
 			<div class="Settings">
-				<p class="Search">Enter your <span style="color: var(--guilded-color)">Guilded</span> server ID:</p>
+				<p class="Search">Enter your <span style="color: var(--guilded-color); text-shadow: 1px 1px 5px #e4ff0087, -1px -1px 10px #ff9512de;">Guilded</span> server ID:</p>
 				<input type="text" placeholder="Server ID" class="Search" id="Search">
-				<button onclick="checkIDAPI()" class="SearchButton">Submit</button>
+                <button class="SearchButton" type="button" onclick="CheckIDAPI()">
+                    <strong>Submit</strong>
+                </button>
 				<div class="notification" id="notification"></div>
 			</div>
 		</div>
