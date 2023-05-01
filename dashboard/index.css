@@ -17,7 +17,7 @@ body {
     grid-template-areas: 
         "header header header"
         "main main main";
-    grid-template-rows: 50px 1fr 70px;
+    grid-template-rows: 60px 1fr 70px;
     grid-template-columns: 20% 1fr 20%;
     grid-row-gap: 10px;
     height: 100vh;
@@ -66,6 +66,7 @@ img.Logo {
     width: 50px;
     height: 50px;
     padding-right: 20px;
+    padding-left: 5px;
 }
 
 .HomePageP {
