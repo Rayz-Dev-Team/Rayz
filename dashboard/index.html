@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rayz</title>
+    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/index.css">
     <style>
         .loading.hidden {
             animation: fadeOut 1s;
@@ -55,8 +56,7 @@
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://api.rayzbot.xyz/dashboard/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -65,42 +65,35 @@
             <div class="loader2"></div>
         </div>
     </div>
-    <div class="Header" id="Header">
-        <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
-        <a role="button" class="Header_btn" href="https://rayzbot.xyz/">Home</a>
-        <a role="button" class="Header_btn" href="https://rayzbot.xyz/dashboard">Dashboard</a>
-    </div>
-    <section class="HomePageTop">
-        <div class="HomePageDiv HomePageTopDiv">
-            <div id="pyscript_loading_splash" class="py-overlayy">
-                <div class="py-pop-upp">
-                    <div class="smooth spinnerr"></div>
-                    <div id="pyscript-loading-label" class="labell">
-                        <div id="pyscript-operation-details">
-                            <p></p>
-                        </div>
-                    </div>
+    <header id="pageHeader">
+        <div class="Header" id="Header">
+            <img class="Logo" src="https://api.rayzbot.xyz/image/logo.png" alt="botlogo">
+            <a role="button" class="Header_btn" href="https://rayzbot.xyz/">Home</a>
+            <a role="button" class="Header_btn" href="https://rayzbot.xyz/dashboard">Dashboard</a>
+        </div>
+    </header>
+    <main id="mainContent">
+        <section class="HomePageTop">
+            <div class="HomePageDiv HomePageTopDiv">
+                <div class="HomePageText">
+                    <p class="HomePageP">Rayz, the best <span style="color: var(--guilded-color); text-shadow: 1px 1px 5px #e4ff0087, -1px -1px 10px #ff9512de;">Guilded</span> bot out there.</p>
+                </div>
+                <div class="HomePageButtons">
+                    <a href="https://rayzbot.xyz/dashboard">
+                        <button type="button" role="button" class="HomePageButton HomePageButtonRoot"><span class="Badge">BETA</span> Go to Dashboard</button>
+                    </a>
+    
+                    <a href="https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778">
+                        <button type="button" role="button" class="HomePageButtonInvite HomePageButtonRoot">Invite Rayz</button>
+                    </a>
+                </div>
+                <div class="HomePageP">Be <span style="color: var(--a-hover-color); text-shadow: 1px 1px 5px #1d0db1, -1px -1px 10px #6352fd;">part</span> of the <span style="color: var(--guilded-color); text-shadow: 1px 1px 5px #e4ff0087, -1px -1px 10px #ff9512de;">hype</span>.</div>
+                <div class="Stats">
+                    <p class="StatsDisplay" id="StatDisplay">{} servers, {} users.</p>
                 </div>
             </div>
-            <div class="HomePageText">
-                <p class="HomePageP">Rayz, the best <span style="color: var(--guilded-color)">Guilded</span> bot out there.</p>
-            </div>
-            <span class="Badge">BETA</span>
-            <div class="HomePageButtons">
-                <a href="https://rayzbot.xyz/dashboard">
-                    <button type="button" role="button" class="HomePageButton HomePageButtonRoot">Go to Dashboard</button>
-                </a>
-
-                <a href="https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778">
-                    <button type="button" role="button" class="HomePageButtonInvite HomePageButtonRoot">Invite Rayz</button>
-                </a>
-            </div>
-            <div class="HomePageP">Be <span style="color: var(--a-hover-color)">part</span> of the <span style="color: var(--guilded-color)">hype</span>.</div>
-            <div class="Stats">
-                <p class="StatsDisplay" id="StatDisplay">{} servers, {} users.</p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
     <script src="https://api.rayzbot.xyz/dashboard/js/index.js"></script>
     <script type="text/javascript">
         window.addEventListener("load", function() {

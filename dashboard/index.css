@@ -8,178 +8,168 @@
     --a-hover-color: #6352fd;
 }
 
-*,:after,:before {
-    box-sizing: border-box;
-    margin: 0
+a:-webkit-any-link {
+    cursor: pointer;
 }
 
 body {
-    font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--body-color);
-    color: var(--text-default-color);
-    line-height: 1;
+    display: grid;
+    grid-template-areas: 
+        "header header header"
+        "main main main";
+    grid-template-rows: 80px 1fr 70px;
+    grid-template-columns: 20% 1fr 20%;
+    grid-row-gap: 10px;
+    height: 100vh;
     margin: 0;
+    background: #000024;
+    color: white;
+    font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.Header {
+header {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+main {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+#pageHeader {
+    grid-area: header;
+    background: linear-gradient(0deg, #f7000045 0%, #000024 66.8%);
+    box-shadow: 1px 1px 5px #ffffff, -1px -1px 100px #f70000b3;
+}
+
+#mainContent {
+    grid-area: main;
+}
+
+div#Header {
     display: flex;
     position: static;
     height: 55px;
     width: 100%;
-    background: var(--header-color);
     align-items: center;
     padding: 0 50px 0 0x;
     flex-wrap: wrap;
-    animation: Header_pageShow__t5zO5 .3s ease-in-out;
+    animation: .3s ease-in-out;
 }
 
-.Header a {
+img.Logo {
+    width: 50px;
+    height: 50px;
+    padding-right: 20px;
+}
+
+.HomePageP {
+    font-size: 3rem;
+    text-align: center;
+    width: 100%;
+    font-weight: 500;
+    text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+}
+
+p.HomePageP {
+    color: white;
+    text-align: center;
+    width: 100%;
+    font-weight: 500;
+    font-size: 3rem;
+    text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+}
+
+p#StatDisplay {
+    font-size: 1.7rem;
+    color: white;
+    text-align: center;
+    text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+    margin: 0;
+}
+
+.HomePageDiv.HomePageTopDiv {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+span.Badge {
+    font-size: 1rem;
+    font-weight: 550;
+    background: linear-gradient(90deg, #6352FD 0%, #FFCE09 100%);
+    padding: 0.1rem 0.2rem;
+    color: white;
+    border-radius: 0.3rem;
+    margin-right: 5px;
+}
+
+button.HomePageButton.HomePageButtonRoot {
+    border-bottom: grey solid 1px;
+    border-left: white;
+    border-top: white;
+    border-right: white;
+    font-weight: 600;
+    color: white;
+    background: grey;
+    border-radius: 12px;
+    padding: 0.5rem;
+    border: 1px solid var(--guilded-color);
+    font-size: 1.9rem;
+    align-items: center;
+    display: inline-flex;
+}
+
+button.HomePageButton.HomePageButtonRoot:hover {
+    cursor: pointer;
+}
+
+button.HomePageButtonInvite.HomePageButtonRoot {
+    background: var(--guilded-color);
+    font-weight: 600;
+    color: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    border: 1px solid var(--guilded-color);
+    font-size: 1.9rem;
+    align-items: center;
+    display: inline-flex;
+}
+
+button.HomePageButtonInvite.HomePageButtonRoot:hover {
+    cursor: pointer;
+}
+
+a {
+    padding: 5px;
+}
+
+a.Header_btn {
     float: left;
     display: block;
     padding: 14px 16px;
     border-radius: 0.4rem;
     text-decoration: none;
+    background: transparent;
+    color: white;
+    font-size: 24px;
+    font-weight: 500;
 }
 
-.Header_btn {
-    color: var(--text-default-color);
+a.Header_btn:hover {
+    transition: 0.25s;
     text-decoration: none;
-    font-weight: 500;
-    padding: 10px 15px;
-    background-color: #181818;
-}
-
-div {
-    display: block;
-}
-
-section {
-    padding: 1rem 0;
-}
-
-.HomePageTop {
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.HomePageTop p {
-    font-weight: 500;
-}
-
-
-.HomePageTop a button {
-    font-weight: 600;
-}
-
-.HomePageTop button {
-    font-weight: 600;
-}
-
-.HomePageTopDiv {
-    position: relative;
-    z-index: 20;
-    padding-bottom: 6rem;
-}
-
-.HomePageText {
-    max-width: 36rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.HomePageP {
-    font-size: 3rem;
-    color: var(--text-default-color);
-    padding-top: 10rem;
-    text-align: center;
-    font-weight: 500;
+    color: var(--guilded-color);
+    text-shadow: 1px 1px 10px #ffffff;
 }
 
 .HomePageButtons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.HomePageButtonRoot {
-    box-shadow: 0 4px 50px rgba(83,84,97, 0.2);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 0.25rem;
-}
-
-.HomePageButton {
-    background: var(--button-color);
-    border: 2px solid var(--guilded-color);
-    color: var(--text-default-color);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 20rem;
-    font-size: 1.9rem;
-}
-
-.HomePageButtonInvite {
-    background: var(--guilded-color);
-    border: 2px solid #242424;
-    color: var(--text-default-color);
-    width: 100%;
-    max-width: 20rem;
-    font-size: 2rem;
-}
-
-button.HomePageButton:hover {
-    transition: 0.25s;
-    background: #36363f;
-    cursor: pointer;
-}
-
-button.HomePageButtonInvite:hover {
-    transition: 0.25s;
-    background: var(--guilded-hovor-color);
-    cursor: pointer;
-}
-
-a:hover {
-    transition: 0.25s;
-    text-decoration: none;
-    color: var(--a-hover-color);
-}
-
-a:-webkit-any-link {
-    cursor: pointer;
-}
-
-.Badge {
-    border-radius: 128px;
-    font-size: .75rem;
-    font-weight: 500;
-    font: bold;
-    background: linear-gradient(90deg, #6352FD 0%, #FFCE09 100%);
-    text-transform: uppercase;
-    padding: 0.2rem 0.7rem;
-    color: var(--text-default-color);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    margin-right: 0rem;
-    margin-left: 2rem;
-    border-radius: 6px;
-}
-
-.StatsDisplay {
-    font-size: 1.7rem;
-    color: var(--text-default-color);
-    padding-top: 2rem;
-    text-align: center;
-}
-
-.Logo {
-    padding: 0 0x 0 50px;
-    width: 50px;
-    height: 50px;
+    display: inline-flex;
+    padding-bottom: 100px;
 }
