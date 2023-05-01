@@ -76,6 +76,10 @@ img.Logo {
     text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
 }
 
+.HomePageText {
+    padding-top: 100px;
+}
+
 p.HomePageP {
     color: white;
     text-align: center;
