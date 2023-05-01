@@ -104,7 +104,15 @@ input.Search {
     width: 75%;
     padding: 7;
     font-size: 24px;
-    box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
+    box-shadow: 1px 1px 10px #9dedf587, -1px -1px 15px #ffffff73;
+    border: white
+}
+
+a.Header_btn:hover {
+    transition: 0.25s;
+    text-decoration: none;
+    color: var(--guilded-color);
+    text-shadow: 1px 1px 10px #ffffff;
 }
 
 sectiontwo {
@@ -119,19 +127,15 @@ sectiontwo {
 
 .SearchButton {
     padding: 1rem 2rem;
-    font-size: 24px;
     background: rgb(255, 255, 255);
     color: #6352fd;
     border-radius: .5rem;
-    border-bottom: 2px solid #6352fd;
-    border-right: 2px solid #6352fd;
-    border-top: 2px solid white;
-    border-left: 2px solid white;
     transition-duration: 1s;
-    margin-top: 20px;
+    margin-top: 40px;
     transition-property: border-top, border-left, border-bottom, border-right, box-shadow;
     width: 50%;
     box-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffff73;
+    border: white
 }
 
 .SearchButton:hover {
