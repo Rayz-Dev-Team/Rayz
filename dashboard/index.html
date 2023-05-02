@@ -55,6 +55,221 @@
                 visibility: hidden;
             }
         }
+
+
+
+
+
+
+        :root {
+            --guilded-color: #F5C400;
+            --guilded-hovor-color: #9b7c00;
+            --body-color: #242424;
+            --text-default-color: #ffffff;
+            --button-color: #535461;
+            --header-color: #181818;
+            --a-hover-color: #6352fd;
+        }
+
+        a:-webkit-any-link {
+            cursor: pointer;
+        }
+
+        body {
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "main main main";
+            grid-template-rows: 60px 1fr 20px;
+            grid-template-columns: 20% 1fr 20%;
+            grid-row-gap: 10px;
+            height: 100vh;
+            margin: 0;
+            background: #000024;
+            color: white;
+            font-family: roboto, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+
+        main {
+            width: 100%;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+        }
+
+        #pageHeader {
+            grid-area: header;
+            background: linear-gradient(0deg, #f7000045 0%, #000024 66.8%);
+            box-shadow: 1px 1px 5px #ffffff, -1px -1px 100px #f70000b3;
+        }
+
+        #mainContent {
+            grid-area: main;
+        }
+
+        div#Header {
+            display: flex;
+            position: static;
+            height: 55px;
+            width: 100%;
+            align-items: center;
+            padding: 0 50px 0 0x;
+            flex-wrap: wrap;
+            animation: .3s ease-in-out;
+        }
+
+        img.Logo {
+            width: 50px;
+            height: 50px;
+            padding-right: 20px;
+            padding-left: 5px;
+        }
+
+        .HomePageP {
+            font-size: 3rem;
+            text-align: center;
+            width: 100%;
+            font-weight: 500;
+            text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+        }
+
+        .HomePageText {
+            padding-top: 100px;
+        }
+
+        p.HomePageP {
+            color: white;
+            text-align: center;
+            width: 100%;
+            font-weight: 500;
+            font-size: 3rem;
+            text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+        }
+
+        p#StatDisplay {
+            font-size: 1.7rem;
+            color: white;
+            text-align: center;
+            text-shadow: 1px 1px 5px #9dedf587, -1px -1px 10px #ffffffb8;
+            margin: 0;
+        }
+
+        .HomePageDiv.HomePageTopDiv {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+
+        span.Badge {
+            font-size: 1rem;
+            font-weight: 550;
+            background: linear-gradient(90deg, #6352FD 0%, #FFCE09 100%);
+            padding: 0.1rem 0.2rem;
+            color: white;
+            border-radius: 0.3rem;
+            margin-right: 5px;
+        }
+
+        button.HomePageButton.HomePageButtonRoot {
+            border-bottom: grey solid 1px;
+            border-left: white;
+            border-top: white;
+            border-right: white;
+            font-weight: 600;
+            color: white;
+            background: grey;
+            border-radius: 12px;
+            padding: 0.5rem;
+            border: 1px solid var(--guilded-color);
+            font-size: 1.9rem;
+            align-items: center;
+            display: inline-flex;
+        }
+
+        button.HomePageButton.HomePageButtonRoot:hover {
+            cursor: pointer;
+        }
+
+        button.HomePageButtonInvite.HomePageButtonRoot {
+            background: var(--guilded-color);
+            font-weight: 600;
+            color: white;
+            border-radius: 12px;
+            padding: 0.5rem;
+            border: 1px solid var(--guilded-color);
+            font-size: 1.9rem;
+            align-items: center;
+            display: inline-flex;
+        }
+
+        button.HomePageButtonInvite.HomePageButtonRoot:hover {
+            cursor: pointer;
+        }
+
+        a {
+            padding: 5px;
+        }
+
+        a.Header_btn {
+            float: left;
+            display: block;
+            padding: 14px 16px;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            background: transparent;
+            color: white;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        a.Header_btn:hover {
+            transition: 0.25s;
+            text-decoration: none;
+            color: var(--guilded-color);
+            text-shadow: 1px 1px 10px #ffffff;
+        }
+
+        .HomePageButtons {
+            display: inline-flex;
+            padding-bottom: 100px;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            opacity: 1;
+            transition: opacity 0.6s;
+            margin-bottom: 10px;
+            border-radius: 0.3rem;
+        }
+
+        .alert.success {background-color: #04AA6D;}
+        .alert.info {background-color: #2196F3;}
+        .alert.warning {background-color: #ff9800;}
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .closebtn:hover {
+            color: black;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
 </head>
@@ -75,6 +290,12 @@
     <main id="mainContent">
         <section class="HomePageTop">
             <div class="HomePageDiv HomePageTopDiv">
+                <div>
+                    <div class="alert warning">
+                        <span class="closebtn">&times;</span>  
+                        <strong>Warning:</strong> Some things may be unresponsive.
+                    </div>
+                </div>
                 <div class="HomePageText">
                     <p class="HomePageP">Rayz, the best <span style="color: var(--guilded-color); text-shadow: 1px 1px 5px #e4ff0087, -1px -1px 10px #ff9512de;">Guilded</span> bot out there.</p>
                 </div>
@@ -100,6 +321,17 @@
             const loader = document.querySelector(".loading");
             loader.className += " hidden";
         });
+
+        var close = document.getElementsByClassName("closebtn");
+        var i;
+
+        for (i = 0; i < close.length; i++) {
+            close[i].onclick = function(){
+                var div = this.parentElement;
+                div.style.opacity = "0";
+                setTimeout(function(){ div.style.display = "none"; }, 600);
+            }
+        }
     </script>
 </body>
 </html>
