@@ -363,10 +363,12 @@ async def check_leaderboard(author):
 	try:
 		user = await getUser(author.id)
 		with db_connection.connection() as conn:
-			if user == None:
-				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO leaderboard(id, name, currency) VALUES('{author.id}', 'None', 0)")
-				conn.commit()
+			if not user == None:
+				lb_user = await getUser(author.id)
+				if lb_user == None:
+					cursor = conn.cursor()
+					cursor.execute(f"INSERT INTO leaderboard(id, name, currency) VALUES('{author.id}', 'None', 0)")
+					conn.commit()
 			await _check_inventory(author)
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
