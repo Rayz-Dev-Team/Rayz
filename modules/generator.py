@@ -9,6 +9,7 @@ import psycopg
 from psycopg_pool import ConnectionPool 
 from tools.db_funcs import getServer
 from tools.db_funcs import getUser
+from tools.db_funcs import getUserLB
 from psycopg.rows import dict_row
 
 def remove_repeated_letters(word):
@@ -364,7 +365,7 @@ async def check_leaderboard(author):
 		user = await getUser(author.id)
 		with db_connection.connection() as conn:
 			if not user == None:
-				lb_user = await getUser(author.id)
+				lb_user = await getUserLB(author.id)
 				if lb_user == None:
 					cursor = conn.cursor()
 					cursor.execute(f"INSERT INTO leaderboard(id, name, currency) VALUES('{author.id}', 'None', 0)")
