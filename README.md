@@ -6,8 +6,6 @@
 
 <p align = "left">
 
-DISCLAMER: This is just a "Bug fix" repo. I am looking for bugs and patching them. This will be updated to main on the offical rayz repo.
-
 ## > Introduction
 
 A warm welcome to the **Rayz** Github repo! Rayz is a multi-utility Guilded bot built in Python, using [Shay's Guilded.py!](https://github.com/shayypy/guilded.py) wrapper library. This document provides guidelines on how to contribute to the project and set up the bot on your local machine.
