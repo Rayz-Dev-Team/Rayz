@@ -26,6 +26,7 @@ from tools.functions import roll_chance
 import asyncio
 import datetime
 import simplejson
+import re
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -421,34 +422,54 @@ class Economy(commands.Cog):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
-		if author.bot:
-			return
+
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
+
+		if author.bot:
+			return
+		
+		if item is None:
+			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
+			await ctx.reply(embed=em)
+			return
+
+		if amount is None:
+			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
+			await ctx.reply(embed=em)
+			return
+		
+		if member is None:
+			em = guilded.Embed(title="Uh oh!", description="User cannot be NoneType.", color=0x363942)
+			await ctx.reply(embed=em)
+			return
+		
+		await _check_inventory_member(member)
+
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
+
+		item = item.lower()
+
+		display_item_names = {}
+		item_names = []
+
+		for i in item_list["items"]:
+			display_item_names[item_list["items"][i]["display_name"].lower()] = {
+				"name": i
+			}
+			item_names.append(i)
+
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
-		if item == None:
-			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
-			await ctx.reply(embed=em)
-			return
-		if amount == None:
-			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
-			await ctx.reply(embed=em)
-			return
 		if amount < 0:
 			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-			await ctx.reply(embed=em)
-			return
-		if member == None:
-			em = guilded.Embed(title="Uh oh!", description="Member cannot be NoneType.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		await _check_inventory_member(member)
@@ -456,37 +477,76 @@ class Economy(commands.Cog):
 			user = await getUser(author.id)
 			member1 = await getUser(member.id)
 			info = user["inventory"]
-			accepted_responses = ["jolly_ranchers", "candycorn", "nerds", "dots"]
-			if item.lower() in accepted_responses:
-				if amount > info["inventory"]["items"][item.lower()]["amount"]:
-					em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
+
+
+			if item in display_item_names:
+				item = display_item_names[item]["name"]
+				if not item_list["items"][item]["giftable"] == True:
+					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
-					info_member = member1["inventory"]
-					#Take from info
-					info_amount = info["inventory"]["items"][item.lower()]["amount"]
-					new_info_amount = info_amount - amount
-					info["inventory"]["items"][item.lower()]["amount"] = new_info_amount
-					infoJson = json.dumps(info)
-					#Give to info_member
-					info_member_amount = info_member["inventory"]["items"][item.lower()]["amount"]
-					new_info_member_amount = info_member_amount + amount
-					info_member["inventory"]["items"][item.lower()]["amount"] = new_info_member_amount
-					infoJsonMember= json.dumps(info_member)
-					with db_connection.connection() as conn:
-						cursor = conn.cursor()
-						cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
-						cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
-						conn.commit()
-					em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
-					em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+					if amount > info["inventory"]["items"][item.lower()]["amount"]:
+						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
+						await ctx.reply(embed=em)
+					else:
+						info_member = member1["inventory"]
+						#Take from info
+						info_amount = info["inventory"]["items"][item.lower()]["amount"]
+						new_info_amount = info_amount - amount
+						info["inventory"]["items"][item.lower()]["amount"] = new_info_amount
+						infoJson = json.dumps(info)
+						#Give to info_member
+						info_member_amount = info_member["inventory"]["items"][item.lower()]["amount"]
+						new_info_member_amount = info_member_amount + amount
+						info_member["inventory"]["items"][item.lower()]["amount"] = new_info_member_amount
+						infoJsonMember= json.dumps(info_member)
+						with db_connection.connection() as conn:
+							cursor = conn.cursor()
+							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
+							conn.commit()
+						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
+						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+						await ctx.reply(embed=em)
+						guild1 = await self.bot.fetch_server("Mldgz04R")
+						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
+						em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
+						await channel.send(embed=em)
+
+			elif item in item_names:
+				if not item_list["items"][item]["giftable"] == True:
+					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
-					guild1 = await self.bot.fetch_server("Mldgz04R")
-					channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
-					em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
-					await channel.send(embed=em)
+				else:
+					if amount > info["inventory"]["items"][item.lower()]["amount"]:
+						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
+						await ctx.reply(embed=em)
+					else:
+						info_member = member1["inventory"]
+						#Take from info
+						info_amount = info["inventory"]["items"][item.lower()]["amount"]
+						new_info_amount = info_amount - amount
+						info["inventory"]["items"][item.lower()]["amount"] = new_info_amount
+						infoJson = json.dumps(info)
+						#Give to info_member
+						info_member_amount = info_member["inventory"]["items"][item.lower()]["amount"]
+						new_info_member_amount = info_member_amount + amount
+						info_member["inventory"]["items"][item.lower()]["amount"] = new_info_member_amount
+						infoJsonMember= json.dumps(info_member)
+						with db_connection.connection() as conn:
+							cursor = conn.cursor()
+							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
+							conn.commit()
+						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
+						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+						await ctx.reply(embed=em)
+						guild1 = await self.bot.fetch_server("Mldgz04R")
+						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
+						em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
+						await channel.send(embed=em)
 			else:
-				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!\n\n__**Accepted items:**__\n{}".format(" \n".join(accepted_responses)), color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="That item doesn't exist!", color=0x363942)
 				await ctx.reply(embed=em)
 		except psycopg.DatabaseError as e:
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
