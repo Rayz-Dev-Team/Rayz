@@ -14,6 +14,13 @@ async def getUser(id):
         user = cursor.fetchone()
     return user
 
+async def getUserLB(id):
+    with db_connection.connection() as conn:
+        cursor = conn.cursor(row_factory=dict_row)
+        cursor.execute(f"SELECT * from leaderboard where id = '{id}'")
+        user = cursor.fetchone()
+    return user
+
 # Get Server
 # id = Server ID :)
 async def getServer(id):
