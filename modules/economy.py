@@ -366,7 +366,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 			return
 		if item == None:
-			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You didn't pick a item to sell. (You can look at available items to sell using the prices command!)", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -434,17 +434,17 @@ class Economy(commands.Cog):
 			return
 		
 		if item is None:
-			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a Item.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 
 		if amount is None:
-			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a Amount.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		
 		if member is None:
-			em = guilded.Embed(title="Uh oh!", description="User cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a User.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		
@@ -573,7 +573,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 			return
 		if amount == None:
-			em = guilded.Embed(title="Uh oh!", description="Amount cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify  a Amount.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		if amount < 0:
@@ -581,7 +581,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 			return
 		if member == None:
-			em = guilded.Embed(title="Uh oh!", description="Member cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a Member.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
