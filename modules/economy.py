@@ -366,7 +366,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 			return
 		if item == None:
-			em = guilded.Embed(title="Uh oh!", description="Item cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You didn't pick a item to sell. (You can look at available items to sell using the prices command!)", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
