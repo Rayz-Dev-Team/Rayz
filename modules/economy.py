@@ -444,7 +444,7 @@ class Economy(commands.Cog):
 			return
 		
 		if member is None:
-			em = guilded.Embed(title="Uh oh!", description="User cannot be NoneType.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a User.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		
