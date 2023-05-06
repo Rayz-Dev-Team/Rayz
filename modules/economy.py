@@ -390,6 +390,21 @@ class Economy(commands.Cog):
 						if int(answer1.message.content) > info["inventory"]["items"][key]["amount"]:
 							em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 							await ctx.reply(embed=em)
+						if int(answer1.message.content) == "all":
+							price_amount = prices["items"][key]["price"]
+							total_amount = price_amount = ["inventory"]["items"][key]["amount"]
+							pocket_before = user["pocket"]
+							pocket_after = pocket_before + total_amount
+							loss_amount = info["inventory"]["items"][key]["amount"] (answer1.message.content)
+							info["inventory"]["items"][key]["amount"] = loss_amount
+							infoJson = json.dumps(info)
+							with db_connection.connection() as conn:
+								cursor = conn.cursor()
+								cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+								cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
+								conn.commit()
+							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+							await ctx.reply(embed=em)
 						else:
 							price_amount = prices["items"][key]["price"]
 							total_amount = price_amount * int(answer1.message.content)
