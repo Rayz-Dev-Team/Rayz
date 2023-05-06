@@ -377,7 +377,7 @@ class Economy(commands.Cog):
 				accepted_responses.append(i["display_name"].lower())
 				if i["display_name"].lower() == item.lower():
 					em = guilded.Embed(description="How many would you like to sell?", color=0x363942)
-					em.set_footer(text="Accepted response: Must be an integer.")
+					em.set_footer(text="Accepted response: Must be an integer or all.")
 					await ctx.reply(embed=em)
 					def pred(m):
 						return m.message.author == message.author
@@ -422,7 +422,7 @@ class Economy(commands.Cog):
 							await ctx.reply(embed=em)
 					except Exception as e:
 						em = guilded.Embed(description="There was an error processing your command.", color=0x363942)
-						em.set_footer(text="Accepted response: Must be an integer.")
+						em.set_footer(text="Accepted response: Must be an integer or all.")
 						await ctx.reply(embed=em)
 			if not item.lower() in accepted_responses:
 				em = guilded.Embed(title="Uh oh!", description="That item cannot be sold.", color=0x363942)
@@ -449,12 +449,12 @@ class Economy(commands.Cog):
 			return
 		
 		if item is None:
-			em = guilded.Embed(title="Uh oh!", description="You must specify an item.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify an Item.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 
 		if amount is None:
-			em = guilded.Embed(title="Uh oh!", description="You must specify an amount.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify an Amount.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		
