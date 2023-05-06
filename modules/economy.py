@@ -449,12 +449,12 @@ class Economy(commands.Cog):
 			return
 		
 		if item is None:
-			em = guilded.Embed(title="Uh oh!", description="You must specify a Item.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify an item.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 
 		if amount is None:
-			em = guilded.Embed(title="Uh oh!", description="You must specify a Amount.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify an amount.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		
