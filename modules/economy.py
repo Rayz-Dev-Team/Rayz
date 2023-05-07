@@ -10,7 +10,7 @@ from modules.generator import _check_values
 from modules.generator import _check_inventory
 from modules.generator import _check_inventory_member
 from modules.generator import _check_values_member
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
 from modules.generator import command_processed
@@ -35,8 +35,8 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def test_values(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
-		await _check_values_guild(guild)
+		server = ctx.server
+		await _check_values_server(server)
 		try:
 			users = await getAllUsers()
 			with db_connection.connection() as conn:
@@ -63,8 +63,8 @@ class Economy(commands.Cog):
 	#@commands.command()
 	#async def test_values(self, ctx):
 	#	author = ctx.author
-	#	guild = ctx.guild
-	#	await _check_values_guild(guild)
+	#	server = ctx.server
+	#	await _check_values_server(server)
 	#	try:
 	#		connection = psycopg2.connect(user=database_username, password=database_password, port=database_port, database=database_name)
 	#		async def getUser():
@@ -104,18 +104,18 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def purge_partners(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
-		await _check_values_guild(guild)
+		server = ctx.server
+		await _check_values_server(server)
 
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		config = fileIO("config/config.json", "load")
 
-		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-		members_support_guild = await support_guild.fetch_members()
+		support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_server = await support_server.fetch_members()
 
-		if author in members_support_guild:
-			author_support_guild = await support_guild.fetch_member(author.id)
-			roles_list = await author_support_guild.fetch_role_ids()
+		if author in members_support_server:
+			author_support_server = await support_server.fetch_member(author.id)
+			roles_list = await author_support_server.fetch_role_ids()
 			if config["developer_role_id"] in roles_list or config["manager_role_id"] in roles_list:
 				try:
 					with db_connection.connection() as conn:
@@ -141,8 +141,8 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def partners(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
-		await _check_values_guild(guild)
+		server = ctx.server
+		await _check_values_server(server)
 		try:
 			with db_connection.connection() as conn:
 				async def getServers():
@@ -155,9 +155,9 @@ class Economy(commands.Cog):
 				for i in servers:
 					if i["partner_status"].lower() == "true":
 						try:
-							get_guild = await self.bot.fetch_server(i["id"])
-							vanity_url = get_guild.vanity_url
-							partners_list.append("[{}]({}) `-` **x{}**".format(get_guild.name, vanity_url, i["economy_multiplier"]))
+							get_server = await self.bot.fetch_server(i["id"])
+							vanity_url = get_server.vanity_url
+							partners_list.append("[{}]({}) `-` **x{}**".format(get_server.name, vanity_url, i["economy_multiplier"]))
 						except:
 							pass
 				random.shuffle(partners_list)
@@ -176,8 +176,8 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def test1(self, ctx):
 		author = ctx.author
-		guild = await self.bot.fetch_server("Mldgz04R")
-		await _check_values_guild(guild)
+		server = await self.bot.fetch_server("Mldgz04R")
+		await _check_values_server(server)
 		roles_list = await author.fetch_role_ids()
 		boost_or_not = False
 		if 30053069 in roles_list:
@@ -190,8 +190,8 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def test(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
-		await _check_values_guild(guild)
+		server = ctx.server
+		await _check_values_server(server)
 		user = await getUser(author.id)
 		print(user)
 		if user["inventory"] == None or user["inventory"]["inventory"] == None:
@@ -202,11 +202,11 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def add(self, ctx, member: guilded.Member=None, *, amount: int=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		if author.bot:
 			return
 		DEV = fileIO("config/config.json", "load")
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		if not author.id in DEV["Developer"]:
 			return
 		try:
@@ -225,12 +225,12 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def e_ban(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		if author.bot:
 			return
 		DEV = fileIO("config/config.json", "load")
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		if not author.id in DEV["Developer"]:
 			return
 		LB = fileIO("config/economy_settings.json", "load")
@@ -249,30 +249,30 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def toggle_partner(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		config = fileIO("config/config.json", "load")
 
-		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-		members_support_guild = await support_guild.fetch_members()
+		support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_server = await support_server.fetch_members()
 
-		if author in members_support_guild:
-			author_support_guild = await support_guild.fetch_member(author.id)
-			roles_list = await author_support_guild.fetch_role_ids()
+		if author in members_support_server:
+			author_support_server = await support_server.fetch_member(author.id)
+			roles_list = await author_support_server.fetch_role_ids()
 			if config["developer_role_id"] in roles_list or config["managermanager_role_id"] in roles_list:
 				try:
-					server = await getServer(guild.id)
+					server = await getServer(server.id)
 					int_check = 0
 					if server["partner_status"].lower() == "false":
 						em = guilded.Embed(title="Partner management", description="How much would you like to increase the economy boost by?", color=0x363942)
-						em.set_footer(text="Congrats to {} for becoming a partner!".format(guild.name))
+						em.set_footer(text="Congrats to {} for becoming a partner!".format(server.name))
 						await ctx.reply(embed=em)
 						def pred(m):
 							return m.message.author == message.author
@@ -288,10 +288,10 @@ class Economy(commands.Cog):
 						add_data = float(server["economy_multiplier"]) + add_value
 						with db_connection.connection() as conn:
 							cursor = conn.cursor()
-							cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{guild.id}'")
-							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
+							cursor.execute(f"UPDATE servers SET partner_status = 'True' WHERE ID = '{server.id}'")
+							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{server.id}'")
 							conn.commit()
-						em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(guild.name), color=0x363942)
+						em = guilded.Embed(title="Woo hoo!".format(author.name), description="`-` {} is now partnered!\n`-` All partner benefits have been activated!".format(server.name), color=0x363942)
 						em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 						em.set_thumbnail(url="https://cdn.discordapp.com/attachments/546687295684870145/988278191678435378/guilded_image_4bd81f3a0067c6025ab935d019169b71.png")
 						await ctx.reply(embed=em)
@@ -299,10 +299,10 @@ class Economy(commands.Cog):
 						add_data = 1.0
 						with db_connection.connection() as conn:
 							cursor = conn.cursor()
-							cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{guild.id}'")
-							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{guild.id}'")
+							cursor.execute(f"UPDATE servers SET partner_status = 'False' WHERE ID = '{server.id}'")
+							cursor.execute(f"UPDATE servers SET economy_multiplier = '{add_data}' WHERE ID = '{server.id}'")
 							conn.commit()
-						em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked.".format(guild.name), color=0x363942)
+						em = guilded.Embed(title="Uh oh!".format(author.name), description="`-` {} is now un-partnered.\n`-` All partner benefits have been revoked.".format(server.name), color=0x363942)
 						em.set_footer(text="This servers currency multiplier has been set to x{}".format(add_data))
 						await ctx.reply(embed=em)
 				except psycopg.DatabaseError as e:
@@ -312,12 +312,12 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def prices(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -347,12 +347,12 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def sell(self, ctx, *, item: str=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -420,11 +420,11 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def give(self, ctx, item: str=None, amount: int=None, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -508,8 +508,8 @@ class Economy(commands.Cog):
 						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
 						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 						await ctx.reply(embed=em)
-						guild1 = await self.bot.fetch_server("Mldgz04R")
-						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
+						server1 = await self.bot.fetch_server("Mldgz04R")
+						channel = await server1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
 						em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
 						await channel.send(embed=em)
 
@@ -541,8 +541,8 @@ class Economy(commands.Cog):
 						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
 						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 						await ctx.reply(embed=em)
-						guild1 = await self.bot.fetch_server("Mldgz04R")
-						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
+						server1 = await self.bot.fetch_server("Mldgz04R")
+						channel = await server1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
 						em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
 						await channel.send(embed=em)
 			else:
@@ -555,12 +555,12 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def gift(self, ctx, amount: int=None, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -587,7 +587,7 @@ class Economy(commands.Cog):
 		try:
 			user = await getUser(author.id)
 			member1 = await getUser(member.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			prefix = server["server_prefix"]
 			if amount > user["pocket"]:
 				em = guilded.Embed(title="Uh oh!", description="`You don't have {:,} in your pocket.".format(amount), color=0x363942)
@@ -606,8 +606,8 @@ class Economy(commands.Cog):
 				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, economy_settings["currency_name"], author.id, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 				em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
 				await ctx.reply(embed=em)
-				guild1 = await self.bot.fetch_server(economy_settings["support_server_id"])
-				channel = await guild1.fetch_channel("82204345-aa8d-487f-8808-17afc525a735")
+				server1 = await self.bot.fetch_server(economy_settings["support_server_id"])
+				channel = await server1.fetch_channel("82204345-aa8d-487f-8808-17afc525a735")
 				em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, economy_settings["currency_name"]), color=0x363942)
 				await channel.send(embed=em)
 		except psycopg.DatabaseError as e:
@@ -617,12 +617,12 @@ class Economy(commands.Cog):
 	@commands.command(aliases=["with"])
 	async def withdraw(self, ctx, amount: str=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -680,12 +680,12 @@ class Economy(commands.Cog):
 	@commands.command(aliases=["dep"])
 	async def deposit(self, ctx, amount: str=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -749,12 +749,12 @@ class Economy(commands.Cog):
 			page = 1
 
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -800,7 +800,7 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def rob(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if member == None:
 			em = guilded.Embed(title="Uh oh!", description="The member argument was left empty.\n\nEx: `{}rob <member>`".format(prefix), color=0x363942)
@@ -810,14 +810,14 @@ class Economy(commands.Cog):
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
 		await _check_inventory_member(member)
 		await command_processed(message, author)
 		try:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			economy_settings = fileIO("config/economy_settings.json", "load")
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
@@ -892,34 +892,34 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def weekly(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
-		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-		members_support_guild = await support_guild.fetch_members()
+		support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_server = await support_server.fetch_members()
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
 			user = await getUser(author.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if user == None:
 				await _check_values(author)
 			gen_amount = random.randint(5000, 12000)
 			multiplier_amount = float(server["economy_multiplier"])
 			edit_message = None
-			if author in members_support_guild:
-				author_support_guild = await support_guild.fetch_member(author.id)
-				roles_list = await author_support_guild.fetch_role_ids()
+			if author in members_support_server:
+				author_support_server = await support_server.fetch_member(author.id)
+				roles_list = await author_support_server.fetch_role_ids()
 				if 30053086 in roles_list:
 					edit_message = ":Gold_tier: Elite supporter boosted you by `x3`"
 					multiplier_amount += 3
@@ -937,9 +937,9 @@ class Economy(commands.Cog):
 			curr_cooldown = 604800
 			delta = float(curr_time) - float(user["cooldowns"]["weekly_timeout"])
 			if delta >= curr_cooldown and delta>0:
-				if author in members_support_guild:
-					author_support_guild = await support_guild.fetch_member(author.id)
-					roles_list = await author_support_guild.fetch_role_ids()
+				if author in members_support_server:
+					author_support_server = await support_server.fetch_member(author.id)
+					roles_list = await author_support_server.fetch_role_ids()
 					if 30053086 in roles_list or 30053078 in roles_list or 30053069 in roles_list:
 						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, economy_settings["currency_name"], edit_message), color=0x363942)
 					else:
@@ -973,12 +973,12 @@ class Economy(commands.Cog):
 	@commands.command()
 	async def slots(self, ctx, *, amount: int=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
@@ -986,15 +986,15 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_drops = fileIO("economy/drops.json", "load")
 		item_list = fileIO("economy/items.json", "load")
-		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-		members_support_guild = await support_guild.fetch_members()
+		support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_server = await support_server.fetch_members()
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
 			user = await getUser(author.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			prefix = server["server_prefix"]
 
 			slots_bet_min = economy_settings["slots_bet_min"]
@@ -1150,10 +1150,10 @@ class Economy(commands.Cog):
 		if ctx.author.bot:
 			return
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
@@ -1199,7 +1199,7 @@ class Economy(commands.Cog):
 			decrease_drop_slot_chance = economy_settings["dig_drop_slots_chance_decrease"]
 
 			user = await getUser(author.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if user == None:
 				await _check_values(author)
 			curr_time = time.time()
@@ -1376,10 +1376,10 @@ class Economy(commands.Cog):
 		if ctx.author.bot:
 			return
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
@@ -1395,8 +1395,8 @@ class Economy(commands.Cog):
 			item_drops = fileIO("economy/drops.json", "load")
 			item_list = fileIO("economy/items.json", "load")
 
-			support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-			members_support_guild = await support_guild.fetch_members()
+			support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+			members_support_server = await support_server.fetch_members()
 
 			common_min = economy_settings["common_min"]
 			common_max = economy_settings["common_max"]
@@ -1436,7 +1436,7 @@ class Economy(commands.Cog):
 			decrease_drop_slot_chance = economy_settings["drop_slots_chance_decrease"]
 
 			user = await getUser(author.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 
 			if user == None:
 				await _check_values(author)
@@ -1449,9 +1449,9 @@ class Economy(commands.Cog):
 			if delta >= curr_cooldown and delta>0:
 				message_list = []
 				booster_amount = 0
-				if author in members_support_guild:
-					author_support_guild = await support_guild.fetch_member(author.id)
-					roles_list = await author_support_guild.fetch_role_ids()
+				if author in members_support_server:
+					author_support_server = await support_server.fetch_member(author.id)
+					roles_list = await author_support_server.fetch_role_ids()
 					if tier_3_sub_role_id in roles_list:
 						booster_amount += tier_3_sub_boost_amount
 					elif tier_2_sub_role_id in roles_list:
@@ -1699,9 +1699,9 @@ class Economy(commands.Cog):
 				if not drops_lines_list == []:
 					message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
 
-				if author in members_support_guild:
-					author_support_guild = await support_guild.fetch_member(author.id)
-					roles_list = await author_support_guild.fetch_role_ids()
+				if author in members_support_server:
+					author_support_server = await support_server.fetch_member(author.id)
+					roles_list = await author_support_server.fetch_role_ids()
 					if tier_3_sub_role_id in roles_list:
 						edit_message = ":Gold_tier: Elite supporter boosted you by `x{}`".format(tier_3_sub_boost_amount)
 						message_list.append(edit_message)
@@ -1743,12 +1743,12 @@ class Economy(commands.Cog):
 	@commands.command(aliases=["me", "bal", "balance"])
 	async def profile(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -1773,12 +1773,12 @@ class Economy(commands.Cog):
 	@commands.command(aliases=["inventory"])
 	async def inv(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
@@ -1792,7 +1792,7 @@ class Economy(commands.Cog):
 			return
 		try:
 			user = await getUser(author.id)
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			prefix = server["server_prefix"]
 			if user == None:
 				await _check_values(author)
@@ -1809,18 +1809,18 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
 			await ctx.reply(embed=em)
 
-	#Get guild stats, is partner, and booster multiplier
+	#Get server stats, is partner, and booster multiplier
 	@commands.command()
 	async def stats(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		if author.bot:
 			return
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await command_processed(message, author)
-		server = await getServer(guild.id)
-		em = guilded.Embed(title="Guild stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server["partner_status"], server["economy_multiplier"]), color=0x363942)
+		server = await getServer(server.id)
+		em = guilded.Embed(title="Server stats:", description="**Partner:** {}\n**Multiplier:** x{}".format(server["partner_status"], server["economy_multiplier"]), color=0x363942)
 		await ctx.reply(embed=em)
 
 def setup(bot):

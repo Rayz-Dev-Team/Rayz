@@ -2,7 +2,7 @@ import guilded
 from guilded.ext import commands
 from tools.dataIO import fileIO
 from modules.generator import _check_values
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from core.database import *
 from modules.generator import command_processed
 import psycopg
@@ -18,14 +18,14 @@ class General(commands.Cog):
 	@commands.command(pass_context=True)
 	async def changeprefix(self, ctx, pref: str=None):
 		channel = ctx.channel
-		guild = ctx.guild
+		server = ctx.server
 		author = ctx.author
 		message = ctx.message
 		await command_processed(message, author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		try:
-			server = await getServer(guild.id)
-			if author == guild.owner:
+			server = await getServer(server.id)
+			if author == server.owner:
 				if pref == None:
 					em = guilded.Embed(title="Uh oh!", description="You didn't define a prefix.\n\n`Ex: ?changeprefix ;`", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
@@ -34,9 +34,9 @@ class General(commands.Cog):
 					try:
 						with db_connection.connection() as conn:
 							cursor = conn.cursor()
-							cursor.execute(f"UPDATE servers SET server_prefix = '{pref}' WHERE ID = '{guild.id}'")
+							cursor.execute(f"UPDATE servers SET server_prefix = '{pref}' WHERE ID = '{server.id}'")
 							conn.commit()
-						em = guilded.Embed(title="Success!", description="My prefix in this guild was changed to `{}`".format(str(pref)), color=0x363942)
+						em = guilded.Embed(title="Success!", description="My prefix in this server was changed to `{}`".format(str(pref)), color=0x363942)
 						await ctx.reply(embed=em)
 					except:
 						em = guilded.Embed(title="Uh oh!", description="Unknown error, please contact the Developer.", color=0x363942)
@@ -53,16 +53,16 @@ class General(commands.Cog):
 	@commands.command(pass_context=True)
 	async def togglemodule(self, ctx):
 		channel = ctx.channel
-		guild = ctx.guild
+		server = ctx.server
 		author = ctx.author
 		message = ctx.message
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await command_processed(message, author)
 		try:
 			with db_connection.connection() as conn:
-				server = await getServer(guild.id)
+				server = await getServer(server.id)
 				cursor = conn.cursor()
-				if author == guild.owner:
+				if author == server.owner:
 					fun_status = server["fun_module"]
 					mod_status = server["moderation_module"]
 					if fun_status == "Enabled":
@@ -98,13 +98,13 @@ class General(commands.Cog):
 							if answer1.message.content.lower() in modules:
 								if answer1.message.content.lower() == "fun":
 									if server["fun_module"] == "Enabled":
-										cursor.execute(f"UPDATE servers SET fun_module = 'Disabled' WHERE ID = '{guild.id}'")
+										cursor.execute(f"UPDATE servers SET fun_module = 'Disabled' WHERE ID = '{server.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Fun module has been disabled.", color=0x363942)
 										await ctx.reply(embed=em)
 								elif answer1.message.content.lower() == "moderation":
 									if server["moderation_module"] == "Enabled":
-										cursor.execute(f"UPDATE servers SET moderation_module = 'Disabled' WHERE ID = '{guild.id}'")
+										cursor.execute(f"UPDATE servers SET moderation_module = 'Disabled' WHERE ID = '{server.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Moderation module has been disabled.", color=0x363942)
 										await ctx.reply(embed=em)
@@ -139,13 +139,13 @@ class General(commands.Cog):
 							if answer1.message.content.lower() in modules:
 								if answer1.message.content.lower() == "fun":
 									if server["fun_module"] == "Disabled":
-										cursor.execute(f"UPDATE servers SET fun_module = 'Enabled' WHERE ID = '{guild.id}'")
+										cursor.execute(f"UPDATE servers SET fun_module = 'Enabled' WHERE ID = '{server.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Fun module has been enabled.", color=0x363942)
 										await ctx.reply(embed=em)
 								elif answer1.message.content.lower() == "moderation":
 									if server["moderation_module"] == "Disabled":
-										cursor.execute(f"UPDATE servers SET moderation_module = 'Enabled' WHERE ID = '{guild.id}'")
+										cursor.execute(f"UPDATE servers SET moderation_module = 'Enabled' WHERE ID = '{server.id}'")
 										conn.commit()
 										em = guilded.Embed(title="Success!", description="The Moderation module has been enabled.", color=0x363942)
 										await ctx.reply(embed=em)
@@ -177,7 +177,7 @@ class General(commands.Cog):
 	async def addnote(self, ctx, member: guilded.Member=None, *, note: str=None):
 		author = ctx.message.author
 		channel = ctx.message.channel
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await _check_values(author)
 		await command_processed(message, author)
@@ -219,7 +219,7 @@ class General(commands.Cog):
 	async def delnote(self, ctx, member: guilded.Member=None, *, note: str=None):
 		author = ctx.message.author
 		channel = ctx.message.channel
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await _check_values(author)
 		await command_processed(message, author)
@@ -263,7 +263,7 @@ class General(commands.Cog):
 	async def notes(self, ctx, *, member: guilded.Member=None):
 		author = ctx.message.author
 		channel = ctx.message.channel
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await _check_values(author)
 		await command_processed(message, author)

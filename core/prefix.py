@@ -1,4 +1,4 @@
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from core.database import *
 import psycopg
 from psycopg_pool import ConnectionPool 
@@ -12,8 +12,8 @@ database_password = config["database_password"]
 database_username = config["database_username"]
 
 async def prefix(bot, message):
-	guild = message.guild
-	await _check_values_guild(guild)
-	server = await getServer(guild.id)
+	server = message.server
+	await _check_values_server(server)
+	server = await getServer(server.id)
 	prefix = server["server_prefix"]
 	return [prefix, "@Rayz ", "@Rayz", "Rayz ", "Rayz"]
