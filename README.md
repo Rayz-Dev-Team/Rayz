@@ -8,7 +8,7 @@
 
 ## > Introduction
 
-A warm welcome to the **Rayz** Github repo! Rayz is a multi-utility Guilded bot built in Python, using [Shay's Guilded.py!](https://github.com/shayypy/guilded.py) wrapper library. This document provides guidelines on how to contribute to the project and set up the bot on your local machine.
+A warm welcome to the **Rayz** Github repo! Rayz is a multi-utility Guilded bot built in Python, using [shayy's guilded.py!](https://github.com/shayypy/guilded.py) wrapper library. This document provides guidelines on how to contribute to the project and set up the bot on your local machine.
 
 ## > How to use
 
