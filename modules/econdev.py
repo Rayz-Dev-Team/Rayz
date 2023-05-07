@@ -394,7 +394,7 @@ class EconDev(commands.Cog):
                     "sell_price": None,
                     "buy_price": None
                 },
-                "opens": [],
+                "opens": {},
                 "drop": {
                     "min_drop": None,
                     "max_drop": None
