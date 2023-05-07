@@ -27,6 +27,8 @@ import asyncio
 import datetime
 import simplejson
 import re
+from tools.db_funcs import getAllItems
+from tools.db_funcs import getItem
 
 class Economy(commands.Cog):
 	def __init__(self,bot):
@@ -345,7 +347,7 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 
 	@commands.command()
-	async def sell(self, ctx, *, item: str=None):
+	async def sell(self, ctx, amount: int=None, *, item: str=None):
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
@@ -357,6 +359,10 @@ class Economy(commands.Cog):
 		await check_leaderboard_author(author)
 		await _check_inventory(author)
 		await command_processed(message, author)
+
+		server = getServer(server.id)
+		prefix = server["server_prefix"]
+
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
@@ -365,8 +371,16 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
-		if item == None:
-			em = guilded.Embed(title="Uh oh!", description="You didn't pick a item to sell. (You can look at available items to sell using the prices command!)", color=0x363942)
+		if amount is None:
+			em = guilded.Embed(title="An amount wasn't specified.", description=f"**Correct usage:** {prefix}sell <amount> <item>", color=0x363942)
+			await ctx.reply(embed=em)
+			return
+		if item is None:
+			em = guilded.Embed(title="An item wasn't specified.", description=f"**Correct usage:** {prefix}sell <amount> <item>\n\n**Note:** You can view your sellable items using `{prefix}prices`", color=0x363942)
+			await ctx.reply(embed=em)
+			return
+		if amount <= 0:
+			em = guilded.Embed(description="Amount must be greater than 0.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1392,8 +1406,42 @@ class Economy(commands.Cog):
 			return
 		try:
 			economy_settings = fileIO("config/economy_settings.json", "load")
-			item_drops = fileIO("economy/drops.json", "load")
-			item_list = fileIO("economy/items.json", "load")
+			item_list = await getAllItems()
+			
+			common_list = []
+			rare_list = []
+			epic_list = []
+			legendary_list = []
+			unreal_list = []
+
+			for i in item_list:
+				if "work" in i["data"]["obtain"]:
+					if i["data"]["enabled"] == True:
+						if i["data"]["event"] == []:
+							if i["data"]["rarity"].lower() == "common":
+								common_list.append(i["item"])
+							elif i["data"]["rarity"].lower() == "rare":
+								rare_list.append(i["item"])
+							elif i["data"]["rarity"].lower() == "epic":
+								epic_list.append(i["item"])
+							elif i["data"]["rarity"].lower() == "legendary":
+								legendary_list.append(i["item"])
+							elif i["data"]["rarity"].lower() == "unreal":
+								unreal_list.append(i["item"])	
+						else:
+							for a in i["data"]["event"]:
+								thingy = "_event"
+								if economy_settings[a+thingy] == "True":
+									if i["data"]["rarity"].lower() == "common":
+										common_list.append(i["item"])
+									elif i["data"]["rarity"].lower() == "rare":
+										rare_list.append(i["item"])
+									elif i["data"]["rarity"].lower() == "epic":
+										epic_list.append(i["item"])
+									elif i["data"]["rarity"].lower() == "legendary":
+										legendary_list.append(i["item"])
+									elif i["data"]["rarity"].lower() == "unreal":
+										unreal_list.append(i["item"])
 
 			support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
 			members_support_guild = await support_guild.fetch_members()
@@ -1487,108 +1535,6 @@ class Economy(commands.Cog):
 				gen_amount = math.ceil(gen_amount)
 				message_list.append("<@{}> gained {:,} {}!\n".format(author.id, gen_amount, economy_settings["currency_name"]))
 				info = user["inventory"]
-				thanksgiving_drop_lines_list = []
-				christmas_drop_lines_list = []
-				if economy_settings["christmas_event"] == "True":
-					common_chance_gen = roll_chance(common_min, common_max, common_chance)
-					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-					chest_gen_amount = random.randint(1, 2)
-					santa_hat_gen_amount = random.randint(1, 10)
-					candycane_gen_amount = random.randint(10, 20)
-					marshmellows_gen_amount = random.randint(10, 50)
-					if legendary_chance_gen:
-						if not "2022_christmas_event_chest" in info["inventory"]["items"]:
-							info["inventory"]["items"]["2022_christmas_event_chest"] = {
-								"amount": chest_gen_amount
-							}
-							new_amount = chest_gen_amount
-							christmas_drop_lines_list.append("`-` [LEGENDARY] + {} {}".format(new_amount))
-						else:
-							new_amount = info["inventory"]["items"]["2022_christmas_event_chest"]["amount"] + chest_gen_amount
-							info["inventory"]["items"]["2022_christmas_event_chest"]["amount"] += new_amount
-							christmas_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(chest_gen_amount, item_list["items"]["2022_christmas_event_chest"]["display_name"]))
-					elif epic_chance_gen:
-						if not "santa_hat" in info["inventory"]["items"]:
-							info["inventory"]["items"]["santa_hat"] = {
-								"amount": santa_hat_gen_amount
-							}
-							new_amount = santa_hat_gen_amount
-							christmas_drop_lines_list.append("`-` [Epic] + {} {}".format(new_amount))
-						else:
-							new_amount = info["inventory"]["items"]["santa_hat"]["amount"] + santa_hat_gen_amount
-							info["inventory"]["items"]["santa_hat"]["amount"] += new_amount
-							christmas_drop_lines_list.append("`-` [Epic] +{} {}".format(santa_hat_gen_amount, item_list["items"]["santa_hat"]["display_name"]))
-					elif rare_chance_gen:
-						if not "candycane" in info["inventory"]["items"]:
-							info["inventory"]["items"]["candycane"] = {
-								"amount": candycane_gen_amount
-							}
-							new_amount = candycane_gen_amount
-							christmas_drop_lines_list.append("`-` [Rare] + {} {}".format(new_amount))
-						else:
-							new_amount = info["inventory"]["items"]["candycane"]["amount"] + candycane_gen_amount
-							info["inventory"]["items"]["candycane"]["amount"] += new_amount
-							christmas_drop_lines_list.append("`-` [Rare] +{} {}".format(candycane_gen_amount, item_list["items"]["candycane"]["display_name"]))
-					elif common_chance_gen:
-						if not "marshmellows" in info["inventory"]["items"]:
-							info["inventory"]["items"]["marshmellows"] = {
-								"amount": marshmellows_gen_amount
-							}
-							new_amount = marshmellows_gen_amount
-							christmas_drop_lines_list.append("`-` [Common] + {} {}".format(new_amount))
-						else:
-							new_amount = info["inventory"]["items"]["marshmellows"]["amount"] + marshmellows_gen_amount
-							info["inventory"]["items"]["marshmellows"]["amount"] += new_amount
-							christmas_drop_lines_list.append("`-` [Common] +{} {}".format(marshmellows_gen_amount, item_list["items"]["marshmellows"]["display_name"]))
-				if economy_settings["thanksgiving_event"] == "True":
-					common_chance_gen = roll_chance(common_min, common_max, common_chance)
-					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-					turkey_gen_amount = random.randint(1, 2)
-					if legendary_chance_gen:
-						if not "golden_turkey" in info["inventory"]["items"]:
-							info["inventory"]["items"]["golden_turkey"] = {
-								"amount": turkey_gen_amount
-							}
-							new_amount = turkey_gen_amount
-							thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(new_amount, item_list["items"]["golden_turkey"]["display_name"]))
-						else:
-							new_amount = info["inventory"]["items"]["golden_turkey"]["amount"] + turkey_gen_amount
-							info["inventory"]["items"]["golden_turkey"]["amount"] += new_amount
-							thanksgiving_drop_lines_list.append("`-` [LEGENDARY] +{} {}".format(new_amount, item_list["items"]["golden_turkey"]["display_name"]))
-					else:
-						thanksgiving_drop_lines_list.append("Nothing found.")
-
-				if economy_settings["halloween_event"] == "True":
-					common_chance_gen = roll_chance(common_min, common_max, common_chance)
-					rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-					epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-					candycorn_gen_amount = random.randint(1, 10)
-					work_event_lines_list = []
-					if common_chance_gen <= common_chance:
-						info["inventory"]["items"]["candycorn"]["amount"] += candycorn_gen_amount
-						work_event_lines_list.append(f"[Common] +{candycorn_gen_amount} Candycorn")
-					if rare_chance_gen <= rare_chance:
-						rare_amount = random.randint(1, 10)
-						work_event_lines_list.append(f"[Rare] +{rare_amount} Jolly ranchers")
-						info["inventory"]["items"]["jolly_ranchers"]["amount"] += rare_amount
-					if epic_chance_gen == epic_chance:
-						epic_amount = random.randint(1, 10)
-						work_event_lines_list.append(f"[Epic] +{epic_amount} Nerds")
-						info["inventory"]["items"]["nerds"]["amount"] += epic_amount
-					if legendary_chance_gen == legendary_chance:
-						legendary_amount = random.randint(1, 10)
-						work_event_lines_list.append(f"[LEGENDARY] +{legendary_amount} Dots")
-						info["inventory"]["items"]["dots"]["amount"] += legendary_amount
-					if not work_event_lines_list == []:
-						message_list.append("__**Halloween event bonus:**__\n{}\n".format(" \n".join(work_event_lines_list)))
 				drops_lines_list = []
 				for i in range(drop_slots):
 					common_chance_gen = roll_chance(common_min, common_max, common_chance)
@@ -1597,104 +1543,102 @@ class Economy(commands.Cog):
 					legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
 					unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
 					if unreal_chance_gen:
-						drop_list = []
-						for i in item_drops["unreal"]:
-							drop_list.append(i)
-						drop = random.choice(drop_list)
-						amount = random.randint(item_drops["unreal"][drop]["min_amount"], item_drops["unreal"][drop]["max_amount"])
+						drop = random.choice(unreal_list)
+						item_data = await getItem(drop)
+						if not item_data["data"]["event"] == []:
+							event = "[Event]"
+						else:
+							event = ""
+						amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
 						if not drop in info["inventory"]["items"]:
 							info["inventory"]["items"][drop] = {
 								"amount": amount
 							}
 							new_amount = amount
-							drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[UNREAL]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 						else:
-							new_amount = info["inventory"]["items"][drop]["amount"] + amount
 							info["inventory"]["items"][drop]["amount"] += amount
-							drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[UNREAL]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 					elif legendary_chance_gen:
-						drop_list = []
-						for i in item_drops["legendary"]:
-							drop_list.append(i)
-						drop = random.choice(drop_list)
-						amount = random.randint(item_drops["legendary"][drop]["min_amount"], item_drops["legendary"][drop]["max_amount"])
+						drop = random.choice(legendary_list)
+						item_data = await getItem(drop)
+						if not item_data["data"]["event"] == []:
+							event = "[Event]"
+						else:
+							event = ""
+						amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
 						if not drop in info["inventory"]["items"]:
 							info["inventory"]["items"][drop] = {
 								"amount": amount
 							}
 							new_amount = amount
-							drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[LEGENDARY]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 						else:
-							new_amount = info["inventory"]["items"][drop]["amount"] + amount
 							info["inventory"]["items"][drop]["amount"] += amount
-							drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[LEGENDARY]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 					elif epic_chance_gen:
-						drop_list = []
-						for i in item_drops["epic"]:
-							drop_list.append(i)
-						drop = random.choice(drop_list)
-						amount = random.randint(item_drops["epic"][drop]["min_amount"], item_drops["epic"][drop]["max_amount"])
+						drop = random.choice(epic_list)
+						item_data = await getItem(drop)
+						if not item_data["data"]["event"] == []:
+							event = "[Event]"
+						else:
+							event = ""
+						amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
 						if not drop in info["inventory"]["items"]:
 							info["inventory"]["items"][drop] = {
 								"amount": amount
 							}
 							new_amount = amount
-							drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Epic]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 						else:
-							new_amount = info["inventory"]["items"][drop]["amount"] + amount
 							info["inventory"]["items"][drop]["amount"] += amount
-							drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Epic]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 					elif rare_chance_gen:
-						drop_list = []
-						for i in item_drops["rare"]:
-							drop_list.append(i)
-						drop = random.choice(drop_list)
-						amount = random.randint(item_drops["rare"][drop]["min_amount"], item_drops["rare"][drop]["max_amount"])
+						drop = random.choice(rare_list)
+						item_data = await getItem(drop)
+						if not item_data["data"]["event"] == []:
+							event = "[Event]"
+						else:
+							event = ""
+						amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
 						if not drop in info["inventory"]["items"]:
 							info["inventory"]["items"][drop] = {
 								"amount": amount
 							}
 							new_amount = amount
-							drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Rare]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 						else:
-							new_amount = info["inventory"]["items"][drop]["amount"] + amount
 							info["inventory"]["items"][drop]["amount"] += amount
-							drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Rare]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 					elif common_chance_gen:
-						drop_list = []
-						for i in item_drops["common"]:
-							drop_list.append(i)
-						drop = random.choice(drop_list)
-						amount = random.randint(item_drops["common"][drop]["min_amount"], item_drops["common"][drop]["max_amount"])
+						drop = random.choice(common_list)
+						item_data = await getItem(drop)
+						if not item_data["data"]["event"] == []:
+							event = "[Event]"
+						else:
+							event = ""
+						amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
 						if not drop in info["inventory"]["items"]:
 							info["inventory"]["items"][drop] = {
 								"amount": amount
 							}
-							new_amount = amount
-							drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Common]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 						else:
-							new_amount = info["inventory"]["items"][drop]["amount"] + amount
 							info["inventory"]["items"][drop]["amount"] += amount
-							drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount,item_list["items"][drop]["display_name"]))
+							drops_lines_list.append("`{}.` `{}[Common]` +{} {}".format(drop_counter, event, amount, item_data["data"]["display_name"]))
 							drop_counter += 1
 					else:
 						drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
 						drop_counter += 1
-
-				if not christmas_drop_lines_list == []:
-					message_list.append("__**Christmas event drop:**__\n{}\n".format(" \n".join(christmas_drop_lines_list)))
-
-				if not thanksgiving_drop_lines_list == []:
-					message_list.append("__**Thanksgiving event drop:**__\n{}\n".format(" \n".join(thanksgiving_drop_lines_list)))
 
 				if not drops_lines_list == []:
 					message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
