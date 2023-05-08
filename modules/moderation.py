@@ -401,15 +401,8 @@ class Moderation(commands.Cog):
 		message = ctx.message
 		channel = await guild.fetch_channel(ctx.channel.id)
 		await command_processed(message, author)
-		moderator_or_not = False
-		for i in author.roles:
-			if i.permissions.manage_messages == True or i.permissions.kick_members == True:
-				moderator_or_not = True
-		if author == guild.owner:
-			moderator_or_not = True
-		if moderator_or_not == True:
-			em = guilded.Embed(title="Channel ID retrieved.", description="{}".format(channel.id), color=0x363942)
-			await ctx.reply(embed=em)
+		em = guilded.Embed(title="Channel ID retrieved.", description="{}".format(channel.id), color=0x363942)
+		await ctx.reply(embed=em)
 
 	@commands.command()
 	@checks.is_dev()
