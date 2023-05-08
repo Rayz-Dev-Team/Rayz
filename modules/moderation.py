@@ -405,7 +405,7 @@ class Moderation(commands.Cog):
 		await ctx.reply(embed=em)
 
 	@commands.command()
-	@checks.is_dev()
+	@checks.is_dev_check()
 	async def info(self, ctx):
 		guild = ctx.guild
 		author = await guild.fetch_member(ctx.message.author.id)
@@ -419,7 +419,7 @@ class Moderation(commands.Cog):
 		await ctx.reply(embed=em)
 
 	@commands.command()
-	@checks.is_dev()
+	@checks.is_dev_check()
 	async def guildlist(self, ctx):
 		author = ctx.message.author
 		channel = ctx.message.channel
