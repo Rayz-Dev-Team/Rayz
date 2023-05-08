@@ -22,7 +22,7 @@ class Moderation(commands.Cog):
 		await command_processed(message, author)
 		if author == guild.owner:
 			if arg == None:
-				em = guilded.Embed(title="Uh oh!", description="Message cannot be blank!\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="Welcome message cannot be blank!\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
 				await ctx.reply(embed=em)
 				return
 			try:
