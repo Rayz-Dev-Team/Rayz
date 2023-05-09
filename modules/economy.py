@@ -1844,9 +1844,13 @@ class Economy(commands.Cog):
 			info = user["inventory"]
 			default_print_list = []
 			for i in info["inventory"]["items"]:
-				item_data = await getItem(i)
-				if info["inventory"]["items"][i]["amount"] > 0:
-					default_print_list.append("[{}] `{}:` {:,}".format(item_data["data"]["rarity"], item_data["data"]["display_name"], i["amount"], item_data["data"]["description"]))
+				print(i)
+				if i == "marshmellows" or i == "trick_or_treat_bag":
+					pass
+				else:
+					item_data = await getItem(i)
+					if info["inventory"]["items"][i]["amount"] > 0:
+						default_print_list.append("[{}] `{}:` {:,}".format(item_data["data"]["rarity"], item_data["data"]["display_name"], info["inventory"]["items"][i]["amount"], item_data["data"]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
 			em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
