@@ -4,7 +4,7 @@ from modules.generator import _check_values
 from modules.generator import _check_inventory
 from modules.generator import _check_inventory_member
 from modules.generator import _check_values_member
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
 from modules.generator import command_processed
@@ -23,19 +23,19 @@ class Help(commands.Cog):
 	@commands.command()
 	async def help(self, ctx, *, num: str=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await command_processed(message, author)
 		await _check_values(author)
 
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		config = fileIO("config/config.json", "load")
 
-		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-		members_support_guild = await support_guild.fetch_members()
+		support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+		members_support_server = await support_server.fetch_members()
 
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		last_update = "{}".format(config["last_updated"])
 		prefix = server["server_prefix"]
 
@@ -53,9 +53,9 @@ class Help(commands.Cog):
 			economy_status = "Disabled"
 
 		display_list = ["`1` • General `-` Enabled", "`2` • Fun `-` {}".format(fun_status), "`3` • Moderation `-` {}".format(mod_status), "`4` • Economy module `-` {}".format(economy_status)]
-		if author in members_support_guild:
-			author_support_guild = await support_guild.fetch_member(author.id)
-			roles_list = await author_support_guild.fetch_role_ids()
+		if author in members_support_server:
+			author_support_server = await support_server.fetch_member(author.id)
+			roles_list = await author_support_server.fetch_role_ids()
 			if config["staff_role_id"] in roles_list:
 				display_list.append("`5` • Support staff `-` Enabled")
 			if config["manager_role_id"] in roles_list:
@@ -76,7 +76,7 @@ class Help(commands.Cog):
 			em.set_footer(text=f"{last_update}")
 			await ctx.send(embed=em)
 		elif num == "3" or num.lower() == "mod" or num.lower() == "moderation" or num.lower() == "moderation module":
-			em = guilded.Embed(title="Moderation Module | Page 3", description=f"[optional] • <required>\n\n**Currently, only server owners can execute these commands.**\n\n__**Moderation**__ [{mod_status}]\n{prefix}changeprefix <prefix> `-` Change the prefix in this guild.\n{prefix}togglemodule `-` Toggle modules for your guild.\n{prefix}setlogchannel `-` Set the current channel to post logs in.\n{prefix}banword <word argument> `-` Bans usage of a word/phrase you don't like.\n{prefix}unbanword <word argument> `-` Unban usage of a word/phrase.\n{prefix}kick <user> `-` Kick a user from a Guild.\n{prefix}ban <user> `-` Ban a user from a Guild.\n{prefix}channelid `-` Get the channel ID in the channel you post this in.\n{prefix}settrafficlogs `-` Set the current channel to post traffic logs in.\n{prefix}setactionlogs `-` Set the current channel to post action logs in.\n{prefix}setwelcomechannel `-` Set the current channel to post welcome messages in.\n{prefix}setwelcomemessage <message> `-` Change the welcome message.\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)", color=0x363942)
+			em = guilded.Embed(title="Moderation Module | Page 3", description=f"[optional] • <required>\n\n**Currently, only server owners can execute these commands.**\n\n__**Moderation**__ [{mod_status}]\n{prefix}changeprefix <prefix> `-` Change the prefix in this server.\n{prefix}togglemodule `-` Toggle modules for your server.\n{prefix}setlogchannel `-` Set the current channel to post logs in.\n{prefix}banword <word argument> `-` Bans usage of a word/phrase you don't like.\n{prefix}unbanword <word argument> `-` Unban usage of a word/phrase.\n{prefix}kick <user> `-` Kick a user from a server.\n{prefix}ban <user> `-` Ban a user from a server.\n{prefix}channelid `-` Get the channel ID in the channel you post this in.\n{prefix}settrafficlogs `-` Set the current channel to post traffic logs in.\n{prefix}setactionlogs `-` Set the current channel to post action logs in.\n{prefix}setwelcomechannel `-` Set the current channel to post welcome messages in.\n{prefix}setwelcomemessage <message> `-` Change the welcome message.\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)", color=0x363942)
 			em.set_footer(text=f"{last_update}")
 			await ctx.send(embed=em)
 		elif num == "4" or num.lower() == "economy" or num.lower() == "economy module":

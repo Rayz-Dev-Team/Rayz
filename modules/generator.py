@@ -1,3 +1,4 @@
+from asyncio.base_events import Server
 import guilded
 from guilded.ext import commands
 import json
@@ -69,61 +70,61 @@ class Generator(commands.Cog):
 	@commands.Cog.listener()
 	async def on_member_remove(self, event: guilded.MemberRemoveEvent):
 		author = event.member
-		guild = event.server
+		server = event.server
 		kicked = event.kicked
 		banned = event.banned
 		if author.bot:
 			return
-		await _check_values_guild(guild)
-		server = await getServer(guild.id)
+		await _check_values_server(server)
+		server = await getServer(server.id)
 		if server["log_actions"] == None:
 			return
 		if banned == True:
-			channel = await guild.fetch_channel(server["log_actions"])
+			channel = await server.fetch_channel(server["log_actions"])
 			em = guilded.Embed(title="A member was banned:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 		elif kicked  == True:
-			channel = await guild.fetch_channel(server["log_actions"])
+			channel = await server.fetch_channel(server["log_actions"])
 			em = guilded.Embed(title="A member was kicked:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 		else:
-			channel = await guild.fetch_channel(server["log_traffic"])
+			channel = await server.fetch_channel(server["log_traffic"])
 			em = guilded.Embed(title="A member has left:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 			await channel.send(embed=em)
 
 	@commands.Cog.listener()
 	async def on_bot_add(self, event: guilded.BotAddEvent):
-		guild = event.server
+		server = event.server
 		user = event.member
 		author = user
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await _check_inventory(author)
-		send_channel = await guild.fetch_default_channel()
-		support_guild = await self.bot.fetch_server("Mldgz04R")
-		channel = await support_guild.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
-		await _check_values_guild(guild)
-		em = guilded.Embed(title="Hello community!", description="`-` Thanks <@{}> for inviting me to **{}!**\n`-` My default prefix/help command is `?help`\n`-` Rayz is a multipurpose bot featuring moderation, logging, a global economy, interaction commands, and more!\n\n**Links**\n[Support server](https://guilded.gg/Rayz) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, guild.name), color=0x363942)
+		send_channel = await server.fetch_default_channel()
+		support_server = await self.bot.fetch_server("Mldgz04R")
+		channel = await support_server.fetch_channel("fd818fb2-c102-4ce9-b347-23d00a5649f8")
+		await _check_values_server(Server)
+		em = guilded.Embed(title="Hello community!", description="`-` Thanks <@{}> for inviting me to **{}!**\n`-` My default prefix/help command is `?help`\n`-` Rayz is a multipurpose bot featuring moderation, logging, a global economy, interaction commands, and more!\n\n**Links**\n[Support server](https://guilded.gg/Rayz) • [Invite Rayz](https://www.guilded.gg/b/acd5fc8c-4272-48d0-b78b-da1fecb1bab5)".format(user.id, server.name), color=0x363942)
 		await send_channel.send(embed=em)
-		em = guilded.Embed(title="Rayz joined a Guild!", description="**__{}__**\n**Inivted by:** `{} ({})`".format(guild.name, user.name, user.id), color=0x363942)
+		em = guilded.Embed(title="Rayz joined a server!", description="**__{}__**\n**Inivted by:** `{} ({})`".format(server.name, user.name, user.id), color=0x363942)
 		await channel.send(embed=em)
 
 	@commands.Cog.listener()
 	async def on_member_join(self, event: guilded.MemberJoinEvent):
 		author = event.member
-		guild = event.server
+		server = event.server
 		if author.bot:
 			return
-		await _check_values_guild(guild)
-		server = await getServer(guild.id)
+		await _check_values_server(server)
+		server = await getServer(server.id)
 		if server["welcome_channel"] == None:
 			pass
 		else:
 			try:
-				channel = await guild.fetch_channel(server["welcome_channel"])
+				channel = await server.fetch_channel(server["welcome_channel"])
 				if server["welcome_message"] == None:
-					welcome_message = f"Welcome <@{author.id}> to {guild.name}!"
+					welcome_message = f"Welcome <@{author.id}> to {server.name}!"
 				else:
 					welcome_message = server["welcome_message"]
 				try:
@@ -131,12 +132,12 @@ class Generator(commands.Cog):
 				except:
 					pass
 				try:
-					welcome_message = welcome_message.replace("<server>", f"{guild.name}")
+					welcome_message = welcome_message.replace("<server>", f"{server.name}")
 				except:
 					pass
 				em = guilded.Embed(title="A member has joined!", description="{}".format(welcome_message), color=0x363942)
 				try:
-					em.set_thumbnail(url=guild.icon)
+					em.set_thumbnail(url=server.icon)
 				except:
 					pass
 				await channel.send(embed=em)
@@ -145,24 +146,24 @@ class Generator(commands.Cog):
 			if server["log_traffic"] == None:
 				pass
 			else:
-				channel = await guild.fetch_channel(server["log_traffic"])
+				channel = await server.fetch_channel(server["log_traffic"])
 				em = guilded.Embed(title="A member has joined:", description="`Username:` {}\n`User ID:` {}".format(author.name, author.id), color=0x363942)
 				await channel.send(embed=em)
 
 	@commands.Cog.listener()
 	async def on_message(self, event: guilded.MessageEvent):
 		author = event.message.author
-		guild = event.server
+		server = event.server
 		message = event.message
 		if event.message.created_by_bot:
 			return
 		await _check_values(author)
-		await _check_values_guild(guild)
+		await _check_values_server(server)
 		await check_leaderboard(author)
 		await check_leaderboard_author(author)
 		info = fileIO("config/banned_words.json", "load")
 
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		prefix = server["server_prefix"]
 		if server["custom_blocked_words"] == None:
 			append_it = ["111111111111111111111111111111111111111111111111111111111111111111111111111111111"]
@@ -191,7 +192,7 @@ class Generator(commands.Cog):
 					await message.delete()
 				else:
 					try:
-						channel = await guild.fetch_channel(server["logs_channel_id"])
+						channel = await server.fetch_channel(server["logs_channel_id"])
 						em = guilded.Embed(title="A blacklisted word was used.", description="**User** {}\n**ID:** {}\n\n__**READ AT YOUR OWN RISK**__\n`Captures:`\n{}\n\n`Message content:`\n{}".format(author.name, author.id, " \n".join(captures), message.content), color=0x363942)
 						await channel.send(embed=em)
 						em = guilded.Embed(title="A blacklisted word was used.", description="<@{}> **said:**\n{}".format(author.id, " \n".join(things_said)), color=0x363942)
@@ -206,17 +207,17 @@ class Generator(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_update(self, event: guilded.MessageUpdateEvent):
-		guild = event.server
+		server = event.server
 		author = event.before.author
 		before = event.before
 		after = event.after
 		if before.created_by_bot:
 			return
 
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["logs_channel_id"] is not None:
 			try:
-				channel = await guild.fetch_channel(server["logs_channel_id"])
+				channel = await server.fetch_channel(server["logs_channel_id"])
 				em = guilded.Embed(title="Message edit event.", description="**User:** {}\n**ID:** {}\n\n__**EDIT EVENT**__\n`Before:`\n{}\n\n`After:`\n{}".format(author.name, author.id, before.content, after.content), color=0x363942)
 				await channel.send(embed=em)
 			except:
@@ -226,17 +227,17 @@ class Generator(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_delete(self, event: guilded.MessageDeleteEvent):
-		guild = event.server
+		server = event.server
 		author = event.message.author
 		channel = event.channel
 		message = event.message
 		if message.created_by_bot:
 			return
 
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["logs_channel_id"] is not None:
 			try:
-				channel = await guild.fetch_channel(server["logs_channel_id"])
+				channel = await server.fetch_channel(server["logs_channel_id"])
 				em = guilded.Embed(title="Message delete event.", description="**User:** {}\n**ID:** {}\n\n__**DELETE EVENT**__\n**Deleted message:** {}".format(author.name, author.id, message.content), color=0x363942)
 				await channel.send(embed=em)
 			except:
@@ -424,13 +425,13 @@ async def _check_values(author):
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 
-async def _check_values_guild(guild):
+async def _check_values_server(server):
 	try:
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		with db_connection.connection() as conn:
 			if server == None:
 				cursor = conn.cursor()
-				cursor.execute(f"INSERT INTO servers(id, logs_channel_id, server_prefix, partner_status, economy_multiplier, moderation_module, fun_module, economy_module) VALUES('{guild.id}', 'None', '?', 'False', 1, 'Enabled', 'Enabled', 'Enabled')")
+				cursor.execute(f"INSERT INTO servers(id, logs_channel_id, server_prefix, partner_status, economy_multiplier, moderation_module, fun_module, economy_module) VALUES('{server.id}', 'None', '?', 'False', 1, 'Enabled', 'Enabled', 'Enabled')")
 				conn.commit()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
