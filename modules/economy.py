@@ -1843,9 +1843,10 @@ class Economy(commands.Cog):
 				await _check_values(author)
 			info = user["inventory"]
 			default_print_list = []
-			for key, i in info["inventory"]["items"].items():
-				if i["amount"] > 0:
-					default_print_list.append("[{}] `{}:` {:,}".format(item_list["items"][key]["rarity"], item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
+			for i in info["inventory"]["items"]:
+				item_data = await getItem(i)
+				if info["inventory"]["items"][i]["amount"] > 0:
+					default_print_list.append("[{}] `{}:` {:,}".format(item_data["data"]["rarity"], item_data["data"]["display_name"], i["amount"], item_data["data"]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
 			em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
