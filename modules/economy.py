@@ -327,7 +327,7 @@ class Economy(commands.Cog):
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		prices = fileIO("economy/prices.json", "load")
-		item_list = fileIO("economy/items.json", "load")
+		item_list = await getAllItems()
 		try:
 			user = await getUser(author.id)
 			info = user["inventory"]
@@ -335,10 +335,11 @@ class Economy(commands.Cog):
 			for i in info["inventory"]["items"]:
 				current_item_list.append(i)
 			say_list = []
-			for key, i in prices["items"].items():
-				if key in current_item_list:
-					if info["inventory"]["items"][key]["amount"] > 0:
-						say_list.append("{} - {:,} {}".format(item_list["items"][key]["display_name"], i["price"], economy_settings["currency_name"]))
+			for i in item_list:
+				if i["item"] in current_item_list:
+					if i["data"]["shop"]["enabled_sell"] == True:
+						if info["inventory"]["items"][i["item"]]["amount"] > 0:
+							say_list.append("{} - {:,} {}".format(i["data"]["display_name"], i["data"]["shop"]["sell_price"], economy_settings["currency_name"]))
 			em = guilded.Embed(title="Prices list", description="Item - Price\n\n{}".format(" \n".join(say_list)), color=0x363942)
 			em.set_footer(text="This only shows the items in your inventory that are currently sellable.")
 			await ctx.reply(embed=em)
@@ -365,7 +366,6 @@ class Economy(commands.Cog):
 
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
-		prices = fileIO("economy/prices.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -386,44 +386,99 @@ class Economy(commands.Cog):
 		try:
 			user = await getUser(author.id)
 			info = user["inventory"]
-			accepted_responses = []
-			for key, i in prices["items"].items():
-				accepted_responses.append(i["display_name"].lower())
-				if i["display_name"].lower() == item.lower():
-					em = guilded.Embed(description="How many would you like to sell?", color=0x363942)
-					em.set_footer(text="Accepted response: Must be an integer.")
-					await ctx.reply(embed=em)
-					def pred(m):
-						return m.message.author == message.author
-					answer1 = await self.bot.wait_for("message", check=pred)
-					try:
-						if int(answer1.message.content) < 0:
-							em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
-							await ctx.reply(embed=em)
-							return
-						if int(answer1.message.content) > info["inventory"]["items"][key]["amount"]:
-							em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
-							await ctx.reply(embed=em)
-						else:
-							price_amount = prices["items"][key]["price"]
-							total_amount = price_amount * int(answer1.message.content)
-							pocket_before = user["pocket"]
-							pocket_after = pocket_before + total_amount
-							loss_amount = info["inventory"]["items"][key]["amount"] - int(answer1.message.content)
-							info["inventory"]["items"][key]["amount"] = loss_amount
+			accepted_responses = {}
+			item_list = await getAllItems()
+			item_keys = []
+			for i in item_list:
+				if i["data"]["shop"]["enabled_sell"] == True:
+					item_keys.append(i["item"].lower())
+					accepted_responses[i["data"]["display_name"].lower()] = {
+						"key": i["item"].lower()
+					}
+			print(accepted_responses)
+
+			if item.lower() in item_keys:
+				item_data = await getItem(item.lower())
+				try:
+					if amount > info["inventory"]["items"][item.lower()]["amount"]:
+						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
+						await ctx.reply(embed=em)
+					else:
+						display_name = item_data["data"]["display_name"]
+						price_amount = item_data["data"]["shop"]["sell_price"]
+						total_amount = price_amount * amount
+						pocket_before = user["pocket"]
+						pocket_after = pocket_before + total_amount
+
+						em = guilded.Embed(title="Are you sure you would like to sell?", description="`You have:` {} {}\n`Selling amount:` {}\n\n`Estimated earnings:` {}".format(info["inventory"]["items"][item.lower()]["amount"], display_name, amount, total_amount), color=0x363942)
+						em.set_footer(text="Accepted responses: Yes, No, Y, N")
+						await ctx.reply(embed=em)
+						def pred(m):
+							return m.message.author == message.author
+						answer1 = await self.bot.wait_for("message", check=pred)
+						if answer1.message.content.lower() == "y" or answer1.message.content.lower() == "yes":
+							info["inventory"]["items"][item.lower()]["amount"] = info["inventory"]["items"][item.lower()]["amount"] - amount
 							infoJson = json.dumps(info)
 							with db_connection.connection() as conn:
 								cursor = conn.cursor()
 								cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
 								cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
 								conn.commit()
-							em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(int(answer1.message.content), i["display_name"], author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+
+								em = guilded.Embed(title="Transfer complete.", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, display_name, author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+								await ctx.reply(embed=em)
+
+						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
+							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
 							await ctx.reply(embed=em)
-					except Exception as e:
-						em = guilded.Embed(description="There was an error processing your command.", color=0x363942)
-						em.set_footer(text="Accepted response: Must be an integer.")
+						else:
+							pass
+				except psycopg.DatabaseError as e:
+					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+					await ctx.reply(embed=em)
+
+			elif item.lower() in accepted_responses:
+				item = accepted_responses[item.lower()]["key"]
+				print(item)
+				item_data = await getItem(item.lower())
+				try:
+					if amount > info["inventory"]["items"][item.lower()]["amount"]:
+						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
 						await ctx.reply(embed=em)
-			if not item.lower() in accepted_responses:
+					else:
+						display_name = item_data["data"]["display_name"]
+						price_amount = item_data["data"]["shop"]["sell_price"]
+						total_amount = price_amount * amount
+						pocket_before = user["pocket"]
+						pocket_after = pocket_before + total_amount
+
+						em = guilded.Embed(title="Are you sure you would like to sell?", description="`You have:` {} {}\n`Selling amount:` {}\n\n`Estimated earnings:` {}".format(info["inventory"]["items"][item.lower()]["amount"], display_name, amount, total_amount), color=0x363942)
+						em.set_footer(text="Accepted responses: Yes, No, Y, N")
+						await ctx.reply(embed=em)
+						def pred(m):
+							return m.message.author == message.author
+						answer1 = await self.bot.wait_for("message", check=pred)
+						if answer1.message.content.lower() == "y" or answer1.message.content.lower() == "yes":
+							info["inventory"]["items"][item.lower()]["amount"] = info["inventory"]["items"][item.lower()]["amount"] - amount
+							infoJson = json.dumps(info)
+							with db_connection.connection() as conn:
+								cursor = conn.cursor()
+								cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+								cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
+								conn.commit()
+
+								em = guilded.Embed(title="Transfer complete.", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, display_name, author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
+								await ctx.reply(embed=em)
+
+						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
+							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
+							await ctx.reply(embed=em)
+						else:
+							pass
+				except psycopg.DatabaseError as e:
+					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+					await ctx.reply(embed=em)
+			else:
 				em = guilded.Embed(title="Uh oh!", description="That item cannot be sold.", color=0x363942)
 				em.set_footer(text="Check the prices command to see what you can sell.")
 				await ctx.reply(embed=em)
