@@ -99,6 +99,54 @@ class Economy(commands.Cog):
 	#		await ctx.reply(embed=em)
 
 	@commands.command()
+	async def about(self, ctx, *, item: str=None):
+		author = ctx.author
+		guild = ctx.guild
+
+		server = await getServer(guild.id)
+		prefix = server["server_prefix"]
+
+		if item is None:
+			em = guilded.Embed(title="An item wasn't specified.", description="__**Correct usage:**__\n`{}about <item>`".format(prefix), color=0x363942)
+			await ctx.reply(embed=em)
+
+		keys = []
+		accepted_keys = {}
+
+		item_list = await getAllItems()
+
+		for i in item_list:
+				keys.append(i["item"])
+				accepted_keys[i["data"]["display_name"].lower()] = {
+					"key" : i["item"]
+				}
+
+		if item.lower() in keys:
+			item_data = await getItem(item.lower())
+			display_name = item_data["data"]["display_name"]
+			if item_data:
+				em = guilded.Embed(title="{}".format(display_name), description="```{}```".format(json.dumps(item_data, indent=4)), color=0x363942)
+				await ctx.reply(embed=em)
+			else:
+				em = guilded.Embed(title="Uh oh!", description="{} doesn't exist.".format(item.lower()), color=0x363942)
+				await ctx.reply(embed=em)
+
+		elif item.lower() in accepted_keys:
+			item = accepted_keys[item.lower()]["key"]
+			item_data = await getItem(item.lower())
+			display_name = item_data["data"]["display_name"]
+			if item_data:
+				em = guilded.Embed(title="{}".format(display_name), description="```{}```".format(json.dumps(item_data, indent=4)), color=0x363942)
+				await ctx.reply(embed=em)
+			else:
+				em = guilded.Embed(title="Uh oh!", description="{} doesn't exist.".format(item.lower()), color=0x363942)
+				await ctx.reply(embed=em)
+
+		else:
+			em = guilded.Embed(title="Uh oh!", description="{} doesn't exist.".format(item.lower()), color=0x363942)
+			await ctx.reply(embed=em)
+
+	@commands.command()
 	async def tos(self, ctx:commands.Context):
 		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above 2 lines, 'data' is refered to Rayz's economy system, and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's economy, you agree for your username, and data to be displayed in other servers.\n`b.3` `-` Alt accounts to farm 'coins' is **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot is **not** allowed unless you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
 		await ctx.reply(embed=em)
@@ -395,7 +443,6 @@ class Economy(commands.Cog):
 					accepted_responses[i["data"]["display_name"].lower()] = {
 						"key": i["item"].lower()
 					}
-			print(accepted_responses)
 
 			if item.lower() in item_keys:
 				item_data = await getItem(item.lower())
@@ -439,7 +486,6 @@ class Economy(commands.Cog):
 
 			elif item.lower() in accepted_responses:
 				item = accepted_responses[item.lower()]["key"]
-				print(item)
 				item_data = await getItem(item.lower())
 				try:
 					if amount > info["inventory"]["items"][item.lower()]["amount"]:
@@ -1797,9 +1843,10 @@ class Economy(commands.Cog):
 				await _check_values(author)
 			info = user["inventory"]
 			default_print_list = []
-			for key, i in info["inventory"]["items"].items():
-				if i["amount"] > 0:
-					default_print_list.append("[{}] `{}:` {:,}".format(item_list["items"][key]["rarity"], item_list["items"][key]["display_name"], i["amount"], item_list["items"][key]["description"]))
+			for i in info["inventory"]["items"]:
+				item_data = await getItem(i)
+				if info["inventory"]["items"][i]["amount"] > 0:
+					default_print_list.append("[{}] `{}:` {:,}".format(item_data["data"]["rarity"], item_data["data"]["display_name"], i["amount"], item_data["data"]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
 			em = guilded.Embed(title="Inventory".format(author.name), description="{}".format(" \n".join(default_print_list)), color=0x363942)
