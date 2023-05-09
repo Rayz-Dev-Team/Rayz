@@ -34,13 +34,31 @@ async def getServer(id):
 async def getAllUsers():
     with db_connection.connection() as conn:
         cursor = conn.cursor(row_factory=dict_row)
-        cursor.execute(f"SELECT * FROM users")
+        cursor.execute(f"SELECT * from users")
         users = cursor.fetchall()
     return users
 
+# Get all servers
 async def getAllServers():
     with db_connection.connection() as conn:
         cursor = conn.cursor(row_factory=dict_row)
         cursor.execute(f"SELECT * FROM servers")
         servers = cursor.fetchall()
     return servers
+
+# Get all items
+async def getAllItems():
+    with db_connection.connection() as conn:
+        cursor = conn.cursor(row_factory=dict_row)
+        cursor.execute(f"SELECT * from items")
+        items = cursor.fetchall()
+    return items
+
+# Get an item
+# id = Item 
+async def getItem(id):
+    with db_connection.connection() as conn:    
+        cursor = conn.cursor(row_factory=dict_row)
+        cursor.execute(f"SELECT * from items where item = '{id}'")
+        item = cursor.fetchone()
+    return item
