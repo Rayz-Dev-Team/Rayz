@@ -1844,6 +1844,7 @@ class Economy(commands.Cog):
 			info = user["inventory"]
 			default_print_list = []
 			for i in info["inventory"]["items"]:
+				print(i)
 				if i == "marshmellows":
 					pass
 				else:
