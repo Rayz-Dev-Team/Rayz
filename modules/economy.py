@@ -443,7 +443,6 @@ class Economy(commands.Cog):
 					accepted_responses[i["data"]["display_name"].lower()] = {
 						"key": i["item"].lower()
 					}
-			print(accepted_responses)
 
 			if item.lower() in item_keys:
 				item_data = await getItem(item.lower())
@@ -487,7 +486,6 @@ class Economy(commands.Cog):
 
 			elif item.lower() in accepted_responses:
 				item = accepted_responses[item.lower()]["key"]
-				print(item)
 				item_data = await getItem(item.lower())
 				try:
 					if amount > info["inventory"]["items"][item.lower()]["amount"]:
