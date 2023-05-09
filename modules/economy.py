@@ -1843,9 +1843,9 @@ class Economy(commands.Cog):
 				await _check_values(author)
 			info = user["inventory"]
 			default_print_list = []
-			for key, i in info["inventory"]["items"].items():
-				item_data = await getItem(key)
-				if i["amount"] > 0:
+			for i in info["inventory"]["items"]:
+				item_data = await getItem(i)
+				if info["inventory"]["items"][i]["amount"] > 0:
 					default_print_list.append("[{}] `{}:` {:,}".format(item_data["data"]["rarity"], item_data["data"]["display_name"], i["amount"], item_data["data"]["description"]))
 			if default_print_list == []:
 				default_print_list.append("None")
