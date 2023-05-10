@@ -574,10 +574,10 @@ class Economy(commands.Cog):
 		item_names = []
 
 		for i in item_list:
-			display_item_names[item_list[i]["data"]["display_name"].lower()] = {
-				"name": item_list[i]["item"]
+			display_item_names[i["data"]["display_name"].lower()] = {
+				"name": i["item"]
 			}
-			item_names.append(item_list[i]["item"])
+			item_names.append(i["item"])
 
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
@@ -596,7 +596,8 @@ class Economy(commands.Cog):
 
 			if item in display_item_names:
 				item = display_item_names[item]["name"]
-				if not item_list["items"][item]["giftable"] == True:
+				item_data = await getItem(item)
+				if not item_data["data"]["giftable"] == True:
 					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
@@ -629,7 +630,8 @@ class Economy(commands.Cog):
 						await channel.send(embed=em)
 
 			elif item in item_names:
-				if not item_list["items"][item]["giftable"] == True:
+				item_data = await getItem(item)
+				if not item_data["data"]["giftable"] == True:
 					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
