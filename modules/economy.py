@@ -574,6 +574,7 @@ class Economy(commands.Cog):
 		item_names = []
 
 		for i in item_list:
+			print(i["data"]["display_name"].lower())
 			display_item_names[i["data"]["display_name"].lower()] = {
 				"name": i["item"]
 			}
@@ -583,7 +584,7 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
-		if amount < 0:
+		if amount <= 0:
 			em = guilded.Embed(title="Nice try!", description="__**This bug was already found by:**__\n`-` Chicken [mqE6EKXm]\n`-` ItzNxthaniel [xd9ZOzpm]", color=0x363942)
 			await ctx.reply(embed=em)
 			return
