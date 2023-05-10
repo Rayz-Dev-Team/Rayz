@@ -573,12 +573,11 @@ class Economy(commands.Cog):
 		display_item_names = {}
 		item_names = []
 
-		for i in item_list:
-			print(i)
-			display_item_names[i["data"]["display_name"].lower()] = {
-				"name": i["item"]
+		for key, i in item_list.items():
+			display_item_names[key["data"]["display_name"].lower()] = {
+				"name": key["item"]
 			}
-			item_names.append(i["item"])
+			item_names.append(key["item"])
 
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
