@@ -573,7 +573,7 @@ class Economy(commands.Cog):
 		display_item_names = {}
 		item_names = []
 
-		for i in item_list.items:
+		for i in item_list:
 			print(i)
 			display_item_names[i["data"]["display_name"].lower()] = {
 				"name": i["item"]
