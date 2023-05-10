@@ -594,9 +594,10 @@ class Economy(commands.Cog):
 			info = user["inventory"]
 
 
-			if display_item_names[item]:
+			if item in display_item_names:
 				item = display_item_names[item]["name"]
-				if not item_list["items"][item]["giftable"] == True:
+				item_data = await getItem(item)
+				if not item_data["data"]["giftable"] == True:
 					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
@@ -629,7 +630,8 @@ class Economy(commands.Cog):
 						await channel.send(embed=em)
 
 			elif item in item_names:
-				if not item_list["items"][item]["giftable"] == True:
+				item_data = await getItem(item)
+				if not item_data["data"]["giftable"] == True:
 					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
 					await ctx.reply(embed=em)
 				else:
