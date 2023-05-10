@@ -476,7 +476,7 @@ class Economy(commands.Cog):
 								await ctx.reply(embed=em)
 
 						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
-							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
+							em = guilded.Embed(description="Thanks for stopping by the shop!", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
 							pass
@@ -517,7 +517,7 @@ class Economy(commands.Cog):
 								await ctx.reply(embed=em)
 
 						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
-							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
+							em = guilded.Embed(description="Thanks for stopping by the shop!", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
 							pass
