@@ -566,7 +566,7 @@ class Economy(commands.Cog):
 		await _check_inventory_member(member)
 
 		LB_bans = fileIO("economy/bans.json", "load")
-		item_list = fileIO("economy/items.json", "load")
+		item_list = await getAllItems()
 
 		item = item.lower()
 
