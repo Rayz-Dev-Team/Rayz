@@ -4,7 +4,7 @@ from modules.generator import _check_values
 from modules.generator import _check_inventory
 from modules.generator import _check_inventory_member
 from modules.generator import _check_values_member
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
 from modules.generator import command_processed
@@ -29,7 +29,7 @@ class API(commands.Cog):
 	@commands.command()
 	async def activate(self, ctx, *, password: str=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		curr_time = time.time()
 		if author.bot:
 			return

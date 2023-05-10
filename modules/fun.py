@@ -18,7 +18,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def hug(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "hug"
@@ -28,7 +28,7 @@ class Fun(commands.Cog):
 			return
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -64,7 +64,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def kiss(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "kiss"
@@ -73,7 +73,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -109,7 +109,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def feed(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "feed"
@@ -118,7 +118,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -154,7 +154,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def tickle(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "tickle"
@@ -163,7 +163,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -199,7 +199,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def pat(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "pat"
@@ -208,7 +208,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -245,7 +245,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def slap(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "slap"
@@ -254,7 +254,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -290,7 +290,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def holdhand(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "holdhand"
@@ -299,7 +299,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -335,7 +335,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def highfive(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "highfive"
@@ -344,7 +344,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -380,7 +380,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def punch(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "punch"
@@ -389,7 +389,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -425,7 +425,7 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def bite(self, ctx, *, member: guilded.Member=None):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
 		action = "bite"
@@ -434,7 +434,7 @@ class Fun(commands.Cog):
 			await ctx.send(embed=em)
 		matching = await match_check(ctx, member, action)
 		if not matching:
-			server = await getServer(guild.id)
+			server = await getServer(server.id)
 			if server["fun_module"] == "Disabled":
 				em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 				await message.reply(private=True, embed=em)
@@ -470,10 +470,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def cry(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -509,10 +509,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def blush(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -548,10 +548,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def dance(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -587,10 +587,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def shrug(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -626,10 +626,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def wink(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -665,10 +665,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def wave(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -704,10 +704,10 @@ class Fun(commands.Cog):
 	@commands.command()
 	async def urban(self, ctx):
 		author = ctx.author
-		guild = ctx.guild
+		server = ctx.server
 		message = ctx.message
 		await command_processed(message, author)
-		server = await getServer(guild.id)
+		server = await getServer(server.id)
 		if server["fun_module"] == "Disabled":
 			em = guilded.Embed(description="The fun module is disabled in this server.", color=0x363942)
 			await message.reply(private=True, embed=em)
@@ -731,7 +731,7 @@ class Fun(commands.Cog):
 
 async def match_check(ctx, member, action):
 	author = ctx.author
-	guild = ctx.guild
+	server = ctx.server
 	message = ctx.message
 	if author.id == member.id:
 		try:

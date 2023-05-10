@@ -2,8 +2,8 @@ from guilded.ext import commands
 from tools.dataIO import fileIO
 
 def is_dm_check(ctx):
-	guild = ctx.guild
-	if guild:
+	server = ctx.server
+	if server:
 		return False
 	else:
 		return True

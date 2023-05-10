@@ -10,7 +10,7 @@ from modules.generator import _check_values
 from modules.generator import _check_inventory
 from modules.generator import _check_inventory_member
 from modules.generator import _check_values_member
-from modules.generator import _check_values_guild
+from modules.generator import _check_values_server
 from modules.generator import check_leaderboard
 from modules.generator import check_leaderboard_author
 from modules.generator import command_processed
@@ -41,12 +41,12 @@ class EconDev(commands.Cog):
         message = ctx.message
 
         economy_settings = fileIO("config/economy_settings.json", "load")
-        support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-        members_support_guild = await support_guild.fetch_members()
+        support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+        members_support_server = await support_server.fetch_members()
 
-        if author in members_support_guild:
-            author_support_guild = await support_guild.fetch_member(author.id)
-            roles_list = await author_support_guild.fetch_role_ids()
+        if author in members_support_server:
+            author_support_server = await support_server.fetch_member(author.id)
+            roles_list = await author_support_server.fetch_role_ids()
 
         if config["developer_role_id"] in roles_list:
             properties_list = ["display_name", "description", "rarity", "giftable", "event", "obtain", "type", "enabled", "enabled_sell", "enabled_buy", "can_rotate", "sell_price", "buy_price"]
@@ -200,7 +200,7 @@ class EconDev(commands.Cog):
                                 em = guilded.Embed(title="Item enabled updated.", description="`Enabled:` {}\n\n{}".format(answer.message.content, infoJson), color=0x363942)
                                 await ctx.send(embed=em)
 
-                        
+
 
                         if item_property == "enabled_sell":
                             em = guilded.Embed(description="What would you like to set enabled_sell to?", color=0x363942)
@@ -331,7 +331,7 @@ class EconDev(commands.Cog):
                             em = guilded.Embed(title="Item max_drop updated.", description="`max_drop:` {}\n\n{}".format(answer.message.content, infoJson), color=0x363942)
                             await ctx.send(embed=em)
 
-                        
+
 
                         if item_property == "opens":
                             em = guilded.Embed(description="What would you like to set opens to?", color=0x363942)
@@ -355,23 +355,23 @@ class EconDev(commands.Cog):
 
                             em = guilded.Embed(title="Item opens updated.", description="`Opens:` {}\n\n{}".format(item_data["data"]["opens"], infoJson), color=0x363942)
                             await ctx.send(embed=em)
-                        
-            
+
+
 
     @commands.command()
     async def create_item(self, ctx, item: str=None):
         author = ctx.author
-        guild = ctx.guild
+        server = ctx.server
         message = ctx.message
 
 
         economy_settings = fileIO("config/economy_settings.json", "load")
-        support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
-        members_support_guild = await support_guild.fetch_members()
+        support_server = await self.bot.fetch_server(economy_settings["support_server_id"])
+        members_support_server = await support_server.fetch_members()
 
-        if author in members_support_guild:
-            author_support_guild = await support_guild.fetch_member(author.id)
-            roles_list = await author_support_guild.fetch_role_ids()
+        if author in members_support_server:
+            author_support_server = await support_server.fetch_member(author.id)
+            roles_list = await author_support_server.fetch_role_ids()
 
         if config["developer_role_id"] in roles_list:
             if item is None:
@@ -413,8 +413,8 @@ class EconDev(commands.Cog):
 
                     em = guilded.Embed(title="An item was created.", description="`Item ID:` {}\n\n{}".format(item, infoJson), color=0x363942)
                     await ctx.reply(embed=em)
-            
-                 
+
+
 
 
 
