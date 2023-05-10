@@ -568,18 +568,16 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = await getAllItems()
 
-		print(item_list)
-
 		item = item.lower()
 
 		display_item_names = {}
 		item_names = []
 
 		for i in item_list:
-			display_item_names[i["data"]["display_name"].lower()] = {
-				"name": i["item"]
+			display_item_names[item_list[i]["data"]["display_name"].lower()] = {
+				"name": item_list[i]["item"]
 			}
-			item_names.append(i["item"])
+			item_names.append(item_list[i]["item"])
 
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
