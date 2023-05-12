@@ -148,7 +148,7 @@ class Economy(commands.Cog):
 
 	@commands.command()
 	async def tos(self, ctx:commands.Context):
-		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above 2 lines, 'data' is refered to Rayz's economy system, and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's economy, you agree for your username, and data to be displayed in other servers.\n`b.3` `-` Alt accounts to farm 'coins' is **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot is **not** allowed unless you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
+		em = guilded.Embed(title="Rayz's ToS", description="__**A**__\n`a.1` `-` By inviting/using Rayz, you agree for it to save data using your UserID/ServerID.\n`a.2` `-` By being in a mutual server with Rayz and sending a message, you agree for it to save data using your UserID.\n`a.3` `-` To break down the above two lines, 'data' is referred to Rayz's economy system and other misc.\n\n__**B**__\n`b.1` `-` Any abuse/usage of loopholes will subject in a **ban** via the Economy.\n`b.2` `-` By using Rayz's Economy, you agree to display your username and data on other servers.\n`b.3` `-` Alt accounts to farm 'coins' and other 'items' are **not** allowed.\n`b.4` `-` Any use of programs or automatic tools for farming will result in a **ban** via the Economy.\n\n__**C**__\n`c.1` `-` Repeated attempts to break/crash the bot are only allowed if you are allowed by a Rayz developer.\n`c.2` `-` [Guilded's ToS is our ToS](https://support.guilded.gg/hc/en-us/articles/360039728313-Terms-of-Use)", color=0x363942)
 		await ctx.reply(embed=em)
 
 	@commands.command()
@@ -416,7 +416,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		if amount is None:
@@ -476,7 +476,7 @@ class Economy(commands.Cog):
 								await ctx.reply(embed=em)
 
 						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
-							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
+							em = guilded.Embed(description="Thanks for stopping by the shop!", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
 							pass
@@ -517,7 +517,7 @@ class Economy(commands.Cog):
 								await ctx.reply(embed=em)
 
 						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
-							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
+							em = guilded.Embed(description="Thanks for stopping by the shop!", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
 							pass
@@ -580,7 +580,7 @@ class Economy(commands.Cog):
 			item_names.append(i["item"])
 
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		if amount <= 0:
@@ -602,7 +602,7 @@ class Economy(commands.Cog):
 					await ctx.reply(embed=em)
 				else:
 					if amount > info["inventory"]["items"][item.lower()]["amount"]:
-						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
+						em = guilded.Embed(title="Uh oh!", description="You don't have that many items!", color=0x363942)
 						await ctx.reply(embed=em)
 					else:
 						info_member = member1["inventory"]
@@ -622,7 +622,7 @@ class Economy(commands.Cog):
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
 							conn.commit()
 						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
-						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+						em.set_footer(text="All transfers are logged to keep track of alt-account farming, which is against our Economy ToS.")
 						await ctx.reply(embed=em)
 						guild1 = await self.bot.fetch_server("Mldgz04R")
 						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
@@ -656,7 +656,7 @@ class Economy(commands.Cog):
 							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
 							conn.commit()
 						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
-						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+						em.set_footer(text="All transfers are logged to keep track of alt-account farming, which is against our Economy ToS.")
 						await ctx.reply(embed=em)
 						guild1 = await self.bot.fetch_server("Mldgz04R")
 						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
@@ -686,11 +686,11 @@ class Economy(commands.Cog):
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		if amount == None:
-			em = guilded.Embed(title="Uh oh!", description="You must specify  a Amount.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You must specify a Amount.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		if amount < 0:
@@ -721,7 +721,7 @@ class Economy(commands.Cog):
 					cursor.execute(f"UPDATE users SET pocket = {new_amount} WHERE ID = '{member.id}'")
 					conn.commit()
 				em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s pocket.\n`-` <@{}> was given {:,} {}.".format(amount, economy_settings["currency_name"], author.id, member.id, amount, economy_settings["currency_name"]), color=0x363942)
-				em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
+				em.set_footer(text="All transfers are logged to keep track of alt-account farming, which is against our Economy ToS.")
 				await ctx.reply(embed=em)
 				guild1 = await self.bot.fetch_server(economy_settings["support_server_id"])
 				channel = await guild1.fetch_channel("82204345-aa8d-487f-8808-17afc525a735")
@@ -747,7 +747,7 @@ class Economy(commands.Cog):
 		LB = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -813,7 +813,7 @@ class Economy(commands.Cog):
 			if author.id in LB["tracker"]:
 				del LB["tracker"][author.id]
 				fileIO("config/economy_settings.json", "save", LB)
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -878,7 +878,7 @@ class Economy(commands.Cog):
 		await command_processed(message, author)
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -899,7 +899,7 @@ class Economy(commands.Cog):
 				[description, numOfPages] = paginate(LB,total[0],page)
 
 				if page > numOfPages:
-					em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist", color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="You provided a page number that does not exist.", color=0x363942)
 					await ctx.reply(embed=em)
 					return
 
@@ -938,7 +938,7 @@ class Economy(commands.Cog):
 			economy_settings = fileIO("config/economy_settings.json", "load")
 			LB_bans = fileIO("economy/bans.json", "load")
 			if author.id in LB_bans["bans"]:
-				em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 				await ctx.reply(embed=em)
 				return
 			prefix = server["server_prefix"]
@@ -1023,7 +1023,7 @@ class Economy(commands.Cog):
 		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
 		members_support_guild = await support_guild.fetch_members()
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1058,11 +1058,11 @@ class Economy(commands.Cog):
 					author_support_guild = await support_guild.fetch_member(author.id)
 					roles_list = await author_support_guild.fetch_role_ids()
 					if 30053086 in roles_list or 30053078 in roles_list or 30053069 in roles_list:
-						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, economy_settings["currency_name"], edit_message), color=0x363942)
+						em = guilded.Embed(title="{} has colected their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!\n\n{}".format(author.id, gen_amount, economy_settings["currency_name"], edit_message), color=0x363942)
 					else:
-						em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
+						em = guilded.Embed(title="{} has colected their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 				else:
-					em = guilded.Embed(title="{} has obtained their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
+					em = guilded.Embed(title="{} has colected their weekly bonus.".format(author.name), description="<@{}> gained x{:,} {}!".format(author.id, gen_amount, economy_settings["currency_name"]), color=0x363942)
 				if server["economy_multiplier"] > 1:
 					em.set_footer(text="The multiplier in this server boosted you by x{}".format(server["economy_multiplier"]))
 				await ctx.reply(embed=em)
@@ -1106,7 +1106,7 @@ class Economy(commands.Cog):
 		support_guild = await self.bot.fetch_server(economy_settings["support_server_id"])
 		members_support_guild = await support_guild.fetch_members()
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1278,7 +1278,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1504,7 +1504,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1803,7 +1803,7 @@ class Economy(commands.Cog):
 		economy_settings = fileIO("config/economy_settings.json", "load")
 		LB_bans = fileIO("economy/bans.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:
@@ -1834,7 +1834,7 @@ class Economy(commands.Cog):
 		LB_bans = fileIO("economy/bans.json", "load")
 		item_list = fileIO("economy/items.json", "load")
 		if author.id in LB_bans["bans"]:
-			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
 		try:

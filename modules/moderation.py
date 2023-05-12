@@ -22,7 +22,7 @@ class Moderation(commands.Cog):
 		await command_processed(message, author)
 		if author == guild.owner:
 			if arg == None:
-				em = guilded.Embed(title="Uh oh!", description="Message cannot be None.\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
+				em = guilded.Embed(title="Uh oh!", description="The welcome message cannot be blank!\n\n**Replaced methods:**\n`<server>` is replaced with the server name.\n`<user>` is replaced with the user.\n\n**Example:**\n`setwelcomemessage <user>, welcome to <server>!`", color=0x363942)
 				await ctx.reply(embed=em)
 				return
 			try:
@@ -36,7 +36,7 @@ class Moderation(commands.Cog):
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
-			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set up a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 
@@ -65,7 +65,7 @@ class Moderation(commands.Cog):
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
-			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set up a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 
@@ -94,7 +94,7 @@ class Moderation(commands.Cog):
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
-			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set up a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 
@@ -123,7 +123,7 @@ class Moderation(commands.Cog):
 			except psycopg.DatabaseError as e:
 				await ctx.reply(f'Error {e}')
 		else:
-			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set a welcome channel.", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You don't have perms to set up a welcome channel.", color=0x363942)
 			em.set_image(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 
@@ -134,7 +134,7 @@ class Moderation(commands.Cog):
 		message = ctx.message
 		await command_processed(message, author)
 		if member == None:
-			em = guilded.Embed(title="Uh oh!", description="The member argument was NULL", color=0x363942)
+			em = guilded.Embed(title="Uh oh!", description="You didn't specify a user to be an owner!", color=0x363942)
 			em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 			await ctx.reply(embed=em)
 		try:
@@ -187,7 +187,7 @@ class Moderation(commands.Cog):
 					await message.delete()
 					return
 				if word == None:
-					em = guilded.Embed(title="Uh oh!", description="The word argument cannot be blank.!\n\n`Ex:` {}unbanword <word>".format(prefix), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="You didn't specify a word to be an unbanned!\n\n`Ex:` {}unbanword <word>".format(prefix), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				moderator_or_not = False
@@ -198,7 +198,7 @@ class Moderation(commands.Cog):
 					moderator_or_not = True
 				if moderator_or_not == True:
 					if server["custom_blocked_words"] == None:
-						em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
+						em = guilded.Embed(title="Wew!", description="The word isn't banned.", color=0x363942)
 						await ctx.reply(embed=em)
 						connection.close()
 						return
@@ -211,10 +211,10 @@ class Moderation(commands.Cog):
 							stmt = f"UPDATE servers SET custom_blocked_words=%s WHERE ID = '{guild.id}'"
 							cursor.execute(stmt, (list_server,))
 							conn.commit()
-							em = guilded.Embed(title="Nice!", description="The word argument has been unbanned.", color=0x363942)
+							em = guilded.Embed(title="Nice!", description="The word has been unbanned.", color=0x363942)
 							await ctx.reply(embed=em)
 						else:
-							em = guilded.Embed(title="Wew!", description="The word argument isn't banned.", color=0x363942)
+							em = guilded.Embed(title="Wew!", description="The word isn't banned.", color=0x363942)
 							await ctx.reply(embed=em)
 				else:
 					em = guilded.Embed(title="Uh oh!", description="You don't have moderator perms.", color=0x363942)
@@ -241,7 +241,7 @@ class Moderation(commands.Cog):
 					await message.delete()
 					return
 				if word == None:
-					em = guilded.Embed(title="Uh oh!", description="The word argument cannot be blank.!\n\n`Ex:` {}banword <word>".format(prefix), color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="You didn't specify a word to be an banned!\n\n`Ex:` {}banword <word>".format(prefix), color=0x363942)
 					await ctx.reply(embed=em)
 					return
 				moderator_or_not = False
@@ -401,15 +401,8 @@ class Moderation(commands.Cog):
 		message = ctx.message
 		channel = await guild.fetch_channel(ctx.channel.id)
 		await command_processed(message, author)
-		moderator_or_not = False
-		for i in author.roles:
-			if i.permissions.manage_messages == True or i.permissions.kick_members == True:
-				moderator_or_not = True
-		if author == guild.owner:
-			moderator_or_not = True
-		if moderator_or_not == True:
-			em = guilded.Embed(title="Channel ID retrieved.", description="{}".format(channel.id), color=0x363942)
-			await ctx.reply(embed=em)
+		em = guilded.Embed(title="Channel ID retrieved.", description="{}".format(channel.id), color=0x363942)
+		await ctx.reply(embed=em)
 
 	@commands.command()
 	@checks.is_dev()
@@ -450,7 +443,7 @@ async def kick_check(self, ctx, member):
 		if i.position > bots_highest_role_num:
 			bots_highest_role_num = int(i.position)
 	if bot_has_perms == False:
-		em = guilded.Embed(title="Uh oh!", description="I don't have permissions to kick members from the server.", color=0x363942)
+		em = guilded.Embed(title="Uh oh!", description="I don't have the right permissions to kick members from this server.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 		await ctx.reply(embed=em)
 	else:
@@ -473,7 +466,7 @@ async def kick_check(self, ctx, member):
 			else:
 				member_name = member.name
 				if member.bot:
-					em = guilded.Embed(title="Uh oh!", description="I'm programmed to avoid kicking bots, for crash related reasons.", color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="I'm programmed to not to kick bots, for crash related reasons.", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 					await ctx.reply(embed=em)
 					return
@@ -507,7 +500,7 @@ async def ban_check(self, ctx, member):
 		if i.position > bots_highest_role_num:
 			bots_highest_role_num = int(i.position)
 	if bot_has_perms == False:
-		em = guilded.Embed(title="Uh oh!", description="I don't have permissions to ban members from the server.", color=0x363942)
+		em = guilded.Embed(title="Uh oh!", description="I don't have the right permissions to ban members from the server.", color=0x363942)
 		em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 		await ctx.reply(embed=em)
 	else:
@@ -530,7 +523,7 @@ async def ban_check(self, ctx, member):
 			else:
 				member_name = member.name
 				if member.bot:
-					em = guilded.Embed(title="Uh oh!", description="I'm programmed to avoid banning bots, for crash related reasons.", color=0x363942)
+					em = guilded.Embed(title="Uh oh!", description="I'm programmed to not to kick bots, for crash related reasons.", color=0x363942)
 					em.set_thumbnail(url="https://img.guildedcdn.com/WebhookThumbnail/aa4b19b0bf393ca43b2f123c22deb94e-Full.webp?w=160&h=160")
 					await ctx.reply(embed=em)
 					return
