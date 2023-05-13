@@ -1263,12 +1263,16 @@ class Economy(commands.Cog):
 			await ctx.reply(embed=em)
 
 	@commands.command()
-	async def dig(self, ctx:commands.Context):
+	async def use(self, ctx, *, item: str=None):
 		if ctx.author.bot:
 			return
 		author = ctx.author
 		guild = ctx.guild
 		message = ctx.message
+
+		server = await getServer(guild.id)
+		prefix = server["server_prefix"]
+
 		await _check_values(author)
 		await _check_values_guild(guild)
 		await check_leaderboard(author)
@@ -1281,212 +1285,438 @@ class Economy(commands.Cog):
 			em = guilded.Embed(title="Uh oh!", description="You have been banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
 			return
-		try:
-			economy_settings = fileIO("config/economy_settings.json", "load")
-			item_drops = fileIO("economy/dig.json", "load")
-			item_list = fileIO("economy/items.json", "load")
-
-			common_min = economy_settings["common_min"]
-			common_max = economy_settings["common_max"]
-			common_chance = economy_settings["common_chance"]
-
-			rare_min = economy_settings["rare_min"]
-			rare_max = economy_settings["rare_max"]
-			rare_chance = economy_settings["rare_chance"]
-
-			epic_min = economy_settings["epic_min"]
-			epic_max = economy_settings["epic_max"]
-			epic_chance = economy_settings["epic_chance"]
-
-			legendary_min = economy_settings["legendary_min"]
-			legendary_max = economy_settings["legendary_max"]
-			legendary_chance = economy_settings["legendary_chance"]
-
-			unreal_min = economy_settings["unreal_min"]
-			unreal_max = economy_settings["unreal_max"]
-			unreal_chance = economy_settings["unreal_chance"]
-
-			# Static is so you can pull the original chance range amount (So it can easily be changed)
-			static_drop_slot_chance = economy_settings["dig_drop_slots_chance"]
-
-			# Drained meaning the part that will be decreased (Pulled from Static)
-			drained_drop_slot_chance = static_drop_slot_chance
-
-			# How much the required range for a valid drop decreases by
-			decrease_drop_slot_chance = economy_settings["dig_drop_slots_chance_decrease"]
-
-			user = await getUser(author.id)
-			server = await getServer(guild.id)
-			if user == None:
-				await _check_values(author)
-			curr_time = time.time()
-			curr_cooldown = 30
-
-			info = user["inventory"]
-
-			delta = float(curr_time) - float(user["cooldowns"]["dig_timeout"])
-			if delta >= curr_cooldown and delta>0:
-				if "shovel" in info["inventory"]["items"]:
-					if info["inventory"]["items"]["shovel"]["amount"] > 0:
-						message_list = []
-				
-						drop_slots = 0
-						drop_slots_fail = False
-						drop_counter = 1
-
-						def calculatedropslots():
-							nonlocal drop_slots_fail
-							nonlocal drop_slots
-							nonlocal drained_drop_slot_chance
-							nonlocal static_drop_slot_chance
-							nonlocal decrease_drop_slot_chance
-							if drop_slots_fail == False:
-								gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
-								if gen_for_drop:
-									drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
-									drop_slots += 1
-									return calculatedropslots
-								else:
-									drop_slots_fail = True
-
-						while drop_slots_fail == False:
-							calculatedropslots()
-
-						drops_lines_list = []
-						for i in range(drop_slots):
-							common_chance_gen = roll_chance(common_min, common_max, common_chance)
-							rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-							epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-							legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-							unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-							if unreal_chance_gen:
-								drop_list = []
-								for i in item_drops["unreal"]:
-									drop_list.append(i)
-								drop = random.choice(drop_list)
-								amount = random.randint(item_drops["unreal"][drop]["min_amount"], item_drops["unreal"][drop]["max_amount"])
-								if not drop in info["inventory"]["items"]:
-									info["inventory"]["items"][drop] = {
-										"amount": amount
-									}
-									new_amount = amount
-									drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-								else:
-									new_amount = info["inventory"]["items"][drop]["amount"] + amount
-									info["inventory"]["items"][drop]["amount"] += amount
-									drops_lines_list.append("`{}.` [UNREAL] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-							elif legendary_chance_gen:
-								drop_list = []
-								for i in item_drops["legendary"]:
-									drop_list.append(i)
-								drop = random.choice(drop_list)
-								amount = random.randint(item_drops["legendary"][drop]["min_amount"], item_drops["legendary"][drop]["max_amount"])
-								if not drop in info["inventory"]["items"]:
-									info["inventory"]["items"][drop] = {
-										"amount": amount
-									}
-									new_amount = amount
-									drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-								else:
-									new_amount = info["inventory"]["items"][drop]["amount"] + amount
-									info["inventory"]["items"][drop]["amount"] += amount
-									drops_lines_list.append("`{}.` [LEGENDARY] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-							elif epic_chance_gen:
-								drop_list = []
-								for i in item_drops["epic"]:
-									drop_list.append(i)
-								drop = random.choice(drop_list)
-								amount = random.randint(item_drops["epic"][drop]["min_amount"], item_drops["epic"][drop]["max_amount"])
-								if not drop in info["inventory"]["items"]:
-									info["inventory"]["items"][drop] = {
-										"amount": amount
-									}
-									new_amount = amount
-									drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-								else:
-									new_amount = info["inventory"]["items"][drop]["amount"] + amount
-									info["inventory"]["items"][drop]["amount"] += amount
-									drops_lines_list.append("`{}.` [Epic] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-							elif rare_chance_gen:
-								drop_list = []
-								for i in item_drops["rare"]:
-									drop_list.append(i)
-								drop = random.choice(drop_list)
-								amount = random.randint(item_drops["rare"][drop]["min_amount"], item_drops["rare"][drop]["max_amount"])
-								if not drop in info["inventory"]["items"]:
-									info["inventory"]["items"][drop] = {
-										"amount": amount
-									}
-									new_amount = amount
-									drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-								else:
-									new_amount = info["inventory"]["items"][drop]["amount"] + amount
-									info["inventory"]["items"][drop]["amount"] += amount
-									drops_lines_list.append("`{}.` [Rare] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-							elif common_chance_gen:
-								drop_list = []
-								for i in item_drops["common"]:
-									drop_list.append(i)
-								drop = random.choice(drop_list)
-								amount = random.randint(item_drops["common"][drop]["min_amount"], item_drops["common"][drop]["max_amount"])
-								if not drop in info["inventory"]["items"]:
-									info["inventory"]["items"][drop] = {
-										"amount": amount
-									}
-									new_amount = amount
-									drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount, item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-								else:
-									new_amount = info["inventory"]["items"][drop]["amount"] + amount
-									info["inventory"]["items"][drop]["amount"] += amount
-									drops_lines_list.append("`{}.` [Common] +{} {}".format(drop_counter, amount,item_list["items"][drop]["display_name"]))
-									drop_counter += 1
-							else:
-								drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
-								drop_counter += 1
-
-						if not drops_lines_list == []:
-							message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
-
-						em = guilded.Embed(title="{} went digging.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
-						await ctx.reply(embed=em)
-						info["inventory"]["items"]["shovel"]["amount"] = info["inventory"]["items"]["shovel"]["amount"] - 1
-						infoJson = simplejson.dumps(info)
-						with db_connection.connection() as conn:
-							updated_cooldown = user["cooldowns"] 
-							updated_cooldown["dig_timeout"] = curr_time
-							info_cooldown_Json = simplejson.dumps(updated_cooldown)
-							cursor = conn.cursor()
-							cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
-							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
-							conn.commit()
-						await check_leaderboard_author(author)
-					else:
-						em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
-						em.set_footer(text="Working is a good way to get items.")
-						await ctx.reply(embed=em)
-				else:
-					em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
-					em.set_footer(text="Working is a good way to get items.")
-					await ctx.reply(embed=em)
-			else:
-				seconds = curr_cooldown - delta
-				m, s = divmod(seconds, 60)
-				h, m = divmod(m, 60)
-				em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
-				await ctx.reply(embed=em)
-		except psycopg.DatabaseError as e:
-			em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
+		
+		if item is None:
+			em = guilded.Embed(title="An item wasn't defined.", description="__**Correct usage:**__\n`{}use <item>`".format(prefix), color=0x363942)
 			await ctx.reply(embed=em)
+			return
+		
+		economy_settings = fileIO("config/economy_settings.json", "load")
 
+		common_min = economy_settings["common_min"]
+		common_max = economy_settings["common_max"]
+		common_chance = economy_settings["common_chance"]
+
+		rare_min = economy_settings["rare_min"]
+		rare_max = economy_settings["rare_max"]
+		rare_chance = economy_settings["rare_chance"]
+
+		epic_min = economy_settings["epic_min"]
+		epic_max = economy_settings["epic_max"]
+		epic_chance = economy_settings["epic_chance"]
+
+		legendary_min = economy_settings["legendary_min"]
+		legendary_max = economy_settings["legendary_max"]
+		legendary_chance = economy_settings["legendary_chance"]
+
+		unreal_min = economy_settings["unreal_min"]
+		unreal_max = economy_settings["unreal_max"]
+		unreal_chance = economy_settings["unreal_chance"]
+		
+		accepted_responses = {}
+		item_list = await getAllItems()
+		item_keys = []
+
+		for i in item_list:
+				if i["data"]["enabled"] == True:
+					item_keys.append(i["item"].lower())
+					accepted_responses[i["data"]["display_name"].lower()] = {
+						"key": i["item"].lower()
+					}
+
+		if item.lower() in item_keys:
+			item = item.lower()
+			item_data = await getItem(item)
+			if item_data:
+				if item_data["data"]["type"] == "consumeable":
+					if item_data["item"] == "shovel":
+						user = await getUser(author.id)
+						user = user["inventory"]
+						user_data = await getUser(author.id)
+
+						if user is None:
+							await _check_values(author)
+
+						curr_time = time.time()
+						curr_cooldown = 30
+
+						delta = float(curr_time) - float(user_data["cooldowns"]["dig_timeout"])
+
+						if delta >= curr_cooldown and delta>0:
+							if "shovel" in user["inventory"]["items"]:
+								if user["inventory"]["items"][item]["amount"] > 0:
+									message_list = []
+									drop_list = {
+										"unreal" : [],
+										"legendary" : [],
+										"epic" : [],
+										"rare" : [],
+										"common" : []
+									}
+									
+									for i in item_list:
+										if i["data"]["type"] == "item":
+											if "shovel" in i["data"]["obtain"]:
+												if i["data"]["enabled"] == True:
+													drop_list[i["data"]["rarity"].lower()].append(i["item"])
+
+									# Static is so you can pull the original chance range amount (So it can easily be changed)
+									static_drop_slot_chance = economy_settings["dig_drop_slots_chance"]
+
+									# Drained meaning the part that will be decreased (Pulled from Static)
+									drained_drop_slot_chance = static_drop_slot_chance
+
+									# How much the required range for a valid drop decreases by
+									decrease_drop_slot_chance = economy_settings["dig_drop_slots_chance_decrease"]
+
+									drop_slots = 0
+									drop_slots_fail = False
+									drop_counter = 1
+
+									def calculatedropslots():
+										nonlocal drop_slots_fail
+										nonlocal drop_slots
+										nonlocal drained_drop_slot_chance
+										nonlocal static_drop_slot_chance
+										nonlocal decrease_drop_slot_chance
+										if drop_slots_fail == False:
+											gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
+											if gen_for_drop:
+												drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
+												drop_slots += 1
+												return calculatedropslots
+											else:
+												drop_slots_fail = True
+
+									while drop_slots_fail == False:
+										calculatedropslots()
+
+									drops_lines_list = []
+
+									for i in range(drop_slots):
+										common_chance_gen = roll_chance(common_min, common_max, common_chance)
+										rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+										epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+										legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+										unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
+										if unreal_chance_gen:
+											drop_list_unreal = drop_list["unreal"]
+											drop = random.choice(drop_list_unreal)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif legendary_chance_gen:
+											drop_list_legendary = drop_list["legendary"]
+											drop = random.choice(drop_list_legendary)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif epic_chance_gen:
+											drop_list_epic = drop_list["epic"]
+											drop = random.choice(drop_list_epic)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif rare_chance_gen:
+											drop_list_rare = drop_list["rare"]
+											drop = random.choice(drop_list_rare)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif common_chance_gen:
+											drop_list_common = drop_list["common"]
+											drop = random.choice(drop_list_common)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										else:
+											drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
+											drop_counter += 1
+
+									if not drops_lines_list == []:
+										message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
+
+									em = guilded.Embed(title="{} went digging.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
+									await ctx.reply(embed=em)
+
+									user["inventory"]["items"][item]["amount"] = user["inventory"]["items"][item]["amount"] - 1
+									infoJson = simplejson.dumps(user)
+									with db_connection.connection() as conn:
+										updated_cooldown = user_data["cooldowns"] 
+										updated_cooldown["dig_timeout"] = curr_time
+										info_cooldown_Json = simplejson.dumps(updated_cooldown)
+										cursor = conn.cursor()
+										cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
+										cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+										conn.commit()
+									await check_leaderboard_author(author)
+								else:
+									em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
+									em.set_footer(text="Working is a good way to get items.")
+									await ctx.reply(embed=em)
+							else:
+								em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
+								em.set_footer(text="Working is a good way to get items.")
+								await ctx.reply(embed=em)
+						else:
+							seconds = curr_cooldown - delta
+							m, s = divmod(seconds, 60)
+							h, m = divmod(m, 60)
+							em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
+							await ctx.reply(embed=em)
+				else:
+					em = guilded.Embed(title="This item can't be used.", description="It looks like `{}` isn't a consumeable.".format(item), color=0x363942)
+					await ctx.reply(embed=em)
+					return
+			else:
+				em = guilded.Embed(title="Uh oh!", description="Something went wrong.", color=0x363942)
+				await ctx.reply(embed=em)
+				return
+
+
+		elif item.lower() in accepted_responses:
+			item = accepted_responses[item.lower()]["key"]
+			item = item.lower()
+			item_data = await getItem(item)
+			if item_data:
+				if item_data["data"]["type"] == "consumeable":
+					if item_data["item"] == "shovel":
+						user = await getUser(author.id)
+						user = user["inventory"]
+						user_data = await getUser(author.id)
+
+						if user is None:
+							await _check_values(author)
+
+						curr_time = time.time()
+						curr_cooldown = 30
+
+						delta = float(curr_time) - float(user_data["cooldowns"]["dig_timeout"])
+
+						if delta >= curr_cooldown and delta>0:
+							if "shovel" in user["inventory"]["items"]:
+								if user["inventory"]["items"][item]["amount"] > 0:
+									message_list = []
+									drop_list = {
+										"unreal" : [],
+										"legendary" : [],
+										"epic" : [],
+										"rare" : [],
+										"common" : []
+									}
+									
+									for i in item_list:
+										if i["data"]["type"] == "item":
+											if "shovel" in i["data"]["obtain"]:
+												if i["data"]["enabled"] == True:
+													drop_list[i["data"]["rarity"].lower()].append(i["item"])
+
+									# Static is so you can pull the original chance range amount (So it can easily be changed)
+									static_drop_slot_chance = economy_settings["dig_drop_slots_chance"]
+
+									# Drained meaning the part that will be decreased (Pulled from Static)
+									drained_drop_slot_chance = static_drop_slot_chance
+
+									# How much the required range for a valid drop decreases by
+									decrease_drop_slot_chance = economy_settings["dig_drop_slots_chance_decrease"]
+
+									drop_slots = 0
+									drop_slots_fail = False
+									drop_counter = 1
+
+									def calculatedropslots():
+										nonlocal drop_slots_fail
+										nonlocal drop_slots
+										nonlocal drained_drop_slot_chance
+										nonlocal static_drop_slot_chance
+										nonlocal decrease_drop_slot_chance
+										if drop_slots_fail == False:
+											gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
+											if gen_for_drop:
+												drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
+												drop_slots += 1
+												return calculatedropslots
+											else:
+												drop_slots_fail = True
+
+									while drop_slots_fail == False:
+										calculatedropslots()
+
+									drops_lines_list = []
+
+									for i in range(drop_slots):
+										common_chance_gen = roll_chance(common_min, common_max, common_chance)
+										rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
+										epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
+										legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
+										unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
+										if unreal_chance_gen:
+											drop_list_unreal = drop_list["unreal"]
+											drop = random.choice(drop_list_unreal)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif legendary_chance_gen:
+											drop_list_legendary = drop_list["legendary"]
+											drop = random.choice(drop_list_legendary)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif epic_chance_gen:
+											drop_list_epic = drop_list["epic"]
+											drop = random.choice(drop_list_epic)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif rare_chance_gen:
+											drop_list_rare = drop_list["rare"]
+											drop = random.choice(drop_list_rare)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										elif common_chance_gen:
+											drop_list_common = drop_list["common"]
+											drop = random.choice(drop_list_common)
+											item_data = await getItem(drop)
+											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
+											if not drop in user["inventory"]["items"]:
+												user["inventory"]["items"][drop] = {
+													"amount": amount
+												}
+												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+											else:
+												user["inventory"]["items"][drop]["amount"] += amount
+												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
+												drop_counter += 1
+										else:
+											drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
+											drop_counter += 1
+
+									if not drops_lines_list == []:
+										message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
+
+									em = guilded.Embed(title="{} went digging.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
+									await ctx.reply(embed=em)
+
+									user["inventory"]["items"][item]["amount"] = user["inventory"]["items"][item]["amount"] - 1
+									infoJson = simplejson.dumps(user)
+									with db_connection.connection() as conn:
+										updated_cooldown = user_data["cooldowns"] 
+										updated_cooldown["dig_timeout"] = curr_time
+										info_cooldown_Json = simplejson.dumps(updated_cooldown)
+										cursor = conn.cursor()
+										cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
+										cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+										conn.commit()
+									await check_leaderboard_author(author)
+								else:
+									em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
+									em.set_footer(text="Working is a good way to get items.")
+									await ctx.reply(embed=em)
+							else:
+								em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
+								em.set_footer(text="Working is a good way to get items.")
+								await ctx.reply(embed=em)
+						else:
+							seconds = curr_cooldown - delta
+							m, s = divmod(seconds, 60)
+							h, m = divmod(m, 60)
+							em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
+							await ctx.reply(embed=em)
+				else:
+					em = guilded.Embed(title="This item can't be used.", description="It looks like `{}` isn't a consumeable.".format(item), color=0x363942)
+					await ctx.reply(embed=em)
+					return
+			else:
+				em = guilded.Embed(title="Uh oh!", description="Something went wrong.", color=0x363942)
+				await ctx.reply(embed=em)
+				return
+		else:
+			em = guilded.Embed(title="Item doesn't exist.", description="It looks like `{}` isn't valid item.".format(item.lower()), color=0x363942)
+			await ctx.reply(embed=em)
+			return
 
 	@commands.command()
 	async def work(self, ctx:commands.Context):
