@@ -90,7 +90,7 @@ class Help(commands.Cog):
 				await ctx.send(embed=em)
 		elif num == "6" or num.lower() == "manager" or num.lower() == "management":
 			if config["manager_role_id"] in roles_list:
-				em = guilded.Embed(title="Rayz Manager Module | Page 6", description=f"[optional] • <required>\n\n{prefix}toggle_partner `-` Enables/Disables partner status/benefits.\n{prefix}purge_partners `-` Purages every partner. [Don't use]\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)", color=0x363942)
+				em = guilded.Embed(title="Rayz Manager Module | Page 6", description=f"[optional] • <required>\n\n{prefix}toggle_partner `-` Enables/Disables partner status/benefits.\n{prefix}purge_partners `-` Purges every partner. [Don't use]\n\n[Invite Rayz](https://www.guilded.gg/b/e249e5b0-cbd9-4318-92bb-9cc7fb8c6778)\n[Support Server](https://guilded.gg/Rayz)", color=0x363942)
 				em.set_footer(text=f"{last_update}")
 				await ctx.send(embed=em)
 		elif num == "7" or num.lower() == "developer" or num.lower() == "dev":
