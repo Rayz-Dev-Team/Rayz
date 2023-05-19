@@ -444,48 +444,10 @@ class Economy(commands.Cog):
 						"key": i["item"].lower()
 					}
 
-			if item.lower() in item_keys:
-				item_data = await getItem(item.lower())
-				try:
-					if amount > info["inventory"]["items"][item.lower()]["amount"]:
-						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
-						await ctx.reply(embed=em)
-					else:
-						display_name = item_data["data"]["display_name"]
-						price_amount = item_data["data"]["shop"]["sell_price"]
-						total_amount = price_amount * amount
-						pocket_before = user["pocket"]
-						pocket_after = pocket_before + total_amount
-
-						em = guilded.Embed(title="Are you sure you would like to sell?", description="`You have:` {} {}\n`Selling amount:` {}\n\n`Estimated earnings:` {}".format(info["inventory"]["items"][item.lower()]["amount"], display_name, amount, total_amount), color=0x363942)
-						em.set_footer(text="Accepted responses: Yes, No, Y, N")
-						await ctx.reply(embed=em)
-						def pred(m):
-							return m.message.author == message.author
-						answer1 = await self.bot.wait_for("message", check=pred)
-						if answer1.message.content.lower() == "y" or answer1.message.content.lower() == "yes":
-							info["inventory"]["items"][item.lower()]["amount"] = info["inventory"]["items"][item.lower()]["amount"] - amount
-							infoJson = json.dumps(info)
-							with db_connection.connection() as conn:
-								cursor = conn.cursor()
-								cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
-								cursor.execute(f"UPDATE users SET pocket = '{pocket_after}' WHERE ID = '{author.id}'")
-								conn.commit()
-
-								em = guilded.Embed(title="Transfer complete.", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, display_name, author.id, author.id, total_amount, economy_settings["currency_name"]), color=0x363942)
-								await ctx.reply(embed=em)
-
-						elif answer1.message.content.lower() == "n" or answer1.message.content.lower() == "no":
-							em = guilded.Embed(description="Thanks for stopping by the shop", color=0x363942)
-							await ctx.reply(embed=em)
-						else:
-							pass
-				except psycopg.DatabaseError as e:
-					em = guilded.Embed(title="Uh oh!", description="Error. {}".format(e), color=0x363942)
-					await ctx.reply(embed=em)
-
-			elif item.lower() in accepted_responses:
+			if item.lower() in accepted_responses:
 				item = accepted_responses[item.lower()]["key"]
+
+			if item.lower() in item_keys:
 				item_data = await getItem(item.lower())
 				try:
 					if amount > info["inventory"]["items"][item.lower()]["amount"]:
@@ -579,6 +541,9 @@ class Economy(commands.Cog):
 			}
 			item_names.append(i["item"])
 
+		if item in display_item_names:
+			item = display_item_names[item]["name"]
+
 		if author.id in LB_bans["bans"]:
 			em = guilded.Embed(title="Uh oh!", description="You were banned from Rayz's Economy for violating our ToS.", color=0x363942)
 			await ctx.reply(embed=em)
@@ -593,43 +558,7 @@ class Economy(commands.Cog):
 			member1 = await getUser(member.id)
 			info = user["inventory"]
 
-
-			if item in display_item_names:
-				item = display_item_names[item]["name"]
-				item_data = await getItem(item)
-				if not item_data["data"]["giftable"] == True:
-					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
-					await ctx.reply(embed=em)
-				else:
-					if amount > info["inventory"]["items"][item.lower()]["amount"]:
-						em = guilded.Embed(title="Uh oh!", description="You don't have that much!", color=0x363942)
-						await ctx.reply(embed=em)
-					else:
-						info_member = member1["inventory"]
-						#Take from info
-						info_amount = info["inventory"]["items"][item.lower()]["amount"]
-						new_info_amount = info_amount - amount
-						info["inventory"]["items"][item.lower()]["amount"] = new_info_amount
-						infoJson = json.dumps(info)
-						#Give to info_member
-						info_member_amount = info_member["inventory"]["items"][item.lower()]["amount"]
-						new_info_member_amount = info_member_amount + amount
-						info_member["inventory"]["items"][item.lower()]["amount"] = new_info_member_amount
-						infoJsonMember= json.dumps(info_member)
-						with db_connection.connection() as conn:
-							cursor = conn.cursor()
-							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
-							cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{member.id}'",  [infoJsonMember])
-							conn.commit()
-						em = guilded.Embed(title="Transfer complete", description="`-` {:,} {} removed from <@{}>'s inventory.\n`-` <@{}> was given {:,} {}.".format(amount, item.lower(), author.id, member.id, amount, item.lower()), color=0x363942)
-						em.set_footer(text="All transfers are logged in order to keep track of alt account farming, which is against our Economy ToS.")
-						await ctx.reply(embed=em)
-						guild1 = await self.bot.fetch_server("Mldgz04R")
-						channel = await guild1.fetch_channel("22048e41-bcfc-49e9-a1fa-5b57171299bb")
-						em = guilded.Embed(title="A transfer was made", description="{}[{}] gifted {}[{}] {:,} {}.".format(author.name, author.id, member.name, member.id, amount, item.lower()), color=0x363942)
-						await channel.send(embed=em)
-
-			elif item in item_names:
+			if item in item_names:
 				item_data = await getItem(item)
 				if not item_data["data"]["giftable"] == True:
 					em = guilded.Embed(title="Uh oh!", description=f"{item} cannot be gifted.", color=0x363942)
@@ -1273,10 +1202,6 @@ class Economy(commands.Cog):
 		server = await getServer(guild.id)
 		prefix = server["server_prefix"]
 
-		await _check_values(author)
-		await _check_values_guild(guild)
-		await check_leaderboard(author)
-		await _check_inventory(author)
 		await command_processed(message, author)
 
 		LB_bans = fileIO("economy/bans.json", "load")
@@ -1323,6 +1248,9 @@ class Economy(commands.Cog):
 					accepted_responses[i["data"]["display_name"].lower()] = {
 						"key": i["item"].lower()
 					}
+
+		if item.lower() in accepted_responses:
+			item = accepted_responses[item.lower()]["key"]
 
 		if item.lower() in item_keys:
 			item = item.lower()
@@ -1509,23 +1437,7 @@ class Economy(commands.Cog):
 							h, m = divmod(m, 60)
 							em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
 							await ctx.reply(embed=em)
-				else:
-					em = guilded.Embed(title="This item can't be used.", description="It looks like `{}` isn't a consumeable.".format(item), color=0x363942)
-					await ctx.reply(embed=em)
-					return
-			else:
-				em = guilded.Embed(title="Uh oh!", description="Something went wrong.", color=0x363942)
-				await ctx.reply(embed=em)
-				return
-
-
-		elif item.lower() in accepted_responses:
-			item = accepted_responses[item.lower()]["key"]
-			item = item.lower()
-			item_data = await getItem(item)
-			if item_data:
-				if item_data["data"]["type"] == "consumeable":
-					if item_data["item"] == "shovel":
+					if item_data["item"] == "lock_picker":
 						user = await getUser(author.id)
 						user = user["inventory"]
 						user_data = await getUser(author.id)
@@ -1534,177 +1446,107 @@ class Economy(commands.Cog):
 							await _check_values(author)
 
 						curr_time = time.time()
-						curr_cooldown = 30
+						curr_cooldown = 1
 
-						delta = float(curr_time) - float(user_data["cooldowns"]["dig_timeout"])
+						delta = float(curr_time) - float(user_data["cooldowns"]["lockpick_timeout"])
 
 						if delta >= curr_cooldown and delta>0:
-							if "shovel" in user["inventory"]["items"]:
+							if item_data["item"] in user["inventory"]["items"]:
 								if user["inventory"]["items"][item]["amount"] > 0:
 									message_list = []
-									drop_list = {
-										"unreal" : [],
-										"legendary" : [],
-										"epic" : [],
-										"rare" : [],
-										"common" : []
-									}
+									accepted_responses_answer = {}
+									item_keys_answer = []
 									
 									for i in item_list:
-										if i["data"]["type"] == "item":
-											if "shovel" in i["data"]["obtain"]:
-												if i["data"]["enabled"] == True:
-													drop_list[i["data"]["rarity"].lower()].append(i["item"])
+										if i["data"]["enabled"] == True:
+											if i["data"]["type"] == "chest":
+												if i["data"]["chest"]["locked"] == True:
+													item_keys_answer.append(i["item"])
+													accepted_responses_answer[i["data"]["display_name"].lower()] = {
+														"key": i["item"]
+													}
 
-									# Static is so you can pull the original chance range amount (So it can easily be changed)
-									static_drop_slot_chance = economy_settings["dig_drop_slots_chance"]
+									em = guilded.Embed(title="What would you like to open?", description="__**Valid items:**__\n{}".format(" \n".join(accepted_responses_answer)), color=0x363942)
+									await ctx.reply(embed=em)
 
-									# Drained meaning the part that will be decreased (Pulled from Static)
-									drained_drop_slot_chance = static_drop_slot_chance
+									def pred(m):
+										return m.message.author == message.author
+									answer = await self.bot.wait_for("message", check=pred)
 
-									# How much the required range for a valid drop decreases by
-									decrease_drop_slot_chance = economy_settings["dig_drop_slots_chance_decrease"]
+									if answer.message.content.lower() in accepted_responses_answer:
+										answer.message.content = accepted_responses_answer[answer.message.content.lower()]["key"]
 
-									drop_slots = 0
-									drop_slots_fail = False
-									drop_counter = 1
+									if answer.message.content.lower() in item_keys_answer:
+										item = answer.message.content.lower()
+										item_data = await getItem(item)
 
-									def calculatedropslots():
-										nonlocal drop_slots_fail
-										nonlocal drop_slots
-										nonlocal drained_drop_slot_chance
-										nonlocal static_drop_slot_chance
-										nonlocal decrease_drop_slot_chance
-										if drop_slots_fail == False:
-											gen_for_drop = roll_chance(1, static_drop_slot_chance, drained_drop_slot_chance)
-											if gen_for_drop:
-												drained_drop_slot_chance = drained_drop_slot_chance - decrease_drop_slot_chance
-												drop_slots += 1
-												return calculatedropslots
-											else:
-												drop_slots_fail = True
+										if item_data:
+											with db_connection.connection() as conn:
+												cursor = conn.cursor()
+												if user["inventory"]["items"][item]["amount"] > 0:
+													break_chance = random.randint(1, 100)
+													open_chance = random.randint(1, 100)
 
-									while drop_slots_fail == False:
-										calculatedropslots()
-
-									drops_lines_list = []
-
-									for i in range(drop_slots):
-										common_chance_gen = roll_chance(common_min, common_max, common_chance)
-										rare_chance_gen = roll_chance(rare_min, rare_max, rare_chance)
-										epic_chance_gen = roll_chance(epic_min, epic_max, epic_chance)
-										legendary_chance_gen = roll_chance(legendary_min, legendary_max, legendary_chance)
-										unreal_chance_gen = roll_chance(unreal_min, unreal_max, unreal_chance)
-										if unreal_chance_gen:
-											drop_list_unreal = drop_list["unreal"]
-											drop = random.choice(drop_list_unreal)
-											item_data = await getItem(drop)
-											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
-											if not drop in user["inventory"]["items"]:
-												user["inventory"]["items"][drop] = {
-													"amount": amount
-												}
-												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-											else:
-												user["inventory"]["items"][drop]["amount"] += amount
-												drops_lines_list.append("`{}.` `[UNREAL]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-										elif legendary_chance_gen:
-											drop_list_legendary = drop_list["legendary"]
-											drop = random.choice(drop_list_legendary)
-											item_data = await getItem(drop)
-											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
-											if not drop in user["inventory"]["items"]:
-												user["inventory"]["items"][drop] = {
-													"amount": amount
-												}
-												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-											else:
-												user["inventory"]["items"][drop]["amount"] += amount
-												drops_lines_list.append("`{}.` `[LEGENDARY]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-										elif epic_chance_gen:
-											drop_list_epic = drop_list["epic"]
-											drop = random.choice(drop_list_epic)
-											item_data = await getItem(drop)
-											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
-											if not drop in user["inventory"]["items"]:
-												user["inventory"]["items"][drop] = {
-													"amount": amount
-												}
-												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-											else:
-												user["inventory"]["items"][drop]["amount"] += amount
-												drops_lines_list.append("`{}.` `[Epic]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-										elif rare_chance_gen:
-											drop_list_rare = drop_list["rare"]
-											drop = random.choice(drop_list_rare)
-											item_data = await getItem(drop)
-											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
-											if not drop in user["inventory"]["items"]:
-												user["inventory"]["items"][drop] = {
-													"amount": amount
-												}
-												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-											else:
-												user["inventory"]["items"][drop]["amount"] += amount
-												drops_lines_list.append("`{}.` `[Rare]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-										elif common_chance_gen:
-											drop_list_common = drop_list["common"]
-											drop = random.choice(drop_list_common)
-											item_data = await getItem(drop)
-											amount = random.randint(item_data["data"]["drop"]["min_drop"], item_data["data"]["drop"]["max_drop"])
-											if not drop in user["inventory"]["items"]:
-												user["inventory"]["items"][drop] = {
-													"amount": amount
-												}
-												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
-											else:
-												user["inventory"]["items"][drop]["amount"] += amount
-												drops_lines_list.append("`{}.` `[Common]` +{} {}".format(drop_counter, amount, item_data["data"]["display_name"]))
-												drop_counter += 1
+													if break_chance <= 25:
+														user["inventory"]["items"]["lock_picker"]["amount"] = user["inventory"]["items"]["lock_picker"]["amount"] - 1
+														user_data["cooldowns"]["lockpick_timeout"] = curr_time
+														em = guilded.Embed(title="Lockpick", description="<@{}> broke their lockpick trying to open a {}".format(author.id, item_data["data"]["display_name"]), color=0x363942)
+														await ctx.reply(embed=em)
+														info_cooldown_Json = simplejson.dumps(user_data["cooldowns"])
+														infoJson = simplejson.dumps(user)
+														cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
+														cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+														conn.commit()
+													else:
+														if open_chance <= 70:
+															user["inventory"]["items"]["lock_picker"]["amount"] = user["inventory"]["items"]["lock_picker"]["amount"] - 1
+															message_list = []
+															if item_data["data"]["chest"]["currency_enabled"] == True:
+																earnings = random.randint(item_data["data"]["chest"]["currency"]["min_currency"], item_data["data"]["chest"]["currency"]["max_currency"])
+																message_list.append("**__Currency drop:__**\n`+{:,}` {}!\n".format(earnings, economy_settings["currency_name"]))
+																pocket_amount = user_data["pocket"] + earnings
+																cursor.execute(f"UPDATE users SET pocket = '{pocket_amount}' WHERE ID = '{author.id}'")
+																conn.commit()
+															if item_data["data"]["chest"]["items"]["enabled"] == True:
+																drop_item_chance = random.randint(1, 100)
+																if drop_item_chance <= 20:
+																	if item_data["data"]["chest"]["items"]["enabled"] == True:
+																		item_list = item_data["data"]["chest"]["items"]["item_list"]
+																		item_list_total = []
+																		for i in item_list:
+																			item_list_total.append(i)
+																		item_choice = random.choice(item_list_total)
+																		print(item_choice)
+																		item_drop_data = await getItem(item_choice)
+																		item_amount = random.randint(item_data["data"]["chest"]["items"]["item_list"][item_choice]["min_drop"], item_data["data"]["chest"]["items"]["item_list"][item_choice]["max_drop"])
+																		message_list.append("**__Item drop:__**\n`+{}` `[{}]` {}!".format(item_amount, item_drop_data["data"]["rarity"], item_drop_data["data"]["display_name"]))
+																		if not item_choice in user["inventory"]["items"]:
+																			user["inventory"]["items"][item_choice] = {
+																				"amount": item_amount
+																			} 
+															if message_list == []:
+																message_list.append("**The chest was empty.**")
+															em = guilded.Embed(title="{} opened a {}".format(author.name, item_data["data"]["display_name"]), description="{}".format(" \n".join(message_list)), color=0x363942)
+															await ctx.reply(embed=em)
+															infoJson = simplejson.dumps(user)
+															user_data["cooldowns"]["lockpick_timeout"] = curr_time
+															info_cooldown_Json = simplejson.dumps(user_data["cooldowns"])
+															cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
+															cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
+															conn.commit()
+														else:
+															user_data["cooldowns"]["lockpick_timeout"] = curr_time
+															em = guilded.Embed(title="Lockpick", description="<@{}> failed to open a {}".format(author.id, item_data["data"]["display_name"]), color=0x363942)
+															await ctx.reply(embed=em)
+															info_cooldown_Json = simplejson.dumps(user_data["cooldowns"])
+															cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
+															conn.commit()
+												else:
+													em = guilded.Embed(title="Uh oh!", description="You don't have any to open.", color=0x363942)
+													await ctx.reply(embed=em)
 										else:
-											drops_lines_list.append("`{}.` Nothing found.".format(drop_counter))
-											drop_counter += 1
-
-									if not drops_lines_list == []:
-										message_list.append("__**Item drop:**__\n{}\n".format(" \n".join(drops_lines_list)))
-
-									em = guilded.Embed(title="{} went digging.".format(author.name), description="{}".format(" \n".join(message_list)), color=0x363942)
-									await ctx.reply(embed=em)
-
-									user["inventory"]["items"][item]["amount"] = user["inventory"]["items"][item]["amount"] - 1
-									infoJson = simplejson.dumps(user)
-									with db_connection.connection() as conn:
-										updated_cooldown = user_data["cooldowns"] 
-										updated_cooldown["dig_timeout"] = curr_time
-										info_cooldown_Json = simplejson.dumps(updated_cooldown)
-										cursor = conn.cursor()
-										cursor.execute(f"UPDATE users SET cooldowns = '{info_cooldown_Json}' WHERE ID = '{author.id}'")
-										cursor.execute(f"UPDATE users SET inventory = %s WHERE ID = '{author.id}'",  [infoJson])
-										conn.commit()
-									await check_leaderboard_author(author)
-								else:
-									em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
-									em.set_footer(text="Working is a good way to get items.")
-									await ctx.reply(embed=em)
-							else:
-								em = guilded.Embed(description="<@{}>, you don't have a Shovel to dig with.".format(author.id), color=0x363942)
-								em.set_footer(text="Working is a good way to get items.")
-								await ctx.reply(embed=em)
-						else:
-							seconds = curr_cooldown - delta
-							m, s = divmod(seconds, 60)
-							h, m = divmod(m, 60)
-							em = guilded.Embed(title="Uh oh!", description="<@{}>, you cannot dig yet.\n`Time left:` {}m {}s".format(author.id, int(m), int(s)), color=0x363942)
-							await ctx.reply(embed=em)
+											em = guilded.Embed(title="Uh oh!", description="That item doesn't exist.", color=0x363942)
+											await ctx.reply(embed=em)
 				else:
 					em = guilded.Embed(title="This item can't be used.", description="It looks like `{}` isn't a consumeable.".format(item), color=0x363942)
 					await ctx.reply(embed=em)
