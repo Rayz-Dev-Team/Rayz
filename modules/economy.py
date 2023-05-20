@@ -444,7 +444,6 @@ class Economy(commands.Cog):
 						"key": i["item"].lower()
 					}
 
-
 			if item.lower() in item_keys:
 				item_data = await getItem(item.lower())
 				try:
