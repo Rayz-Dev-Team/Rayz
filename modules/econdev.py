@@ -398,6 +398,14 @@ class EconDev(commands.Cog):
                 "drop": {
                     "min_drop": None,
                     "max_drop": None
+                },
+                "chest": {
+                    "currency": {
+                        "min_currency": 0,
+                        "max_currency": 0
+                        },
+                    "items": {},
+                    "locked": False
                 }
             }
             items = await getAllItems()

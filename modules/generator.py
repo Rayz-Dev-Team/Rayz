@@ -306,6 +306,12 @@ async def _check_cooldowns_author(author):
 				infoJson = json.dumps(new_account)
 				cursor.execute(f"UPDATE users SET cooldowns = %s WHERE ID = '{author.id}'",  [infoJson])
 				conn.commit()
+			else:
+				if not "lockpick_timeout" in user["cooldowns"]:
+					user["cooldowns"]["lockpick_timeout"] = 0
+					infoJson = json.dumps(user["cooldowns"])
+					cursor.execute(f"UPDATE users SET cooldowns = %s WHERE ID = '{author.id}'",  [infoJson])
+					conn.commit()
 	except psycopg.DatabaseError as e:
 		print(f'Error {e}')
 		
